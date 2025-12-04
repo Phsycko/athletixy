@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -41,6 +41,11 @@ export default function DietasPage() {
   ])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [porcionModalOpen, setPorcionModalOpen] = useState(false)
+  const [calculandoMacros, setCalculandoMacros] = useState(false)
+  const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena'>('desayuno')
+  const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
+  
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
     desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
@@ -79,6 +84,69 @@ export default function DietasPage() {
         [campo]: valor
       }
     })
+  }
+
+  const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
+    if (!nuevaDieta[tipo].nombre.trim()) {
+      alert('Por favor escribe el nombre del alimento primero')
+      return
+    }
+    setTipoComidaActual(tipo)
+    setPorcionModalOpen(true)
+  }
+
+  const calcularMacros = async () => {
+    if (!porcionInfo.cantidad) {
+      alert('Por favor indica la cantidad')
+      return
+    }
+
+    setCalculandoMacros(true)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    const nombreAlimento = nuevaDieta[tipoComidaActual].nombre.toLowerCase()
+    const cantidad = parseFloat(porcionInfo.cantidad)
+    const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
+
+    const alimentosBase: { [key: string]: any } = {
+      'pollo': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
+      'arroz': { calorias: 130, proteina: 2.7, carbs: 28, grasas: 0.3 },
+      'salmón': { calorias: 206, proteina: 22, carbs: 0, grasas: 13 },
+      'avena': { calorias: 389, proteina: 17, carbs: 66, grasas: 7 },
+      'huevo': { calorias: 155, proteina: 13, carbs: 1, grasas: 11 },
+      'atún': { calorias: 132, proteina: 28, carbs: 0, grasas: 1.3 },
+      'pechuga': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
+      'pescado': { calorias: 110, proteina: 24, carbs: 0, grasas: 1.5 },
+    }
+
+    let macros = { calorias: 150 * factor, proteina: 8 * factor, carbs: 20 * factor, grasas: 5 * factor }
+
+    for (const [key, valores] of Object.entries(alimentosBase)) {
+      if (nombreAlimento.includes(key)) {
+        macros = {
+          calorias: valores.calorias * factor,
+          proteina: valores.proteina * factor,
+          carbs: valores.carbs * factor,
+          grasas: valores.grasas * factor,
+        }
+        break
+      }
+    }
+
+    setNuevaDieta({
+      ...nuevaDieta,
+      [tipoComidaActual]: {
+        ...nuevaDieta[tipoComidaActual],
+        calorias: Math.round(macros.calorias),
+        proteina: Math.round(macros.proteina),
+        carbs: Math.round(macros.carbs),
+        grasas: Math.round(macros.grasas),
+      }
+    })
+
+    setCalculandoMacros(false)
+    setPorcionModalOpen(false)
+    setPorcionInfo({ cantidad: '', unidad: 'gramos' })
   }
 
   return (
@@ -261,14 +329,25 @@ export default function DietasPage() {
                 <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Avena con frutas"
-                      value={nuevaDieta.desayuno.nombre}
-                      onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Ej: Avena con frutas"
+                        value={nuevaDieta.desayuno.nombre}
+                        onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => abrirCalculadoraIA('desayuno')}
+                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        title="Calcular macros con IA"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        IA
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -318,14 +397,25 @@ export default function DietasPage() {
                 <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Pollo con arroz"
-                      value={nuevaDieta.almuerzo.nombre}
-                      onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Ej: Pollo con arroz"
+                        value={nuevaDieta.almuerzo.nombre}
+                        onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => abrirCalculadoraIA('almuerzo')}
+                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        title="Calcular macros con IA"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        IA
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -375,14 +465,25 @@ export default function DietasPage() {
                 <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Salmón con vegetales"
-                      value={nuevaDieta.cena.nombre}
-                      onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Ej: Salmón con vegetales"
+                        value={nuevaDieta.cena.nombre}
+                        onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => abrirCalculadoraIA('cena')}
+                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        title="Calcular macros con IA"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        IA
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -442,6 +543,86 @@ export default function DietasPage() {
                   Agregar Dieta
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Porción para IA */}
+      {porcionModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-black">Calcular Macros</h3>
+                <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaActual].nombre}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
+                <input
+                  type="number"
+                  placeholder="Ej: 150, 200..."
+                  value={porcionInfo.cantidad}
+                  onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Unidad</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['gramos', 'piezas', 'tazas'].map((unidad) => (
+                    <button
+                      key={unidad}
+                      type="button"
+                      onClick={() => setPorcionInfo({...porcionInfo, unidad})}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                        porcionInfo.unidad === unidad
+                          ? 'border-purple-600 bg-purple-50 text-purple-900'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {unidad}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setPorcionModalOpen(false)
+                  setPorcionInfo({ cantidad: '', unidad: 'gramos' })
+                }}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={calcularMacros}
+                disabled={calculandoMacros}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {calculandoMacros ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Calculando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    Calcular
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
