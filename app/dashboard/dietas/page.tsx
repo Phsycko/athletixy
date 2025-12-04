@@ -118,6 +118,13 @@ export default function DietasPage() {
   const [porcionModalOpen, setPorcionModalOpen] = useState(false)
   const [tipoComidaCalculando, setTipoComidaCalculando] = useState<'desayuno' | 'almuerzo' | 'cena' | null>(null)
   const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
+  
+  const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
+    dia: '',
+    desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+    almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+    cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+  })
 
   // Biblioteca de alimentos con macros
   const alimentosDisponibles = {
@@ -260,13 +267,16 @@ export default function DietasPage() {
     setPorcionInfo({ cantidad: '', unidad: 'gramos' })
     setTipoComidaCalculando(null)
   }
-  
-  const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
-    dia: '',
-    desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-    almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-    cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-  })
+
+  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
+    setNuevaDieta({
+      ...nuevaDieta,
+      [tipo]: {
+        ...nuevaDieta[tipo],
+        [campo]: valor
+      }
+    })
+  }
 
   const [datosUsuario, setDatosUsuario] = useState<DatosUsuario>({
     peso: 75,
@@ -491,16 +501,6 @@ export default function DietasPage() {
     const platos = tipoComida === 'desayuno' ? platosDesayuno : tipoComida === 'almuerzo' ? platosAlmuerzo : platosCena
     const opciones = platos[objetivo as keyof typeof platos]
     return opciones[Math.floor(Math.random() * opciones.length)]
-  }
-
-  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipo]: {
-        ...nuevaDieta[tipo],
-        [campo]: valor
-      }
-    })
   }
 
   return (
