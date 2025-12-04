@@ -57,6 +57,8 @@ export default function DietasPage() {
   const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
   const [generandoIA, setGenerandoIA] = useState(false)
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+  const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
@@ -112,10 +114,22 @@ export default function DietasPage() {
   }
 
   const handleEliminarDieta = (index: number) => {
-    if (confirm('¿Estás seguro de que quieres eliminar esta dieta?')) {
-      const nuevoPlan = dietaPlan.filter((_, i) => i !== index)
+    setDietaAEliminar(index)
+    setConfirmDeleteOpen(true)
+  }
+
+  const confirmarEliminacion = () => {
+    if (dietaAEliminar !== null) {
+      const nuevoPlan = dietaPlan.filter((_, i) => i !== dietaAEliminar)
       setDietaPlan(nuevoPlan)
+      setConfirmDeleteOpen(false)
+      setDietaAEliminar(null)
     }
+  }
+
+  const cancelarEliminacion = () => {
+    setConfirmDeleteOpen(false)
+    setDietaAEliminar(null)
   }
 
   const resetForm = () => {
