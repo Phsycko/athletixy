@@ -80,8 +80,8 @@ export default function DietasPage() {
   // Guardar dietas en localStorage cada vez que cambien
   useEffect(() => {
     const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
-    if (primeraVez) {
-      // Solo guardar si ya se inicializó
+    if (primeraVez && dietaPlan !== null) {
+      // Guardar incluso si está vacío (array vacío significa que el usuario eliminó todo)
       localStorage.setItem('athletixy_dietas', JSON.stringify(dietaPlan))
     }
   }, [dietaPlan])
@@ -110,6 +110,46 @@ export default function DietasPage() {
   const [calendarioOpen, setCalendarioOpen] = useState(false)
   const [mesCalendario, setMesCalendario] = useState(new Date())
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
+  const [esPremium, setEsPremium] = useState(true) // Cambiar a false para usuario básico
+
+  // Biblioteca de alimentos con macros
+  const alimentosDisponibles = {
+    desayuno: [
+      { nombre: 'Avena con Proteína', calorias: 450, proteina: 30, carbs: 52, grasas: 12 },
+      { nombre: 'Huevos Revueltos con Aguacate', calorias: 420, proteina: 28, carbs: 18, grasas: 28 },
+      { nombre: 'Batido de Proteína con Banana', calorias: 380, proteina: 35, carbs: 42, grasas: 8 },
+      { nombre: 'Tortilla de Claras y Espinacas', calorias: 280, proteina: 32, carbs: 8, grasas: 12 },
+      { nombre: 'Yogurt Griego con Granola', calorias: 350, proteina: 25, carbs: 45, grasas: 10 },
+      { nombre: 'Tostadas Integrales con Mantequilla de Maní', calorias: 420, proteina: 18, carbs: 48, grasas: 18 },
+      { nombre: 'Pancakes de Proteína', calorias: 400, proteina: 30, carbs: 40, grasas: 12 },
+    ],
+    almuerzo: [
+      { nombre: 'Pollo con Arroz Integral', calorias: 680, proteina: 55, carbs: 68, grasas: 15 },
+      { nombre: 'Carne Magra con Quinoa', calorias: 720, proteina: 58, carbs: 65, grasas: 18 },
+      { nombre: 'Atún con Pasta Integral', calorias: 650, proteina: 52, carbs: 72, grasas: 12 },
+      { nombre: 'Salmón con Batata', calorias: 620, proteina: 48, carbs: 55, grasas: 20 },
+      { nombre: 'Pechuga con Arroz Basmati', calorias: 700, proteina: 60, carbs: 70, grasas: 14 },
+      { nombre: 'Lentejas con Vegetales', calorias: 520, proteina: 28, carbs: 72, grasas: 8 },
+    ],
+    cena: [
+      { nombre: 'Salmón con Vegetales', calorias: 520, proteina: 42, carbs: 28, grasas: 25 },
+      { nombre: 'Pechuga con Ensalada', calorias: 480, proteina: 48, carbs: 22, grasas: 18 },
+      { nombre: 'Pescado al Horno con Brócoli', calorias: 440, proteina: 45, carbs: 18, grasas: 20 },
+      { nombre: 'Atún con Ensalada Mixta', calorias: 380, proteina: 40, carbs: 15, grasas: 16 },
+      { nombre: 'Pollo a la Plancha con Espárragos', calorias: 420, proteina: 46, carbs: 20, grasas: 14 },
+      { nombre: 'Merluza con Vegetales al Vapor', calorias: 360, proteina: 38, carbs: 18, grasas: 12 },
+    ],
+  }
+
+  const seleccionarAlimentoPredefinido = (tipo: 'desayuno' | 'almuerzo' | 'cena', nombreAlimento: string) => {
+    const alimento = alimentosDisponibles[tipo].find(a => a.nombre === nombreAlimento)
+    if (alimento) {
+      setNuevaDieta({
+        ...nuevaDieta,
+        [tipo]: alimento
+      })
+    }
+  }
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
@@ -742,14 +782,44 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                      <input
-                        type="text"
-                        placeholder="Ej: Avena con frutas"
-                        value={nuevaDieta.desayuno.nombre}
-                        onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        NOMBRE DEL ALIMENTO
+                        {esPremium && (
+                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                            PREMIUM
+                          </span>
+                        )}
+                      </label>
+                      {esPremium ? (
+                        <select
+                          value={nuevaDieta.desayuno.nombre}
+                          onChange={(e) => {
+                            const nombreSeleccionado = e.target.value
+                            if (nombreSeleccionado === 'custom') {
+                              updateComida('desayuno', 'nombre', '')
+                            } else if (nombreSeleccionado) {
+                              seleccionarAlimentoPredefinido('desayuno', nombreSeleccionado)
+                            }
+                          }}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white cursor-pointer"
+                        >
+                          <option value="">Selecciona un alimento...</option>
+                          {alimentosDisponibles.desayuno.map((alimento, idx) => (
+                            <option key={idx} value={alimento.nombre}>
+                              {alimento.nombre} ({alimento.calorias} kcal)
+                            </option>
+                          ))}
+                          <option value="custom">✏️ Escribir personalizado</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder="Ej: Avena con frutas"
+                          value={nuevaDieta.desayuno.nombre}
+                          onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -799,14 +869,44 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                      <input
-                        type="text"
-                        placeholder="Ej: Pollo con arroz"
-                        value={nuevaDieta.almuerzo.nombre}
-                        onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        NOMBRE DEL ALIMENTO
+                        {esPremium && (
+                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                            PREMIUM
+                          </span>
+                        )}
+                      </label>
+                      {esPremium ? (
+                        <select
+                          value={nuevaDieta.almuerzo.nombre}
+                          onChange={(e) => {
+                            const nombreSeleccionado = e.target.value
+                            if (nombreSeleccionado === 'custom') {
+                              updateComida('almuerzo', 'nombre', '')
+                            } else if (nombreSeleccionado) {
+                              seleccionarAlimentoPredefinido('almuerzo', nombreSeleccionado)
+                            }
+                          }}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white cursor-pointer"
+                        >
+                          <option value="">Selecciona un alimento...</option>
+                          {alimentosDisponibles.almuerzo.map((alimento, idx) => (
+                            <option key={idx} value={alimento.nombre}>
+                              {alimento.nombre} ({alimento.calorias} kcal)
+                            </option>
+                          ))}
+                          <option value="custom">✏️ Escribir personalizado</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder="Ej: Pollo con arroz"
+                          value={nuevaDieta.almuerzo.nombre}
+                          onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -856,14 +956,44 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                      <input
-                        type="text"
-                        placeholder="Ej: Salmón con vegetales"
-                        value={nuevaDieta.cena.nombre}
-                        onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        NOMBRE DEL ALIMENTO
+                        {esPremium && (
+                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                            PREMIUM
+                          </span>
+                        )}
+                      </label>
+                      {esPremium ? (
+                        <select
+                          value={nuevaDieta.cena.nombre}
+                          onChange={(e) => {
+                            const nombreSeleccionado = e.target.value
+                            if (nombreSeleccionado === 'custom') {
+                              updateComida('cena', 'nombre', '')
+                            } else if (nombreSeleccionado) {
+                              seleccionarAlimentoPredefinido('cena', nombreSeleccionado)
+                            }
+                          }}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white cursor-pointer"
+                        >
+                          <option value="">Selecciona un alimento...</option>
+                          {alimentosDisponibles.cena.map((alimento, idx) => (
+                            <option key={idx} value={alimento.nombre}>
+                              {alimento.nombre} ({alimento.calorias} kcal)
+                            </option>
+                          ))}
+                          <option value="custom">✏️ Escribir personalizado</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder="Ej: Salmón con vegetales"
+                          value={nuevaDieta.cena.nombre}
+                          onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
+                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
