@@ -59,8 +59,24 @@ export default function DietasPage() {
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
-  const [fechaSemana, setFechaSemana] = useState(new Date())
-  const [selectorFechaOpen, setSelectorFechaOpen] = useState(false)
+  const [fechaInicio, setFechaInicio] = useState<Date>(() => {
+    const hoy = new Date()
+    const dia = hoy.getDay()
+    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
+    return new Date(hoy.getFullYear(), hoy.getMonth(), diff)
+  })
+  const [fechaFin, setFechaFin] = useState<Date>(() => {
+    const hoy = new Date()
+    const dia = hoy.getDay()
+    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
+    const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), diff)
+    const fin = new Date(inicio)
+    fin.setDate(inicio.getDate() + 6)
+    return fin
+  })
+  const [calendarioOpen, setCalendarioOpen] = useState(false)
+  const [mesCalendario, setMesCalendario] = useState(new Date())
+  const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
@@ -134,31 +150,92 @@ export default function DietasPage() {
     setDietaAEliminar(null)
   }
 
-  const obtenerRangoSemana = (fecha: Date) => {
-    const inicioDia = fecha.getDay()
-    const diff = fecha.getDate() - inicioDia + (inicioDia === 0 ? -6 : 1)
+  const formatoFecha = (d: Date) => {
+    return `${d.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}`
+  }
+
+  const obtenerRangoSemana = () => {
+    return `${formatoFecha(fechaInicio)} - ${formatoFecha(fechaFin)}`
+  }
+
+  const cambiarPeriodo = (direccion: 'anterior' | 'siguiente') => {
+    const dias = Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    const nuevaInicio = new Date(fechaInicio)
+    const nuevaFin = new Date(fechaFin)
     
-    const lunes = new Date(fecha.getFullYear(), fecha.getMonth(), diff)
-    const domingo = new Date(lunes)
-    domingo.setDate(lunes.getDate() + 6)
-    
-    const formatoFecha = (d: Date) => {
-      return `${d.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}`
+    if (direccion === 'anterior') {
+      nuevaInicio.setDate(nuevaInicio.getDate() - dias)
+      nuevaFin.setDate(nuevaFin.getDate() - dias)
+    } else {
+      nuevaInicio.setDate(nuevaInicio.getDate() + dias)
+      nuevaFin.setDate(nuevaFin.getDate() + dias)
     }
     
-    return `${formatoFecha(lunes)} - ${formatoFecha(domingo)}`
+    setFechaInicio(nuevaInicio)
+    setFechaFin(nuevaFin)
   }
 
-  const cambiarSemana = (direccion: 'anterior' | 'siguiente') => {
-    const nuevaFecha = new Date(fechaSemana)
-    nuevaFecha.setDate(nuevaFecha.getDate() + (direccion === 'anterior' ? -7 : 7))
-    setFechaSemana(nuevaFecha)
-    setSelectorFechaOpen(false)
+  const irAHoy = () => {
+    const hoy = new Date()
+    const dia = hoy.getDay()
+    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
+    const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), diff)
+    const fin = new Date(inicio)
+    fin.setDate(inicio.getDate() + 6)
+    setFechaInicio(inicio)
+    setFechaFin(fin)
   }
 
-  const irASemanaActual = () => {
-    setFechaSemana(new Date())
-    setSelectorFechaOpen(false)
+  const getDiasDelMes = (fecha: Date) => {
+    const año = fecha.getFullYear()
+    const mes = fecha.getMonth()
+    const primerDia = new Date(año, mes, 1)
+    const ultimoDia = new Date(año, mes + 1, 0)
+    
+    const dias: Date[] = []
+    const diaInicio = primerDia.getDay()
+    const diasAnteriores = diaInicio === 0 ? 6 : diaInicio - 1
+    
+    for (let i = diasAnteriores; i > 0; i--) {
+      const dia = new Date(año, mes, 1 - i)
+      dias.push(dia)
+    }
+    
+    for (let i = 1; i <= ultimoDia.getDate(); i++) {
+      dias.push(new Date(año, mes, i))
+    }
+    
+    const diasRestantes = 42 - dias.length
+    for (let i = 1; i <= diasRestantes; i++) {
+      dias.push(new Date(año, mes + 1, i))
+    }
+    
+    return dias
+  }
+
+  const seleccionarDia = (dia: Date) => {
+    if (seleccionandoRango === 'inicio') {
+      setFechaInicio(dia)
+      setSeleccionandoRango('fin')
+    } else {
+      if (dia >= fechaInicio) {
+        setFechaFin(dia)
+        setCalendarioOpen(false)
+        setSeleccionandoRango('inicio')
+      } else {
+        setFechaInicio(dia)
+      }
+    }
+  }
+
+  const estaEnRango = (dia: Date) => {
+    return dia >= fechaInicio && dia <= fechaFin
+  }
+
+  const esMismoDia = (d1: Date, d2: Date) => {
+    return d1.getDate() === d2.getDate() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getFullYear() === d2.getFullYear()
   }
 
   const resetForm = () => {
@@ -303,41 +380,41 @@ export default function DietasPage() {
           <div className="flex items-center gap-2">
             {/* Botones de navegación */}
             <button
-              onClick={() => cambiarSemana('anterior')}
+              onClick={() => cambiarPeriodo('anterior')}
               className="p-2 hover:bg-gray-100 rounded-lg transition"
-              title="Semana anterior"
+              title="Período anterior"
             >
               <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
             
-            {/* Selector de fecha */}
+            {/* Selector de rango */}
             <button
-              onClick={() => setSelectorFechaOpen(!selectorFechaOpen)}
+              onClick={() => setCalendarioOpen(!calendarioOpen)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition group ${
-                selectorFechaOpen 
+                calendarioOpen 
                   ? 'bg-blue-100 border-2 border-blue-300' 
                   : 'hover:bg-gray-100 border-2 border-transparent'
               }`}
             >
-              <Calendar className={`w-5 h-5 ${selectorFechaOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
+              <Calendar className={`w-5 h-5 ${calendarioOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
               <span className={`text-sm font-medium whitespace-nowrap ${
-                selectorFechaOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
+                calendarioOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
               }`}>
-                {obtenerRangoSemana(fechaSemana)}
+                {obtenerRangoSemana()}
               </span>
             </button>
             
             <button
-              onClick={() => cambiarSemana('siguiente')}
+              onClick={() => cambiarPeriodo('siguiente')}
               className="p-2 hover:bg-gray-100 rounded-lg transition"
-              title="Semana siguiente"
+              title="Período siguiente"
             >
               <ChevronRight className="w-5 h-5 text-gray-600" />
             </button>
 
             {/* Botón ir a hoy */}
             <button
-              onClick={irASemanaActual}
+              onClick={irAHoy}
               className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition"
             >
               Hoy
@@ -345,36 +422,107 @@ export default function DietasPage() {
           </div>
         </div>
 
-        {/* Selector de fecha personalizado */}
-        {selectorFechaOpen && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-blue-200 rounded-lg animate-fadeIn">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-blue-600" />
-                Selecciona cualquier día de la semana
-              </label>
+        {/* Calendario de selección de rango */}
+        {calendarioOpen && (
+          <div className="mb-6 p-4 bg-white border-2 border-blue-200 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-800">
+                Selecciona el rango de días
+              </h3>
               <button
-                onClick={() => setSelectorFechaOpen(false)}
-                className="text-gray-500 hover:text-red-600 transition p-1 hover:bg-white rounded"
+                onClick={() => {
+                  setCalendarioOpen(false)
+                  setSeleccionandoRango('inicio')
+                }}
+                className="text-gray-500 hover:text-red-600 transition p-1 hover:bg-gray-100 rounded"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <input
-              type="date"
-              value={fechaSemana.toISOString().split('T')[0]}
-              onChange={(e) => {
-                const nuevaFecha = new Date(e.target.value + 'T12:00:00')
-                setFechaSemana(nuevaFecha)
-                setSelectorFechaOpen(false)
-              }}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            />
-            <div className="mt-3 p-3 bg-white rounded-lg border border-blue-200">
-              <p className="text-xs text-gray-600 flex items-start gap-2">
-                <span className="text-blue-600 font-bold">ℹ️</span>
-                <span>
-                  Selecciona <strong>cualquier día</strong> y se mostrará el plan completo de esa semana (de lunes a domingo)
+
+            <div className="bg-blue-50 p-3 rounded-lg mb-4">
+              <p className="text-xs text-gray-700">
+                {seleccionandoRango === 'inicio' ? (
+                  <>📅 <strong>Paso 1:</strong> Selecciona la fecha de inicio</>
+                ) : (
+                  <>📅 <strong>Paso 2:</strong> Selecciona la fecha final</>
+                )}
+              </p>
+            </div>
+
+            {/* Navegación del mes */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => {
+                  const nuevoMes = new Date(mesCalendario)
+                  nuevoMes.setMonth(nuevoMes.getMonth() - 1)
+                  setMesCalendario(nuevoMes)
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              
+              <span className="text-lg font-bold text-gray-800">
+                {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][mesCalendario.getMonth()]} {mesCalendario.getFullYear()}
+              </span>
+              
+              <button
+                onClick={() => {
+                  const nuevoMes = new Date(mesCalendario)
+                  nuevoMes.setMonth(nuevoMes.getMonth() + 1)
+                  setMesCalendario(nuevoMes)
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Días de la semana */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((dia, i) => (
+                <div key={i} className="text-center text-xs font-semibold text-gray-600 py-2">
+                  {dia}
+                </div>
+              ))}
+            </div>
+
+            {/* Días del mes */}
+            <div className="grid grid-cols-7 gap-1">
+              {getDiasDelMes(mesCalendario).map((dia, index) => {
+                const esOtroMes = dia.getMonth() !== mesCalendario.getMonth()
+                const enRango = estaEnRango(dia)
+                const esInicio = esMismoDia(dia, fechaInicio)
+                const esFin = esMismoDia(dia, fechaFin)
+                const esHoy = esMismoDia(dia, new Date())
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => !esOtroMes && seleccionarDia(dia)}
+                    disabled={esOtroMes}
+                    className={`
+                      p-2 text-sm rounded-lg transition
+                      ${esOtroMes ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'}
+                      ${enRango && !esOtroMes ? 'bg-blue-100' : ''}
+                      ${(esInicio || esFin) && !esOtroMes ? 'bg-blue-600 text-white font-bold' : ''}
+                      ${esHoy && !esOtroMes && !enRango ? 'border-2 border-blue-400' : ''}
+                    `}
+                  >
+                    {dia.getDate()}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Resumen del rango seleccionado */}
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-xs text-gray-600 mb-2">Rango seleccionado:</p>
+              <p className="text-sm font-semibold text-gray-800">
+                {formatoFecha(fechaInicio)} - {formatoFecha(fechaFin)}
+                <span className="ml-2 text-gray-500">
+                  ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1} días)
                 </span>
               </p>
             </div>
