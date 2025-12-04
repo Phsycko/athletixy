@@ -422,49 +422,49 @@ export default function DietasPage() {
           </div>
         </div>
 
-        {/* Calendario de selección de rango */}
+        {/* Calendario de selección de rango - COMPACTO */}
         {calendarioOpen && (
-          <div className="mb-6 p-4 bg-white border-2 border-blue-200 rounded-xl shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-800">
-                Selecciona el rango de días
+          <div className="mb-4 p-3 bg-white border-2 border-blue-200 rounded-lg shadow-lg max-w-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-semibold text-gray-800">
+                Selecciona rango
               </h3>
               <button
                 onClick={() => {
                   setCalendarioOpen(false)
                   setSeleccionandoRango('inicio')
                 }}
-                className="text-gray-500 hover:text-red-600 transition p-1 hover:bg-gray-100 rounded"
+                className="text-gray-500 hover:text-red-600 transition p-0.5 hover:bg-gray-100 rounded"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="bg-blue-50 p-3 rounded-lg mb-4">
+            <div className="bg-blue-50 px-2 py-1 rounded mb-2">
               <p className="text-xs text-gray-700">
                 {seleccionandoRango === 'inicio' ? (
-                  <>📅 <strong>Paso 1:</strong> Selecciona la fecha de inicio</>
+                  <>📅 <strong>Paso 1:</strong> Inicio</>
                 ) : (
-                  <>📅 <strong>Paso 2:</strong> Selecciona la fecha final</>
+                  <>📅 <strong>Paso 2:</strong> Final</>
                 )}
               </p>
             </div>
 
             {/* Navegación del mes */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <button
                 onClick={() => {
                   const nuevoMes = new Date(mesCalendario)
                   nuevoMes.setMonth(nuevoMes.getMonth() - 1)
                   setMesCalendario(nuevoMes)
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-1 hover:bg-gray-100 rounded transition"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                <ChevronLeft className="w-4 h-4 text-gray-600" />
               </button>
               
-              <span className="text-lg font-bold text-gray-800">
-                {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][mesCalendario.getMonth()]} {mesCalendario.getFullYear()}
+              <span className="text-sm font-bold text-gray-800">
+                {['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][mesCalendario.getMonth()]} {mesCalendario.getFullYear()}
               </span>
               
               <button
@@ -473,23 +473,23 @@ export default function DietasPage() {
                   nuevoMes.setMonth(nuevoMes.getMonth() + 1)
                   setMesCalendario(nuevoMes)
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-1 hover:bg-gray-100 rounded transition"
               >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-gray-600" />
               </button>
             </div>
 
             {/* Días de la semana */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="grid grid-cols-7 gap-0.5 mb-1">
               {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((dia, i) => (
-                <div key={i} className="text-center text-xs font-semibold text-gray-600 py-2">
+                <div key={i} className="text-center text-xs font-semibold text-gray-600 py-1">
                   {dia}
                 </div>
               ))}
             </div>
 
             {/* Días del mes */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0.5">
               {getDiasDelMes(mesCalendario).map((dia, index) => {
                 const esOtroMes = dia.getMonth() !== mesCalendario.getMonth()
                 const enRango = estaEnRango(dia)
@@ -503,11 +503,11 @@ export default function DietasPage() {
                     onClick={() => !esOtroMes && seleccionarDia(dia)}
                     disabled={esOtroMes}
                     className={`
-                      p-2 text-sm rounded-lg transition
+                      p-1.5 text-xs rounded transition
                       ${esOtroMes ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'}
                       ${enRango && !esOtroMes ? 'bg-blue-100' : ''}
                       ${(esInicio || esFin) && !esOtroMes ? 'bg-blue-600 text-white font-bold' : ''}
-                      ${esHoy && !esOtroMes && !enRango ? 'border-2 border-blue-400' : ''}
+                      ${esHoy && !esOtroMes && !enRango ? 'border border-blue-400' : ''}
                     `}
                   >
                     {dia.getDate()}
@@ -517,12 +517,11 @@ export default function DietasPage() {
             </div>
 
             {/* Resumen del rango seleccionado */}
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs text-gray-600 mb-2">Rango seleccionado:</p>
-              <p className="text-sm font-semibold text-gray-800">
+            <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+              <p className="text-xs font-semibold text-gray-800">
                 {formatoFecha(fechaInicio)} - {formatoFecha(fechaFin)}
-                <span className="ml-2 text-gray-500">
-                  ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1} días)
+                <span className="ml-1 text-gray-500 font-normal">
+                  ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1}d)
                 </span>
               </p>
             </div>
