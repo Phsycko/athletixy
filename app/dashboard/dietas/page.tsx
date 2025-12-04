@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2 } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -59,6 +59,8 @@ export default function DietasPage() {
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
+  const [fechaSemana, setFechaSemana] = useState(new Date())
+  const [selectorFechaOpen, setSelectorFechaOpen] = useState(false)
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
@@ -130,6 +132,33 @@ export default function DietasPage() {
   const cancelarEliminacion = () => {
     setConfirmDeleteOpen(false)
     setDietaAEliminar(null)
+  }
+
+  const obtenerRangoSemana = (fecha: Date) => {
+    const inicioDia = fecha.getDay()
+    const diff = fecha.getDate() - inicioDia + (inicioDia === 0 ? -6 : 1)
+    
+    const lunes = new Date(fecha)
+    lunes.setDate(diff)
+    
+    const domingo = new Date(lunes)
+    domingo.setDate(lunes.getDate() + 6)
+    
+    const formatoFecha = (d: Date) => {
+      return `${d.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}`
+    }
+    
+    return `Semana del ${formatoFecha(lunes)} - ${formatoFecha(domingo)}`
+  }
+
+  const cambiarSemana = (direccion: 'anterior' | 'siguiente') => {
+    const nuevaFecha = new Date(fechaSemana)
+    nuevaFecha.setDate(nuevaFecha.getDate() + (direccion === 'anterior' ? -7 : 7))
+    setFechaSemana(nuevaFecha)
+  }
+
+  const irASemanaActual = () => {
+    setFechaSemana(new Date())
   }
 
   const resetForm = () => {
@@ -268,13 +297,76 @@ export default function DietasPage() {
 
       {/* Plan Semanal */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-lg font-semibold text-black">Plan Semanal</h2>
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="w-5 h-5" />
-            <span className="text-sm">Semana del 4-10 Dic</span>
+          
+          <div className="flex items-center gap-2">
+            {/* Botones de navegación */}
+            <button
+              onClick={() => cambiarSemana('anterior')}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              title="Semana anterior"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            
+            {/* Selector de fecha */}
+            <button
+              onClick={() => setSelectorFechaOpen(!selectorFechaOpen)}
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition group"
+            >
+              <Calendar className="w-5 h-5 text-gray-600 group-hover:text-black" />
+              <span className="text-sm text-gray-600 group-hover:text-black font-medium">
+                {obtenerRangoSemana(fechaSemana)}
+              </span>
+            </button>
+            
+            <button
+              onClick={() => cambiarSemana('siguiente')}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              title="Semana siguiente"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {/* Botón ir a hoy */}
+            <button
+              onClick={irASemanaActual}
+              className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition"
+            >
+              Hoy
+            </button>
           </div>
         </div>
+
+        {/* Selector de fecha personalizado */}
+        {selectorFechaOpen && (
+          <div className="mb-6 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-sm font-medium text-gray-700">
+                Selecciona una fecha de la semana
+              </label>
+              <button
+                onClick={() => setSelectorFechaOpen(false)}
+                className="text-gray-500 hover:text-black transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <input
+              type="date"
+              value={fechaSemana.toISOString().split('T')[0]}
+              onChange={(e) => {
+                setFechaSemana(new Date(e.target.value))
+                setSelectorFechaOpen(false)
+              }}
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              El plan se mostrará para toda la semana que contiene esta fecha
+            </p>
+          </div>
+        )}
 
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
