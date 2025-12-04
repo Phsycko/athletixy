@@ -688,13 +688,20 @@ export default function DietasPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Día de la semana
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: Jueves, Viernes..."
+                  <select
                     value={nuevaDieta.dia}
                     onChange={(e) => setNuevaDieta({...nuevaDieta, dia: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
-                  />
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white cursor-pointer"
+                  >
+                    <option value="">Selecciona un día...</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                  </select>
                 </div>
 
                 {/* Desayuno */}
