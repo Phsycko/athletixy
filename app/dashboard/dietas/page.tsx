@@ -46,6 +46,8 @@ export default function DietasPage() {
   const [calculandoMacros, setCalculandoMacros] = useState(false)
   const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena'>('desayuno')
   const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
+  const [ingredientesDetectados, setIngredientesDetectados] = useState<Array<{nombre: string, cantidad: string, unidad: string}>>([])
+  const [esComidaCompuesta, setEsComidaCompuesta] = useState(false)
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
@@ -252,44 +254,138 @@ export default function DietasPage() {
       return
     }
     setTipoComidaActual(tipo)
+    
+    // Detectar si es comida compuesta
+    const nombre = nuevaDieta[tipo].nombre.toLowerCase()
+    const esCompuesta = nombre.includes(' con ') || nombre.includes(' y ') || nombre.includes(',')
+    
+    if (esCompuesta) {
+      // Detectar ingredientes
+      const ingredientes = detectarIngredientes(nombre)
+      setIngredientesDetectados(ingredientes)
+      setEsComidaCompuesta(true)
+    } else {
+      setEsComidaCompuesta(false)
+    }
+    
     setPorcionModalOpen(true)
   }
 
+  const detectarIngredientes = (nombre: string): Array<{nombre: string, cantidad: string, unidad: string}> => {
+    const ingredientes: Array<{nombre: string, cantidad: string, unidad: string}> = []
+    
+    // Separar por "con", "y", o ","
+    let partes = nombre.split(/\s+con\s+|\s+y\s+|,\s*/)
+    
+    partes.forEach(parte => {
+      const palabras = parte.trim().split(' ')
+      let nombreIngrediente = palabras.join(' ')
+      
+      // Limpiar palabras comunes
+      nombreIngrediente = nombreIngrediente
+        .replace(/\s+(a la plancha|al horno|al vapor|a la parrilla|cocido|crudo)/gi, '')
+        .trim()
+      
+      if (nombreIngrediente) {
+        ingredientes.push({
+          nombre: nombreIngrediente.charAt(0).toUpperCase() + nombreIngrediente.slice(1),
+          cantidad: '',
+          unidad: 'gramos'
+        })
+      }
+    })
+    
+    return ingredientes
+  }
+
   const calcularMacros = async () => {
-    if (!porcionInfo.cantidad) {
-      alert('Por favor indica la cantidad')
-      return
+    if (esComidaCompuesta) {
+      // Validar que todos los ingredientes tengan cantidad
+      const faltaCantidad = ingredientesDetectados.some(ing => !ing.cantidad)
+      if (faltaCantidad) {
+        alert('Por favor indica la cantidad de cada ingrediente')
+        return
+      }
+    } else {
+      if (!porcionInfo.cantidad) {
+        alert('Por favor indica la cantidad')
+        return
+      }
     }
 
     setCalculandoMacros(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
 
-    const nombreAlimento = nuevaDieta[tipoComidaActual].nombre.toLowerCase()
-    const cantidad = parseFloat(porcionInfo.cantidad)
-    const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
-
     const alimentosBase: { [key: string]: any } = {
       'pollo': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
+      'pechuga': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
       'arroz': { calorias: 130, proteina: 2.7, carbs: 28, grasas: 0.3 },
       'salmón': { calorias: 206, proteina: 22, carbs: 0, grasas: 13 },
       'avena': { calorias: 389, proteina: 17, carbs: 66, grasas: 7 },
       'huevo': { calorias: 155, proteina: 13, carbs: 1, grasas: 11 },
       'atún': { calorias: 132, proteina: 28, carbs: 0, grasas: 1.3 },
-      'pechuga': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
       'pescado': { calorias: 110, proteina: 24, carbs: 0, grasas: 1.5 },
+      'carne': { calorias: 250, proteina: 26, carbs: 0, grasas: 15 },
+      'quinoa': { calorias: 120, proteina: 4.4, carbs: 21, grasas: 1.9 },
+      'pasta': { calorias: 131, proteina: 5, carbs: 25, grasas: 1.1 },
+      'batata': { calorias: 86, proteina: 1.6, carbs: 20, grasas: 0.1 },
+      'aguacate': { calorias: 160, proteina: 2, carbs: 9, grasas: 15 },
+      'vegetales': { calorias: 35, proteina: 2, carbs: 7, grasas: 0.2 },
+      'ensalada': { calorias: 15, proteina: 1, carbs: 3, grasas: 0.1 },
+      'brócoli': { calorias: 34, proteina: 2.8, carbs: 7, grasas: 0.4 },
+      'espárragos': { calorias: 20, proteina: 2.2, carbs: 4, grasas: 0.1 },
+      'jamón': { calorias: 145, proteina: 21, carbs: 1, grasas: 6 },
+      'queso': { calorias: 402, proteina: 25, carbs: 1.3, grasas: 33 },
+      'yogurt': { calorias: 59, proteina: 10, carbs: 3.6, grasas: 0.4 },
+      'frutas': { calorias: 60, proteina: 0.5, carbs: 15, grasas: 0.2 },
     }
 
-    let macros = { calorias: 150 * factor, proteina: 8 * factor, carbs: 20 * factor, grasas: 5 * factor }
+    let macrosTotales = { calorias: 0, proteina: 0, carbs: 0, grasas: 0 }
 
-    for (const [key, valores] of Object.entries(alimentosBase)) {
-      if (nombreAlimento.includes(key)) {
-        macros = {
-          calorias: valores.calorias * factor,
-          proteina: valores.proteina * factor,
-          carbs: valores.carbs * factor,
-          grasas: valores.grasas * factor,
+    if (esComidaCompuesta) {
+      // Calcular macros de cada ingrediente y sumar
+      ingredientesDetectados.forEach(ingrediente => {
+        const nombreLower = ingrediente.nombre.toLowerCase()
+        const cantidad = parseFloat(ingrediente.cantidad)
+        const factor = ingrediente.unidad === 'gramos' ? cantidad / 100 : cantidad
+        
+        let macrosIngrediente = { calorias: 100 * factor, proteina: 5 * factor, carbs: 15 * factor, grasas: 3 * factor }
+        
+        for (const [key, valores] of Object.entries(alimentosBase)) {
+          if (nombreLower.includes(key)) {
+            macrosIngrediente = {
+              calorias: valores.calorias * factor,
+              proteina: valores.proteina * factor,
+              carbs: valores.carbs * factor,
+              grasas: valores.grasas * factor,
+            }
+            break
+          }
         }
-        break
+        
+        macrosTotales.calorias += macrosIngrediente.calorias
+        macrosTotales.proteina += macrosIngrediente.proteina
+        macrosTotales.carbs += macrosIngrediente.carbs
+        macrosTotales.grasas += macrosIngrediente.grasas
+      })
+    } else {
+      // Cálculo simple para un solo alimento
+      const nombreAlimento = nuevaDieta[tipoComidaActual].nombre.toLowerCase()
+      const cantidad = parseFloat(porcionInfo.cantidad)
+      const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
+
+      macrosTotales = { calorias: 150 * factor, proteina: 8 * factor, carbs: 20 * factor, grasas: 5 * factor }
+
+      for (const [key, valores] of Object.entries(alimentosBase)) {
+        if (nombreAlimento.includes(key)) {
+          macrosTotales = {
+            calorias: valores.calorias * factor,
+            proteina: valores.proteina * factor,
+            carbs: valores.carbs * factor,
+            grasas: valores.grasas * factor,
+          }
+          break
+        }
       }
     }
 
@@ -297,16 +393,32 @@ export default function DietasPage() {
       ...nuevaDieta,
       [tipoComidaActual]: {
         ...nuevaDieta[tipoComidaActual],
-        calorias: Math.round(macros.calorias),
-        proteina: Math.round(macros.proteina),
-        carbs: Math.round(macros.carbs),
-        grasas: Math.round(macros.grasas),
+        calorias: Math.round(macrosTotales.calorias),
+        proteina: Math.round(macrosTotales.proteina),
+        carbs: Math.round(macrosTotales.carbs),
+        grasas: Math.round(macrosTotales.grasas),
       }
     })
 
     setCalculandoMacros(false)
     setPorcionModalOpen(false)
     setPorcionInfo({ cantidad: '', unidad: 'gramos' })
+    setIngredientesDetectados([])
+    setEsComidaCompuesta(false)
+  }
+
+  const actualizarIngrediente = (index: number, campo: 'cantidad' | 'unidad', valor: string) => {
+    const nuevosIngredientes = [...ingredientesDetectados]
+    nuevosIngredientes[index][campo] = valor
+    setIngredientesDetectados(nuevosIngredientes)
+  }
+
+  const agregarIngrediente = () => {
+    setIngredientesDetectados([...ingredientesDetectados, { nombre: '', cantidad: '', unidad: 'gramos' }])
+  }
+
+  const eliminarIngrediente = (index: number) => {
+    setIngredientesDetectados(ingredientesDetectados.filter((_, i) => i !== index))
   }
 
   return (
@@ -813,56 +925,124 @@ export default function DietasPage() {
       {/* Modal de Porción para IA */}
       {porcionModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-black">Calcular Macros</h3>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-black">Calcular Macros con IA</h3>
                 <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaActual].nombre}</p>
               </div>
+              <button onClick={() => {setPorcionModalOpen(false); setIngredientesDetectados([]); setEsComidaCompuesta(false)}} className="text-gray-500 hover:text-red-600 transition">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
-                <input
-                  type="number"
-                  placeholder="Ej: 150, 200..."
-                  value={porcionInfo.cantidad}
-                  onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  autoFocus
-                />
-              </div>
+            {esComidaCompuesta ? (
+              // COMIDA COMPUESTA - Múltiples ingredientes
+              <div className="space-y-4 mb-6">
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-700">
+                    <strong>💡 Comida compuesta detectada</strong><br/>
+                    Indica la cantidad de cada ingrediente para un cálculo preciso de macros:
+                  </p>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Unidad</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['gramos', 'piezas', 'tazas'].map((unidad) => (
-                    <button
-                      key={unidad}
-                      type="button"
-                      onClick={() => setPorcionInfo({...porcionInfo, unidad})}
-                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
-                        porcionInfo.unidad === unidad
-                          ? 'border-purple-600 bg-purple-50 text-purple-900'
-                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                      }`}
-                    >
-                      {unidad}
-                    </button>
-                  ))}
+                {ingredientesDetectados.map((ingrediente, idx) => (
+                  <div key={idx} className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-sm font-semibold text-gray-800">
+                        {ingrediente.nombre}
+                      </label>
+                      {ingredientesDetectados.length > 1 && (
+                        <button
+                          onClick={() => eliminarIngrediente(idx)}
+                          className="text-gray-400 hover:text-red-600 transition"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Cantidad</label>
+                        <input
+                          type="number"
+                          placeholder="150"
+                          value={ingrediente.cantidad}
+                          onChange={(e) => actualizarIngrediente(idx, 'cantidad', e.target.value)}
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Unidad</label>
+                        <select
+                          value={ingrediente.unidad}
+                          onChange={(e) => actualizarIngrediente(idx, 'unidad', e.target.value)}
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                        >
+                          <option value="gramos">gramos</option>
+                          <option value="piezas">piezas</option>
+                          <option value="tazas">tazas</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={agregarIngrediente}
+                  className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-600 hover:border-purple-600 hover:text-purple-600 rounded-lg transition text-sm font-medium"
+                >
+                  + Agregar otro ingrediente
+                </button>
+              </div>
+            ) : (
+              // ALIMENTO SIMPLE - Una sola porción
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
+                  <input
+                    type="number"
+                    placeholder="Ej: 150, 200..."
+                    value={porcionInfo.cantidad}
+                    onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Unidad</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['gramos', 'piezas', 'tazas'].map((unidad) => (
+                      <button
+                        key={unidad}
+                        type="button"
+                        onClick={() => setPorcionInfo({...porcionInfo, unidad})}
+                        className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                          porcionInfo.unidad === unidad
+                            ? 'border-purple-600 bg-purple-50 text-purple-900'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {unidad}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className="flex gap-3">
               <button
                 onClick={() => {
                   setPorcionModalOpen(false)
                   setPorcionInfo({ cantidad: '', unidad: 'gramos' })
+                  setIngredientesDetectados([])
+                  setEsComidaCompuesta(false)
                 }}
                 className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
               >
