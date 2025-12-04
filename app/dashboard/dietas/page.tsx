@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -16,6 +16,19 @@ type DiaPlan = {
   desayuno: Comida
   almuerzo: Comida
   cena: Comida
+}
+
+type DatosUsuario = {
+  peso: number
+  altura: number
+  edad: number
+  sexo: 'masculino' | 'femenino'
+  objetivo: 'perder' | 'mantener' | 'ganar'
+  nivelActividad: 'sedentario' | 'ligero' | 'moderado' | 'intenso' | 'atleta'
+  caloriasObjetivo: number
+  proteinaObjetivo: number
+  carbsObjetivo: number
+  grasasObjetivo: number
 }
 
 export default function DietasPage() {
@@ -41,11 +54,27 @@ export default function DietasPage() {
   ])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
+  const [generandoIA, setGenerandoIA] = useState(false)
+  
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
     desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+  })
+
+  const [datosUsuario, setDatosUsuario] = useState<DatosUsuario>({
+    peso: 75,
+    altura: 175,
+    edad: 28,
+    sexo: 'masculino',
+    objetivo: 'mantener',
+    nivelActividad: 'moderado',
+    caloriasObjetivo: 2800,
+    proteinaObjetivo: 180,
+    carbsObjetivo: 320,
+    grasasObjetivo: 80,
   })
 
   const macrosObjetivo = {
@@ -59,16 +88,81 @@ export default function DietasPage() {
     if (nuevaDieta.dia && nuevaDieta.desayuno.nombre && nuevaDieta.almuerzo.nombre && nuevaDieta.cena.nombre) {
       setDietaPlan([...dietaPlan, nuevaDieta])
       setIsModalOpen(false)
-      // Reset form
-      setNuevaDieta({
-        dia: '',
-        desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-        almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-        cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-      })
+      resetForm()
     } else {
       alert('Por favor completa todos los campos')
     }
+  }
+
+  const resetForm = () => {
+    setNuevaDieta({
+      dia: '',
+      desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+      almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+      cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+    })
+  }
+
+  const generarDietaConIA = async () => {
+    setGenerandoIA(true)
+    
+    // Simulación de llamada a API de IA (aquí integrarías OpenAI, Claude, etc.)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Generación simulada basada en los datos del usuario
+    const dietaGenerada: DiaPlan = {
+      dia: 'Jueves (Generado por IA)',
+      desayuno: {
+        nombre: generarNombrePlato(datosUsuario.objetivo, 'desayuno'),
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.3),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.35),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.25),
+      },
+      almuerzo: {
+        nombre: generarNombrePlato(datosUsuario.objetivo, 'almuerzo'),
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.45),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.45),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.45),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.40),
+      },
+      cena: {
+        nombre: generarNombrePlato(datosUsuario.objetivo, 'cena'),
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.25),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.25),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.20),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.35),
+      },
+    }
+    
+    setGenerandoIA(false)
+    setDietaPlan([...dietaPlan, dietaGenerada])
+    setIsModalOpen(false)
+    setModoCreacion('manual')
+  }
+
+  const generarNombrePlato = (objetivo: string, tipoComida: string): string => {
+    const platosDesayuno = {
+      perder: ['Claras de Huevo con Espinacas', 'Avena con Frutos Rojos', 'Yogurt Griego con Semillas'],
+      mantener: ['Huevos Revueltos con Aguacate', 'Avena con Proteína y Banana', 'Tostadas Integrales con Mantequilla de Maní'],
+      ganar: ['Tortilla de 4 Huevos con Queso', 'Avena con Proteína, Nueces y Miel', 'Pan Integral con Mantequilla y Mermelada'],
+    }
+    
+    const platosAlmuerzo = {
+      perder: ['Pechuga de Pollo con Ensalada', 'Pescado al Vapor con Brócoli', 'Atún con Quinoa y Vegetales'],
+      mantener: ['Pollo con Arroz Integral y Vegetales', 'Salmón con Batata y Espárragos', 'Carne Magra con Quinoa'],
+      ganar: ['Pollo con Arroz Blanco y Aguacate', 'Carne Roja con Pasta Integral', 'Salmón con Arroz Basmati'],
+    }
+    
+    const platosCena = {
+      perder: ['Pescado a la Plancha con Ensalada', 'Pechuga con Vegetales al Vapor', 'Merluza con Espárragos'],
+      mantener: ['Salmón con Brócoli', 'Pollo con Ensalada Mixta', 'Pescado con Vegetales Asados'],
+      ganar: ['Carne con Batata', 'Pollo con Arroz y Aguacate', 'Salmón con Quinoa'],
+    }
+    
+    const platos = tipoComida === 'desayuno' ? platosDesayuno : tipoComida === 'almuerzo' ? platosAlmuerzo : platosCena
+    const opciones = platos[objetivo as keyof typeof platos]
+    return opciones[Math.floor(Math.random() * opciones.length)]
   }
 
   const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
@@ -231,218 +325,424 @@ export default function DietasPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between z-10">
               <h2 className="text-2xl font-bold text-black">Nueva Dieta</h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false)
+                  setModoCreacion('manual')
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
-              {/* Día de la semana */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Día de la semana
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: Jueves, Viernes..."
-                  value={nuevaDieta.dia}
-                  onChange={(e) => setNuevaDieta({...nuevaDieta, dia: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
-                />
-              </div>
-
-              {/* Desayuno */}
-              <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Avena con frutas"
-                      value={nuevaDieta.desayuno.nombre}
-                      onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                    <input
-                      type="number"
-                      placeholder="450"
-                      value={nuevaDieta.desayuno.calorias || ''}
-                      onChange={(e) => updateComida('desayuno', 'calorias', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                    <input
-                      type="number"
-                      placeholder="30"
-                      value={nuevaDieta.desayuno.proteina || ''}
-                      onChange={(e) => updateComida('desayuno', 'proteina', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                    <input
-                      type="number"
-                      placeholder="52"
-                      value={nuevaDieta.desayuno.carbs || ''}
-                      onChange={(e) => updateComida('desayuno', 'carbs', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                    <input
-                      type="number"
-                      placeholder="12"
-                      value={nuevaDieta.desayuno.grasas || ''}
-                      onChange={(e) => updateComida('desayuno', 'grasas', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Almuerzo */}
-              <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Pollo con arroz"
-                      value={nuevaDieta.almuerzo.nombre}
-                      onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                    <input
-                      type="number"
-                      placeholder="680"
-                      value={nuevaDieta.almuerzo.calorias || ''}
-                      onChange={(e) => updateComida('almuerzo', 'calorias', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                    <input
-                      type="number"
-                      placeholder="55"
-                      value={nuevaDieta.almuerzo.proteina || ''}
-                      onChange={(e) => updateComida('almuerzo', 'proteina', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                    <input
-                      type="number"
-                      placeholder="68"
-                      value={nuevaDieta.almuerzo.carbs || ''}
-                      onChange={(e) => updateComida('almuerzo', 'carbs', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                    <input
-                      type="number"
-                      placeholder="15"
-                      value={nuevaDieta.almuerzo.grasas || ''}
-                      onChange={(e) => updateComida('almuerzo', 'grasas', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Cena */}
-              <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Salmón con vegetales"
-                      value={nuevaDieta.cena.nombre}
-                      onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                    <input
-                      type="number"
-                      placeholder="520"
-                      value={nuevaDieta.cena.calorias || ''}
-                      onChange={(e) => updateComida('cena', 'calorias', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                    <input
-                      type="number"
-                      placeholder="42"
-                      value={nuevaDieta.cena.proteina || ''}
-                      onChange={(e) => updateComida('cena', 'proteina', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                    <input
-                      type="number"
-                      placeholder="28"
-                      value={nuevaDieta.cena.carbs || ''}
-                      onChange={(e) => updateComida('cena', 'carbs', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                    <input
-                      type="number"
-                      placeholder="25"
-                      value={nuevaDieta.cena.grasas || ''}
-                      onChange={(e) => updateComida('cena', 'grasas', Number(e.target.value))}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Botones */}
-              <div className="flex gap-4 pt-4">
+            {/* Toggle Manual / IA */}
+            <div className="px-6 pt-6">
+              <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
                 <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  onClick={() => setModoCreacion('manual')}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+                    modoCreacion === 'manual'
+                      ? 'bg-white text-black shadow-sm'
+                      : 'text-gray-600 hover:text-black'
+                  }`}
                 >
-                  Cancelar
+                  Crear Manual
                 </button>
                 <button
-                  onClick={handleAgregarDieta}
-                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+                  onClick={() => setModoCreacion('ia')}
+                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                    modoCreacion === 'ia'
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-sm'
+                      : 'text-gray-600 hover:text-black'
+                  }`}
                 >
-                  Agregar Dieta
+                  <Sparkles className="w-5 h-5" />
+                  Generar con IA
+                  <span className="ml-2 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                    PREMIUM
+                  </span>
                 </button>
               </div>
             </div>
+
+            {modoCreacion === 'manual' ? (
+              // FORMULARIO MANUAL
+              <div className="p-6 space-y-6">
+                {/* Día de la semana */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Día de la semana
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Jueves, Viernes..."
+                    value={nuevaDieta.dia}
+                    onChange={(e) => setNuevaDieta({...nuevaDieta, dia: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+
+                {/* Desayuno */}
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Avena con frutas"
+                        value={nuevaDieta.desayuno.nombre}
+                        onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                      <input
+                        type="number"
+                        placeholder="450"
+                        value={nuevaDieta.desayuno.calorias || ''}
+                        onChange={(e) => updateComida('desayuno', 'calorias', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                      <input
+                        type="number"
+                        placeholder="30"
+                        value={nuevaDieta.desayuno.proteina || ''}
+                        onChange={(e) => updateComida('desayuno', 'proteina', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        placeholder="52"
+                        value={nuevaDieta.desayuno.carbs || ''}
+                        onChange={(e) => updateComida('desayuno', 'carbs', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                      <input
+                        type="number"
+                        placeholder="12"
+                        value={nuevaDieta.desayuno.grasas || ''}
+                        onChange={(e) => updateComida('desayuno', 'grasas', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Almuerzo */}
+                <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Pollo con arroz"
+                        value={nuevaDieta.almuerzo.nombre}
+                        onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                      <input
+                        type="number"
+                        placeholder="680"
+                        value={nuevaDieta.almuerzo.calorias || ''}
+                        onChange={(e) => updateComida('almuerzo', 'calorias', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                      <input
+                        type="number"
+                        placeholder="55"
+                        value={nuevaDieta.almuerzo.proteina || ''}
+                        onChange={(e) => updateComida('almuerzo', 'proteina', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        placeholder="68"
+                        value={nuevaDieta.almuerzo.carbs || ''}
+                        onChange={(e) => updateComida('almuerzo', 'carbs', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                      <input
+                        type="number"
+                        placeholder="15"
+                        value={nuevaDieta.almuerzo.grasas || ''}
+                        onChange={(e) => updateComida('almuerzo', 'grasas', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cena */}
+                <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Salmón con vegetales"
+                        value={nuevaDieta.cena.nombre}
+                        onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                      <input
+                        type="number"
+                        placeholder="520"
+                        value={nuevaDieta.cena.calorias || ''}
+                        onChange={(e) => updateComida('cena', 'calorias', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                      <input
+                        type="number"
+                        placeholder="42"
+                        value={nuevaDieta.cena.proteina || ''}
+                        onChange={(e) => updateComida('cena', 'proteina', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        placeholder="28"
+                        value={nuevaDieta.cena.carbs || ''}
+                        onChange={(e) => updateComida('cena', 'carbs', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                      <input
+                        type="number"
+                        placeholder="25"
+                        value={nuevaDieta.cena.grasas || ''}
+                        onChange={(e) => updateComida('cena', 'grasas', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleAgregarDieta}
+                    className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+                  >
+                    Agregar Dieta
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // FORMULARIO IA
+              <div className="p-6 space-y-6">
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles className="w-6 h-6 text-purple-600" />
+                    <h3 className="text-xl font-bold text-purple-900">Generación Inteligente de Dieta</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    Nuestra IA creará un plan nutricional personalizado basado en tus objetivos, datos físicos y nivel de actividad.
+                  </p>
+                </div>
+
+                {/* Datos Personales */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Peso (kg)
+                    </label>
+                    <input
+                      type="number"
+                      value={datosUsuario.peso}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, peso: Number(e.target.value)})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <Activity className="w-4 h-4" />
+                      Altura (cm)
+                    </label>
+                    <input
+                      type="number"
+                      value={datosUsuario.altura}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, altura: Number(e.target.value)})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
+                    <input
+                      type="number"
+                      value={datosUsuario.edad}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, edad: Number(e.target.value)})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                    <select
+                      value={datosUsuario.sexo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, sexo: e.target.value as 'masculino' | 'femenino'})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    >
+                      <option value="masculino">Masculino</option>
+                      <option value="femenino">Femenino</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Objetivo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <Target className="w-4 h-4" />
+                    Objetivo Principal
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(['perder', 'mantener', 'ganar'] as const).map((obj) => (
+                      <button
+                        key={obj}
+                        onClick={() => setDatosUsuario({...datosUsuario, objetivo: obj})}
+                        className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
+                          datosUsuario.objetivo === obj
+                            ? 'border-purple-600 bg-purple-50 text-purple-900'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {obj === 'perder' ? 'Perder Peso' : obj === 'mantener' ? 'Mantener' : 'Ganar Músculo'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Nivel de Actividad */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad</label>
+                  <select
+                    value={datosUsuario.nivelActividad}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, nivelActividad: e.target.value as any})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  >
+                    <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
+                    <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
+                    <option value="moderado">Moderado (ejercicio 3-5 días/semana)</option>
+                    <option value="intenso">Intenso (ejercicio 6-7 días/semana)</option>
+                    <option value="atleta">Atleta (entrenamiento 2 veces al día)</option>
+                  </select>
+                </div>
+
+                {/* Macros Objetivo */}
+                <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Objetivo Diarios</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Calorías</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.caloriasObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, caloriasObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Proteína (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.proteinaObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, proteinaObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.carbsObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, carbsObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Grasas (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.grasasObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, grasasObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={generarDietaConIA}
+                    disabled={generandoIA}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generandoIA ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Generar Dieta con IA
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
