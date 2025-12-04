@@ -97,11 +97,11 @@ export default function DashboardPage() {
             {recentActivities.map((activity, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition"
+                className="flex items-center justify-between p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition"
               >
                 <div className="flex items-center gap-4">
-                  <div className="bg-primary-600/10 p-2 rounded-lg">
-                    <Activity className="w-5 h-5 text-primary-400" />
+                  <div className="bg-white/10 p-2 rounded-lg">
+                    <Activity className="w-5 h-5 text-gray-300" />
                   </div>
                   <div>
                     <p className="text-white font-medium">{activity.name}</p>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                   <p className="text-white font-medium">{event.title}</p>
                   <p className="text-gray-500 text-sm">{event.time}</p>
                 </div>
-                <span className="px-3 py-1 bg-primary-600/20 text-primary-400 text-xs font-medium rounded-full">
+                <span className="px-3 py-1 bg-white/10 text-white text-xs font-medium rounded-full">
                   {event.type}
                 </span>
               </div>
@@ -152,7 +152,7 @@ export default function DashboardPage() {
               <span className="text-gray-400">4 / 5</span>
             </div>
             <div className="w-full bg-dark-900 rounded-full h-2">
-              <div className="bg-primary-600 h-2 rounded-full" style={{ width: '80%' }}></div>
+              <div className="bg-white h-2 rounded-full" style={{ width: '80%' }}></div>
             </div>
           </div>
           <div>

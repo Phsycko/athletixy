@@ -77,7 +77,7 @@ export default function ComunidadPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Comunidad</h1>
           <p className="text-gray-400">Conecta con otros atletas</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Publicación
         </button>
@@ -89,13 +89,13 @@ export default function ComunidadPage() {
           {/* Crear Publicación */}
           <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">AH</span>
               </div>
               <input
                 type="text"
                 placeholder="¿Qué estás logrando hoy?"
-                className="flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div className="flex gap-3">
@@ -120,7 +120,7 @@ export default function ComunidadPage() {
               {/* Header de la publicación */}
               <div className="p-6 pb-4">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-bold">{post.avatar}</span>
                   </div>
                   <div>
@@ -171,14 +171,14 @@ export default function ComunidadPage() {
           {/* Grupos Populares */}
           <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
             <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary-400" />
+              <Users className="w-5 h-5 text-gray-300" />
               Grupos Populares
             </h2>
             <div className="space-y-3">
               {gruposPopulares.map((grupo, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition cursor-pointer"
+                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
                 >
                   <p className="text-white font-medium text-sm mb-1">{grupo.nombre}</p>
                   <div className="flex items-center justify-between text-xs">
@@ -188,7 +188,7 @@ export default function ComunidadPage() {
                 </div>
               ))}
             </div>
-            <button className="w-full mt-4 py-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition">
+            <button className="w-full mt-4 py-2 text-gray-300 hover:text-primary-300 text-sm font-medium transition">
               Ver todos los grupos
             </button>
           </div>
@@ -196,24 +196,24 @@ export default function ComunidadPage() {
           {/* Eventos Cercanos */}
           <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
             <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary-400" />
+              <TrendingUp className="w-5 h-5 text-gray-300" />
               Eventos Cercanos
             </h2>
             <div className="space-y-3">
               {eventosCercanos.map((evento, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition cursor-pointer"
+                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
                 >
                   <p className="text-white font-medium text-sm mb-1">{evento.titulo}</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-500">{evento.fecha}</span>
-                    <span className="text-primary-400">{evento.participantes} inscritos</span>
+                    <span className="text-gray-300">{evento.participantes} inscritos</span>
                   </div>
                 </div>
               ))}
             </div>
-            <button className="w-full mt-4 py-2 text-primary-400 hover:text-primary-300 text-sm font-medium transition">
+            <button className="w-full mt-4 py-2 text-gray-300 hover:text-primary-300 text-sm font-medium transition">
               Ver todos los eventos
             </button>
           </div>
@@ -228,7 +228,7 @@ export default function ComunidadPage() {
                   className="flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs font-bold">
                         {nombre.split(' ').map(n => n[0]).join('')}
                       </span>
@@ -238,7 +238,7 @@ export default function ComunidadPage() {
                       <p className="text-gray-500 text-xs">Atleta</p>
                     </div>
                   </div>
-                  <button className="px-3 py-1 bg-primary-600 hover:bg-primary-700 text-white text-xs rounded-lg transition">
+                  <button className="px-3 py-1 bg-white hover:bg-gray-200 text-black text-xs rounded-lg transition">
                     Seguir
                   </button>
                 </div>

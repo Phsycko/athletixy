@@ -73,7 +73,7 @@ export default function RutinasPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Rutinas</h1>
           <p className="text-gray-400">Plan de entrenamiento estructurado</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Rutina
         </button>
@@ -84,8 +84,8 @@ export default function RutinasPage() {
         {statsProgreso.map((stat, index) => (
           <div key={index} className="bg-dark-800 border border-dark-700 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-primary-600/10 p-2 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-primary-400" />
+              <div className="bg-white/10 p-2 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-gray-300" />
               </div>
               <span className="text-gray-400 text-sm">{stat.label}</span>
             </div>
@@ -103,10 +103,10 @@ export default function RutinasPage() {
         <div className="space-y-6">
           {rutinaSemanal.map((dia, index) => (
             <div key={index} className="bg-dark-900 rounded-lg border border-dark-600 overflow-hidden">
-              <div className="bg-primary-600/10 px-6 py-4 border-b border-dark-600 flex items-center justify-between">
+              <div className="bg-white/10 px-6 py-4 border-b border-dark-600 flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-semibold text-lg">{dia.dia}</h3>
-                  <p className="text-primary-400 text-sm mt-1">{dia.grupo}</p>
+                  <p className="text-gray-300 text-sm mt-1">{dia.grupo}</p>
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <Clock className="w-4 h-4" />
@@ -118,11 +118,11 @@ export default function RutinasPage() {
                   {dia.ejercicios.map((ejercicio, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-4 bg-dark-800 rounded-lg border border-dark-600 hover:border-primary-600 transition"
+                      className="flex items-center justify-between p-4 bg-dark-800 rounded-lg border border-dark-600 hover:border-gray-600 transition"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="bg-primary-600/20 w-10 h-10 rounded-lg flex items-center justify-center">
-                          <Dumbbell className="w-5 h-5 text-primary-400" />
+                        <div className="bg-white/20 w-10 h-10 rounded-lg flex items-center justify-center">
+                          <Dumbbell className="w-5 h-5 text-gray-300" />
                         </div>
                         <div>
                           <p className="text-white font-medium">{ejercicio.nombre}</p>
@@ -134,7 +134,7 @@ export default function RutinasPage() {
                       <div className="text-right">
                         <div className="flex items-center gap-2">
                           <Target className="w-4 h-4 text-gray-500" />
-                          <span className="text-primary-400 font-semibold">{ejercicio.peso}</span>
+                          <span className="text-gray-300 font-semibold">{ejercicio.peso}</span>
                         </div>
                       </div>
                     </div>

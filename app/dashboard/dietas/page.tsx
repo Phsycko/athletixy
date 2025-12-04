@@ -39,7 +39,7 @@ export default function DietasPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Dietas</h1>
           <p className="text-gray-400">Plan nutricional personalizado</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Dieta
         </button>
@@ -93,7 +93,7 @@ export default function DietasPage() {
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
             <div key={index} className="bg-dark-900 rounded-lg border border-dark-600 overflow-hidden">
-              <div className="bg-primary-600/10 px-6 py-3 border-b border-dark-600">
+              <div className="bg-white/10 px-6 py-3 border-b border-dark-600">
                 <h3 className="text-white font-semibold">{dia.dia}</h3>
               </div>
               <div className="p-6 space-y-4">

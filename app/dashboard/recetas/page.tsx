@@ -144,7 +144,7 @@ export default function RecetasPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Recetas</h1>
           <p className="text-gray-400">Opciones saludables y deliciosas</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Receta
         </button>
@@ -158,7 +158,7 @@ export default function RecetasPage() {
             <input
               type="text"
               placeholder="Buscar recetas..."
-              className="w-full pl-12 pr-4 py-3 bg-dark-800 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 bg-dark-800 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
             />
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function RecetasPage() {
               key={index}
               className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
                 index === 0
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-white text-white'
                   : 'bg-dark-800 text-gray-400 hover:bg-dark-700 hover:text-white'
               }`}
             >
@@ -183,22 +183,22 @@ export default function RecetasPage() {
         {recetas.map((receta, index) => (
           <div
             key={index}
-            className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden hover:border-primary-600 transition-all hover:shadow-xl group"
+            className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden hover:border-gray-600 transition-all hover:shadow-xl group"
           >
             {/* Imagen placeholder con gradiente */}
-            <div className="h-48 bg-gradient-to-br from-primary-600 to-purple-600 flex items-center justify-center">
+            <div className="h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
               <ChefHat className="w-16 h-16 text-white/30" />
             </div>
 
             <div className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <span className="px-3 py-1 bg-primary-600/20 text-primary-400 text-xs font-medium rounded-full">
+                <span className="px-3 py-1 bg-white/20 text-gray-300 text-xs font-medium rounded-full">
                   {receta.categoria}
                 </span>
                 <span className="text-gray-400 text-xs">{receta.dificultad}</span>
               </div>
 
-              <h3 className="text-white font-semibold text-lg mb-3 group-hover:text-primary-400 transition">
+              <h3 className="text-white font-semibold text-lg mb-3 group-hover:text-gray-300 transition">
                 {receta.nombre}
               </h3>
 
@@ -232,19 +232,19 @@ export default function RecetasPage() {
                   <ul className="space-y-1">
                     {receta.ingredientes.slice(0, 3).map((ing, idx) => (
                       <li key={idx} className="text-gray-500 text-xs flex items-center gap-2">
-                        <span className="w-1 h-1 bg-primary-600 rounded-full"></span>
+                        <span className="w-1 h-1 bg-white rounded-full"></span>
                         {ing}
                       </li>
                     ))}
                     {receta.ingredientes.length > 3 && (
-                      <li className="text-primary-400 text-xs">
+                      <li className="text-gray-300 text-xs">
                         +{receta.ingredientes.length - 3} más...
                       </li>
                     )}
                   </ul>
                 </div>
 
-                <button className="w-full py-2 bg-dark-900 hover:bg-primary-600 text-gray-400 hover:text-white rounded-lg transition text-sm font-medium">
+                <button className="w-full py-2 bg-dark-900 hover:bg-white text-gray-400 hover:text-white rounded-lg transition text-sm font-medium">
                   Ver Receta Completa
                 </button>
               </div>

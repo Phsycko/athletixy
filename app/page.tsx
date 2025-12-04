@@ -29,13 +29,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-950 via-primary-900 to-dark-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <div className="w-full max-w-md">
         {/* Logo y título */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
-            <div className="bg-primary-600 p-4 rounded-2xl shadow-2xl">
-              <Dumbbell className="w-12 h-12 text-white" />
+            <div className="bg-white p-4 rounded-2xl shadow-2xl">
+              <Dumbbell className="w-12 h-12 text-black" />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Athletixy</h1>
@@ -56,7 +56,7 @@ export default function LoginPage() {
                 type="email"
                 value={credentials.email}
                 onChange={(e) => setCredentials({...credentials, email: e.target.value})}
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
                 placeholder="tu@email.com"
               />
             </div>
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 type="password"
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
                 placeholder="••••••••"
               />
             </div>
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-primary-600/50"
+              className="w-full bg-white hover:bg-gray-200 text-black font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
             >
               <LogIn className="w-5 h-5" />
               Ingresar
@@ -91,7 +91,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <a href="#" className="text-sm text-primary-400 hover:text-primary-300 transition">
+            <a href="#" className="text-sm text-gray-400 hover:text-white transition">
               ¿Olvidaste tu contraseña?
             </a>
           </div>

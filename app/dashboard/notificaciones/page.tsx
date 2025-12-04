@@ -96,7 +96,7 @@ export default function NotificacionesPage() {
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
             {noLeidas > 0 && (
-              <span className="px-3 py-1 bg-primary-600 text-white text-sm font-semibold rounded-full">
+              <span className="px-3 py-1 bg-white text-white text-sm font-semibold rounded-full">
                 {noLeidas} nuevas
               </span>
             )}
@@ -116,7 +116,7 @@ export default function NotificacionesPage() {
             key={index}
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
               index === 0
-                ? 'bg-primary-600 text-white'
+                ? 'bg-white text-white'
                 : 'bg-dark-800 text-gray-400 hover:bg-dark-700 hover:text-white border border-dark-600'
             }`}
           >
@@ -134,7 +134,7 @@ export default function NotificacionesPage() {
               key={index}
               className={`flex items-start gap-4 p-5 rounded-xl border transition-all cursor-pointer ${
                 !notif.leido
-                  ? 'bg-primary-600/5 border-primary-600/30 hover:border-primary-600'
+                  ? 'bg-white/5 border-gray-600/30 hover:border-gray-600'
                   : 'bg-dark-800 border-dark-700 hover:border-dark-600'
               }`}
             >
@@ -146,7 +146,7 @@ export default function NotificacionesPage() {
                 <div className="flex items-start justify-between gap-4 mb-1">
                   <h3 className="text-white font-semibold">{notif.titulo}</h3>
                   {!notif.leido && (
-                    <span className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-1.5"></span>
+                    <span className="w-2 h-2 bg-white rounded-full flex-shrink-0 mt-1.5"></span>
                   )}
                 </div>
                 <p className="text-gray-400 text-sm mb-2">{notif.mensaje}</p>
@@ -156,7 +156,7 @@ export default function NotificacionesPage() {
                     {notif.fecha}
                   </span>
                   {!notif.leido && (
-                    <button className="text-primary-400 text-xs hover:text-primary-300 transition">
+                    <button className="text-gray-300 text-xs hover:text-primary-300 transition">
                       Marcar como leída
                     </button>
                   )}
@@ -172,7 +172,7 @@ export default function NotificacionesPage() {
         <h2 className="text-lg font-semibold text-white mb-4">Preferencias de Notificación</h2>
         <p className="text-gray-400 text-sm mb-4">
           Configura qué notificaciones deseas recibir. Puedes ajustar estas preferencias en{' '}
-          <a href="/dashboard/ajustes" className="text-primary-400 hover:text-primary-300">
+          <a href="/dashboard/ajustes" className="text-gray-300 hover:text-primary-300">
             Ajustes
           </a>
           .

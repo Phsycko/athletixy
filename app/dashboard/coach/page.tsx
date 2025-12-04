@@ -76,7 +76,7 @@ export default function CoachPage() {
       </div>
 
       {/* Perfil del Coach */}
-      <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl p-6 shadow-xl">
+      <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-3xl text-white font-bold">RS</span>

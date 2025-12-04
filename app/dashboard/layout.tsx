@@ -71,8 +71,8 @@ export default function DashboardLayout({
       <aside className="hidden lg:flex flex-col w-64 bg-dark-900 border-r border-dark-700 fixed h-screen">
         <div className="p-6 border-b border-dark-700">
           <div className="flex items-center gap-3">
-            <div className="bg-primary-600 p-2 rounded-lg">
-              <Dumbbell className="w-6 h-6 text-white" />
+            <div className="bg-white p-2 rounded-lg">
+              <Dumbbell className="w-6 h-6 text-black" />
             </div>
             <span className="text-xl font-bold text-white">Athletixy</span>
           </div>
@@ -89,7 +89,7 @@ export default function DashboardLayout({
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-primary-600 text-white shadow-lg'
+                      ? 'bg-white text-black shadow-lg'
                       : 'text-gray-400 hover:bg-dark-800 hover:text-white'
                   }`}
                 >
@@ -103,8 +103,8 @@ export default function DashboardLayout({
 
         <div className="p-4 border-t border-dark-700">
           <div className="flex items-center gap-3 mb-3 px-2">
-            <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-black" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{userEmail}</p>
@@ -125,8 +125,8 @@ export default function DashboardLayout({
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-dark-900 border-b border-dark-700 z-40 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-primary-600 p-2 rounded-lg">
-              <Dumbbell className="w-5 h-5 text-white" />
+            <div className="bg-white p-2 rounded-lg">
+              <Dumbbell className="w-5 h-5 text-black" />
             </div>
             <span className="text-lg font-bold text-white">Athletixy</span>
           </div>
@@ -154,7 +154,7 @@ export default function DashboardLayout({
                     onClick={() => setIsMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                       isActive
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-white text-black'
                         : 'text-gray-400 hover:bg-dark-800 hover:text-white'
                     }`}
                   >

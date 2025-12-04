@@ -62,7 +62,7 @@ export default function NutriologoPage() {
       </div>
 
       {/* Perfil del Nutriólogo */}
-      <div className="bg-gradient-to-br from-primary-600 to-purple-600 rounded-xl p-6 shadow-xl">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-3xl text-white font-bold">PM</span>
@@ -79,7 +79,7 @@ export default function NutriologoPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-5 py-3 bg-white text-primary-600 rounded-lg hover:bg-gray-100 transition font-semibold shadow-lg">
+            <button className="flex items-center gap-2 px-5 py-3 bg-white text-white rounded-lg hover:bg-gray-100 transition font-semibold shadow-lg">
               <MessageCircle className="w-4 h-4" />
               Mensaje
             </button>
@@ -107,12 +107,12 @@ export default function NutriologoPage() {
         {/* Próxima Consulta */}
         <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white mb-6">Próxima Consulta</h2>
-          <div className="bg-primary-600/10 border border-primary-600/30 rounded-lg p-5 mb-6">
+          <div className="bg-white/10 border border-gray-600/30 rounded-lg p-5 mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-primary-600 p-2 rounded-lg">
+              <div className="bg-white p-2 rounded-lg">
                 <Video className="w-5 h-5 text-white" />
               </div>
-              <span className="text-primary-400 font-medium">{proximaConsulta.tipo}</span>
+              <span className="text-gray-300 font-medium">{proximaConsulta.tipo}</span>
             </div>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
@@ -130,7 +130,7 @@ export default function NutriologoPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="flex-1 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium">
+            <button className="flex-1 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition font-medium">
               Unirse a la Consulta
             </button>
             <button className="px-4 py-3 bg-dark-900 hover:bg-dark-700 text-gray-400 hover:text-white rounded-lg transition border border-dark-600">
@@ -165,7 +165,7 @@ export default function NutriologoPage() {
           {consultasAnteriores.map((consulta, index) => (
             <div
               key={index}
-              className="p-5 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition cursor-pointer"
+              className="p-5 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
@@ -176,9 +176,9 @@ export default function NutriologoPage() {
                   </div>
                 </div>
                 {consulta.archivos > 0 && (
-                  <div className="flex items-center gap-2 px-3 py-1 bg-primary-600/10 rounded-full">
-                    <FileText className="w-4 h-4 text-primary-400" />
-                    <span className="text-primary-400 text-sm font-medium">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full">
+                    <FileText className="w-4 h-4 text-gray-300" />
+                    <span className="text-gray-300 text-sm font-medium">
                       {consulta.archivos} archivo{consulta.archivos > 1 ? 's' : ''}
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export default function NutriologoPage() {
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-white">Documentos Compartidos</h2>
-          <button className="text-primary-400 text-sm hover:text-primary-300 transition">
+          <button className="text-gray-300 text-sm hover:text-primary-300 transition">
             Ver todos
           </button>
         </div>
@@ -202,7 +202,7 @@ export default function NutriologoPage() {
           {documentos.map((doc, index) => (
             <div
               key={index}
-              className="p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition cursor-pointer"
+              className="p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
             >
               <div className="flex items-start gap-3">
                 <div className="bg-red-500/10 p-2 rounded">
@@ -224,7 +224,7 @@ export default function NutriologoPage() {
         <p className="text-gray-400 text-sm mb-6">
           Selecciona un horario disponible para tu próxima consulta nutricional
         </p>
-        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition font-medium">
           <Calendar className="w-5 h-5" />
           Ver Calendario de Disponibilidad
         </button>

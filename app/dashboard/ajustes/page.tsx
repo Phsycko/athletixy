@@ -14,7 +14,7 @@ export default function AjustesPage() {
       {/* Perfil Personal */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <User className="w-5 h-5 text-primary-400" />
+          <User className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Perfil Personal</h2>
         </div>
         <div className="space-y-4">
@@ -24,7 +24,7 @@ export default function AjustesPage() {
               <input
                 type="text"
                 defaultValue="Alex Hernández"
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div>
@@ -32,7 +32,7 @@ export default function AjustesPage() {
               <input
                 type="email"
                 defaultValue="alex@athletixy.com"
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
           </div>
@@ -42,19 +42,19 @@ export default function AjustesPage() {
               <input
                 type="number"
                 defaultValue="28"
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Género</label>
-              <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
+              <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white">
                 <option>Masculino</option>
                 <option>Femenino</option>
                 <option>Otro</option>
               </select>
             </div>
           </div>
-          <button className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium">
+          <button className="px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition font-medium">
             Guardar Cambios
           </button>
         </div>
@@ -63,7 +63,7 @@ export default function AjustesPage() {
       {/* Seguridad */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Lock className="w-5 h-5 text-primary-400" />
+          <Lock className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Seguridad</h2>
         </div>
         <div className="space-y-4">
@@ -72,7 +72,7 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
@@ -88,10 +88,10 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
-          <button className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium">
+          <button className="px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition font-medium">
             Actualizar Contraseña
           </button>
         </div>
@@ -100,7 +100,7 @@ export default function AjustesPage() {
       {/* Notificaciones */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Bell className="w-5 h-5 text-primary-400" />
+          <Bell className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Preferencias de Notificaciones</h2>
         </div>
         <div className="space-y-4">
@@ -115,7 +115,7 @@ export default function AjustesPage() {
               <span className="text-gray-300">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />
-                <div className="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <div className="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-white rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white"></div>
               </label>
             </div>
           ))}
@@ -125,13 +125,13 @@ export default function AjustesPage() {
       {/* Preferencias */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Globe className="w-5 h-5 text-primary-400" />
+          <Globe className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Preferencias</h2>
         </div>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Idioma</label>
-            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
+            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white">
               <option>Español</option>
               <option>English</option>
               <option>Português</option>
@@ -139,7 +139,7 @@ export default function AjustesPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Zona Horaria</label>
-            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
+            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white">
               <option>GMT-6 (Ciudad de México)</option>
               <option>GMT-5 (New York)</option>
               <option>GMT+1 (Madrid)</option>
@@ -147,7 +147,7 @@ export default function AjustesPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Unidades</label>
-            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
+            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white">
               <option>Métricas (kg, cm)</option>
               <option>Imperiales (lb, in)</option>
             </select>
@@ -158,7 +158,7 @@ export default function AjustesPage() {
       {/* Privacidad */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Shield className="w-5 h-5 text-primary-400" />
+          <Shield className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Privacidad</h2>
         </div>
         <div className="space-y-4">
@@ -171,7 +171,7 @@ export default function AjustesPage() {
               <span className="text-gray-300">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />
-                <div className="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <div className="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-white rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white"></div>
               </label>
             </div>
           ))}

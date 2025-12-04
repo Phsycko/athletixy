@@ -42,35 +42,35 @@ export default function SoportePage() {
 
       {/* Contacto Rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-primary-600 transition cursor-pointer">
-          <div className="bg-primary-600/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-            <MessageSquare className="w-6 h-6 text-primary-400" />
+        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
+          <div className="bg-white/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+            <MessageSquare className="w-6 h-6 text-gray-300" />
           </div>
           <h3 className="text-white font-semibold mb-2">Chat en Vivo</h3>
           <p className="text-gray-400 text-sm mb-4">Respuesta inmediata de nuestro equipo</p>
-          <button className="text-primary-400 text-sm font-medium hover:text-primary-300 transition">
+          <button className="text-gray-300 text-sm font-medium hover:text-primary-300 transition">
             Iniciar chat →
           </button>
         </div>
 
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-primary-600 transition cursor-pointer">
+        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
           <div className="bg-green-600/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
             <Mail className="w-6 h-6 text-green-400" />
           </div>
           <h3 className="text-white font-semibold mb-2">Email</h3>
           <p className="text-gray-400 text-sm mb-4">soporte@athletixy.com</p>
-          <button className="text-primary-400 text-sm font-medium hover:text-primary-300 transition">
+          <button className="text-gray-300 text-sm font-medium hover:text-primary-300 transition">
             Enviar email →
           </button>
         </div>
 
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-primary-600 transition cursor-pointer">
+        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
           <div className="bg-blue-600/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
             <Phone className="w-6 h-6 text-blue-400" />
           </div>
           <h3 className="text-white font-semibold mb-2">Teléfono</h3>
           <p className="text-gray-400 text-sm mb-4">+52 55 1234 5678</p>
-          <button className="text-primary-400 text-sm font-medium hover:text-primary-300 transition">
+          <button className="text-gray-300 text-sm font-medium hover:text-primary-300 transition">
             Llamar ahora →
           </button>
         </div>
@@ -79,7 +79,7 @@ export default function SoportePage() {
       {/* Nuevo Ticket */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Send className="w-5 h-5 text-primary-400" />
+          <Send className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Enviar Nuevo Ticket</h2>
         </div>
         <form className="space-y-4">
@@ -88,12 +88,12 @@ export default function SoportePage() {
             <input
               type="text"
               placeholder="¿En qué podemos ayudarte?"
-              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Categoría</label>
-            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
+            <select className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white">
               <option>Problema técnico</option>
               <option>Consulta de facturación</option>
               <option>Pregunta sobre entrenamientos</option>
@@ -106,12 +106,12 @@ export default function SoportePage() {
             <textarea
               rows={5}
               placeholder="Describe tu consulta o problema..."
-              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-600 resize-none"
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white resize-none"
             ></textarea>
           </div>
           <button
             type="submit"
-            className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium shadow-lg"
+            className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition font-medium shadow-lg"
           >
             <Send className="w-4 h-4" />
             Enviar Ticket
@@ -122,18 +122,18 @@ export default function SoportePage() {
       {/* Tickets Recientes */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <Book className="w-5 h-5 text-primary-400" />
+          <Book className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Tickets Recientes</h2>
         </div>
         <div className="space-y-3">
           {ticketsRecientes.map((ticket, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-primary-600 transition cursor-pointer"
+              className="flex items-center justify-between p-4 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="text-primary-400 font-mono text-sm">{ticket.id}</span>
+                  <span className="text-gray-300 font-mono text-sm">{ticket.id}</span>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
                       ticket.estado === 'Resuelto'
@@ -155,7 +155,7 @@ export default function SoportePage() {
       {/* Preguntas Frecuentes */}
       <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <HelpCircle className="w-5 h-5 text-primary-400" />
+          <HelpCircle className="w-5 h-5 text-gray-300" />
           <h2 className="text-lg font-semibold text-white">Preguntas Frecuentes</h2>
         </div>
         <div className="space-y-4">

@@ -74,7 +74,7 @@ export default function MembresiasPage() {
       </div>
 
       {/* Membresía Actual */}
-      <div className="bg-gradient-to-br from-primary-600 to-purple-600 rounded-xl p-6 shadow-xl">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-xl">
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -121,13 +121,13 @@ export default function MembresiasPage() {
               key={index}
               className={`rounded-xl p-6 border-2 transition-all ${
                 plan.popular
-                  ? 'bg-primary-600/10 border-primary-600 shadow-xl'
+                  ? 'bg-white/10 border-gray-600 shadow-xl'
                   : 'bg-dark-800 border-dark-700 hover:border-dark-600'
               }`}
             >
               {plan.popular && (
                 <div className="mb-4">
-                  <span className="px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 bg-white text-white text-xs font-medium rounded-full">
                     Más Popular
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function MembresiasPage() {
                   membresiaActual.plan === plan.nombre
                     ? 'bg-dark-600 text-gray-400 cursor-not-allowed'
                     : plan.popular
-                    ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                    ? 'bg-white hover:bg-gray-200 text-black'
                     : 'bg-dark-700 hover:bg-dark-600 text-white'
                 }`}
                 disabled={membresiaActual.plan === plan.nombre}

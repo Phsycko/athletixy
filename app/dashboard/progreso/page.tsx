@@ -179,7 +179,7 @@ export default function ProgresoPage() {
               </div>
               <div className="w-full bg-dark-900 rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-primary-600 to-purple-600 h-3 rounded-full transition-all"
+                  className="bg-gradient-to-r from-gray-800 to-gray-900 h-3 rounded-full transition-all"
                   style={{ width: `${objetivo.progreso}%` }}
                 ></div>
               </div>
