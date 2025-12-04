@@ -804,6 +804,42 @@ export default function DietasPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {confirmDeleteOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-black">Eliminar Dieta</h3>
+                <p className="text-gray-600 text-sm">Esta acción no se puede deshacer</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-700 mb-6">
+              ¿Estás seguro de que quieres eliminar la dieta de <span className="font-semibold text-black">{dietaAEliminar !== null ? dietaPlan[dietaAEliminar]?.dia : ''}</span>?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelarEliminacion}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmarEliminacion}
+                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium shadow-lg"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
