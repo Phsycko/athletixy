@@ -110,7 +110,9 @@ export default function DietasPage() {
   const [calendarioOpen, setCalendarioOpen] = useState(false)
   const [mesCalendario, setMesCalendario] = useState(new Date())
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
-  const [esPremium, setEsPremium] = useState(true) // Cambiar a false para usuario básico
+  const [dropdownDesayunoOpen, setDropdownDesayunoOpen] = useState(false)
+  const [dropdownAlmuerzoOpen, setDropdownAlmuerzoOpen] = useState(false)
+  const [dropdownCenaOpen, setDropdownCenaOpen] = useState(false)
 
   // Biblioteca de alimentos con macros
   const alimentosDisponibles = {
@@ -149,6 +151,21 @@ export default function DietasPage() {
         [tipo]: alimento
       })
     }
+    // Cerrar dropdowns
+    setDropdownDesayunoOpen(false)
+    setDropdownAlmuerzoOpen(false)
+    setDropdownCenaOpen(false)
+  }
+
+  // Obtener alimentos únicos de las dietas guardadas
+  const obtenerAlimentosGuardados = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
+    const alimentosUnicos = new Set<string>()
+    dietaPlan.forEach(dia => {
+      if (dia[tipo].nombre) {
+        alimentosUnicos.add(dia[tipo].nombre)
+      }
+    })
+    return Array.from(alimentosUnicos)
   }
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
@@ -782,44 +799,56 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
-                        {esPremium && (
-                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                            PREMIUM
-                          </span>
-                        )}
                       </label>
-                      {esPremium ? (
-                        <select
-                          value={nuevaDieta.desayuno.nombre}
-                          onChange={(e) => {
-                            const nombreSeleccionado = e.target.value
-                            if (nombreSeleccionado === 'custom') {
-                              updateComida('desayuno', 'nombre', '')
-                            } else if (nombreSeleccionado) {
-                              seleccionarAlimentoPredefinido('desayuno', nombreSeleccionado)
-                            }
-                          }}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white cursor-pointer"
-                        >
-                          <option value="">Selecciona un alimento...</option>
-                          {alimentosDisponibles.desayuno.map((alimento, idx) => (
-                            <option key={idx} value={alimento.nombre}>
-                              {alimento.nombre} ({alimento.calorias} kcal)
-                            </option>
-                          ))}
-                          <option value="custom">✏️ Escribir personalizado</option>
-                        </select>
-                      ) : (
+                      <div className="relative">
                         <input
                           type="text"
                           placeholder="Ej: Avena con frutas"
                           value={nuevaDieta.desayuno.nombre}
                           onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
-                      )}
+                        <button
+                          type="button"
+                          onClick={() => setDropdownDesayunoOpen(!dropdownDesayunoOpen)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                        >
+                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownDesayunoOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        
+                        {/* Dropdown de alimentos guardados */}
+                        {dropdownDesayunoOpen && (
+                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            <div className="p-2 border-b border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
+                            </div>
+                            {obtenerAlimentosGuardados('desayuno').length > 0 ? (
+                              obtenerAlimentosGuardados('desayuno').map((alimento, idx) => (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() => {
+                                    updateComida('desayuno', 'nombre', alimento)
+                                    setDropdownDesayunoOpen(false)
+                                  }}
+                                  className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition text-sm text-gray-700 hover:text-black"
+                                >
+                                  {alimento}
+                                </button>
+                              ))
+                            ) : (
+                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                                No hay alimentos guardados aún
+                              </div>
+                            )}
+                            <div className="p-2 border-t border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -869,44 +898,56 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
-                        {esPremium && (
-                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                            PREMIUM
-                          </span>
-                        )}
                       </label>
-                      {esPremium ? (
-                        <select
-                          value={nuevaDieta.almuerzo.nombre}
-                          onChange={(e) => {
-                            const nombreSeleccionado = e.target.value
-                            if (nombreSeleccionado === 'custom') {
-                              updateComida('almuerzo', 'nombre', '')
-                            } else if (nombreSeleccionado) {
-                              seleccionarAlimentoPredefinido('almuerzo', nombreSeleccionado)
-                            }
-                          }}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white cursor-pointer"
-                        >
-                          <option value="">Selecciona un alimento...</option>
-                          {alimentosDisponibles.almuerzo.map((alimento, idx) => (
-                            <option key={idx} value={alimento.nombre}>
-                              {alimento.nombre} ({alimento.calorias} kcal)
-                            </option>
-                          ))}
-                          <option value="custom">✏️ Escribir personalizado</option>
-                        </select>
-                      ) : (
+                      <div className="relative">
                         <input
                           type="text"
                           placeholder="Ej: Pollo con arroz"
                           value={nuevaDieta.almuerzo.nombre}
                           onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
-                      )}
+                        <button
+                          type="button"
+                          onClick={() => setDropdownAlmuerzoOpen(!dropdownAlmuerzoOpen)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                        >
+                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownAlmuerzoOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        
+                        {/* Dropdown de alimentos guardados */}
+                        {dropdownAlmuerzoOpen && (
+                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            <div className="p-2 border-b border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
+                            </div>
+                            {obtenerAlimentosGuardados('almuerzo').length > 0 ? (
+                              obtenerAlimentosGuardados('almuerzo').map((alimento, idx) => (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() => {
+                                    updateComida('almuerzo', 'nombre', alimento)
+                                    setDropdownAlmuerzoOpen(false)
+                                  }}
+                                  className="w-full text-left px-4 py-2 hover:bg-orange-50 transition text-sm text-gray-700 hover:text-black"
+                                >
+                                  {alimento}
+                                </button>
+                              ))
+                            ) : (
+                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                                No hay alimentos guardados aún
+                              </div>
+                            )}
+                            <div className="p-2 border-t border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -956,44 +997,56 @@ export default function DietasPage() {
                   <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
-                        {esPremium && (
-                          <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                            PREMIUM
-                          </span>
-                        )}
                       </label>
-                      {esPremium ? (
-                        <select
-                          value={nuevaDieta.cena.nombre}
-                          onChange={(e) => {
-                            const nombreSeleccionado = e.target.value
-                            if (nombreSeleccionado === 'custom') {
-                              updateComida('cena', 'nombre', '')
-                            } else if (nombreSeleccionado) {
-                              seleccionarAlimentoPredefinido('cena', nombreSeleccionado)
-                            }
-                          }}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white cursor-pointer"
-                        >
-                          <option value="">Selecciona un alimento...</option>
-                          {alimentosDisponibles.cena.map((alimento, idx) => (
-                            <option key={idx} value={alimento.nombre}>
-                              {alimento.nombre} ({alimento.calorias} kcal)
-                            </option>
-                          ))}
-                          <option value="custom">✏️ Escribir personalizado</option>
-                        </select>
-                      ) : (
+                      <div className="relative">
                         <input
                           type="text"
                           placeholder="Ej: Salmón con vegetales"
                           value={nuevaDieta.cena.nombre}
                           onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                          className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
-                      )}
+                        <button
+                          type="button"
+                          onClick={() => setDropdownCenaOpen(!dropdownCenaOpen)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                        >
+                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownCenaOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        
+                        {/* Dropdown de alimentos guardados */}
+                        {dropdownCenaOpen && (
+                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            <div className="p-2 border-b border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
+                            </div>
+                            {obtenerAlimentosGuardados('cena').length > 0 ? (
+                              obtenerAlimentosGuardados('cena').map((alimento, idx) => (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() => {
+                                    updateComida('cena', 'nombre', alimento)
+                                    setDropdownCenaOpen(false)
+                                  }}
+                                  className="w-full text-left px-4 py-2 hover:bg-purple-50 transition text-sm text-gray-700 hover:text-black"
+                                >
+                                  {alimento}
+                                </button>
+                              ))
+                            ) : (
+                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                                No hay alimentos guardados aún
+                              </div>
+                            )}
+                            <div className="p-2 border-t border-gray-200 bg-gray-50">
+                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
