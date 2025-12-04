@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 type Comida = {
@@ -32,7 +32,7 @@ type DatosUsuario = {
 }
 
 export default function DietasPage() {
-  const [dietaPlan, setDietaPlan] = useState<DiaPlan[]>([
+  const dietasIniciales = [
     {
       dia: 'Lunes',
       desayuno: { nombre: 'Avena con Proteína', calorias: 450, proteina: 30, carbs: 52, grasas: 12 },
@@ -51,7 +51,32 @@ export default function DietasPage() {
       almuerzo: { nombre: 'Atún con Pasta Integral', calorias: 650, proteina: 52, carbs: 72, grasas: 12 },
       cena: { nombre: 'Pescado al Horno', calorias: 440, proteina: 45, carbs: 18, grasas: 20 },
     },
-  ])
+  ]
+
+  const [dietaPlan, setDietaPlan] = useState<DiaPlan[]>([])
+
+  // Cargar dietas desde localStorage al iniciar
+  useEffect(() => {
+    const dietasGuardadas = localStorage.getItem('athletixy_dietas')
+    if (dietasGuardadas) {
+      try {
+        const dietas = JSON.parse(dietasGuardadas)
+        setDietaPlan(dietas)
+      } catch (error) {
+        console.error('Error cargando dietas:', error)
+        setDietaPlan(dietasIniciales)
+      }
+    } else {
+      setDietaPlan(dietasIniciales)
+    }
+  }, [])
+
+  // Guardar dietas en localStorage cada vez que cambien
+  useEffect(() => {
+    if (dietaPlan.length > 0) {
+      localStorage.setItem('athletixy_dietas', JSON.stringify(dietaPlan))
+    }
+  }, [dietaPlan])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
