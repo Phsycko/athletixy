@@ -441,6 +441,30 @@ export default function DietasPage() {
     setEditandoIndex(null)
   }
 
+  const generarNombrePlato = (objetivo: string, tipoComida: string): string => {
+    const platosDesayuno = {
+      perder: ['Claras de Huevo con Espinacas', 'Avena con Frutos Rojos', 'Yogurt Griego con Semillas'],
+      mantener: ['Huevos Revueltos con Aguacate', 'Avena con Proteína y Banana', 'Tostadas Integrales con Mantequilla de Maní'],
+      ganar: ['Tortilla de 4 Huevos con Queso', 'Avena con Proteína, Nueces y Miel', 'Pan Integral con Mantequilla y Mermelada'],
+    }
+    
+    const platosAlmuerzo = {
+      perder: ['Pechuga de Pollo con Ensalada', 'Pescado al Vapor con Brócoli', 'Atún con Quinoa y Vegetales'],
+      mantener: ['Pollo con Arroz Integral y Vegetales', 'Salmón con Batata y Espárragos', 'Carne Magra con Quinoa'],
+      ganar: ['Pollo con Arroz Blanco y Aguacate', 'Carne Roja con Pasta Integral', 'Salmón con Arroz Basmati'],
+    }
+    
+    const platosCena = {
+      perder: ['Pescado a la Plancha con Ensalada', 'Pechuga con Vegetales al Vapor', 'Merluza con Espárragos'],
+      mantener: ['Salmón con Brócoli', 'Pollo con Ensalada Mixta', 'Pescado con Vegetales Asados'],
+      ganar: ['Carne con Batata', 'Pollo con Arroz y Aguacate', 'Salmón con Quinoa'],
+    }
+    
+    const platos = tipoComida === 'desayuno' ? platosDesayuno : tipoComida === 'almuerzo' ? platosAlmuerzo : platosCena
+    const opciones = platos[objetivo as keyof typeof platos]
+    return opciones[Math.floor(Math.random() * opciones.length)]
+  }
+
   const generarDietaConIA = async () => {
     setGenerandoIA(true)
     
@@ -477,30 +501,6 @@ export default function DietasPage() {
     setDietaPlan([...dietaPlan, dietaGenerada])
     setIsModalOpen(false)
     setModoCreacion('manual')
-  }
-
-  const generarNombrePlato = (objetivo: string, tipoComida: string): string => {
-    const platosDesayuno = {
-      perder: ['Claras de Huevo con Espinacas', 'Avena con Frutos Rojos', 'Yogurt Griego con Semillas'],
-      mantener: ['Huevos Revueltos con Aguacate', 'Avena con Proteína y Banana', 'Tostadas Integrales con Mantequilla de Maní'],
-      ganar: ['Tortilla de 4 Huevos con Queso', 'Avena con Proteína, Nueces y Miel', 'Pan Integral con Mantequilla y Mermelada'],
-    }
-    
-    const platosAlmuerzo = {
-      perder: ['Pechuga de Pollo con Ensalada', 'Pescado al Vapor con Brócoli', 'Atún con Quinoa y Vegetales'],
-      mantener: ['Pollo con Arroz Integral y Vegetales', 'Salmón con Batata y Espárragos', 'Carne Magra con Quinoa'],
-      ganar: ['Pollo con Arroz Blanco y Aguacate', 'Carne Roja con Pasta Integral', 'Salmón con Arroz Basmati'],
-    }
-    
-    const platosCena = {
-      perder: ['Pescado a la Plancha con Ensalada', 'Pechuga con Vegetales al Vapor', 'Merluza con Espárragos'],
-      mantener: ['Salmón con Brócoli', 'Pollo con Ensalada Mixta', 'Pescado con Vegetales Asados'],
-      ganar: ['Carne con Batata', 'Pollo con Arroz y Aguacate', 'Salmón con Quinoa'],
-    }
-    
-    const platos = tipoComida === 'desayuno' ? platosDesayuno : tipoComida === 'almuerzo' ? platosAlmuerzo : platosCena
-    const opciones = platos[objetivo as keyof typeof platos]
-    return opciones[Math.floor(Math.random() * opciones.length)]
   }
 
   return (
