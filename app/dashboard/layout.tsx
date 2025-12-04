@@ -66,7 +66,7 @@ export default function DashboardLayout({
   ]
 
   return (
-    <div className="min-h-screen bg-dark-950 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-screen shadow-sm">
         <div className="p-6 border-b border-gray-200">
@@ -178,8 +178,8 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
-        <div className="p-6 lg:p-8">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-white min-h-screen">
+        <div className="p-6 lg:p-8 bg-white">
           {children}
         </div>
       </main>
