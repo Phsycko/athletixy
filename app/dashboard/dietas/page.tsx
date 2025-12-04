@@ -138,9 +138,7 @@ export default function DietasPage() {
     const inicioDia = fecha.getDay()
     const diff = fecha.getDate() - inicioDia + (inicioDia === 0 ? -6 : 1)
     
-    const lunes = new Date(fecha)
-    lunes.setDate(diff)
-    
+    const lunes = new Date(fecha.getFullYear(), fecha.getMonth(), diff)
     const domingo = new Date(lunes)
     domingo.setDate(lunes.getDate() + 6)
     
@@ -148,17 +146,19 @@ export default function DietasPage() {
       return `${d.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}`
     }
     
-    return `Semana del ${formatoFecha(lunes)} - ${formatoFecha(domingo)}`
+    return `${formatoFecha(lunes)} - ${formatoFecha(domingo)}`
   }
 
   const cambiarSemana = (direccion: 'anterior' | 'siguiente') => {
     const nuevaFecha = new Date(fechaSemana)
     nuevaFecha.setDate(nuevaFecha.getDate() + (direccion === 'anterior' ? -7 : 7))
     setFechaSemana(nuevaFecha)
+    setSelectorFechaOpen(false)
   }
 
   const irASemanaActual = () => {
     setFechaSemana(new Date())
+    setSelectorFechaOpen(false)
   }
 
   const resetForm = () => {
@@ -313,10 +313,16 @@ export default function DietasPage() {
             {/* Selector de fecha */}
             <button
               onClick={() => setSelectorFechaOpen(!selectorFechaOpen)}
-              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition group"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition group ${
+                selectorFechaOpen 
+                  ? 'bg-blue-100 border-2 border-blue-300' 
+                  : 'hover:bg-gray-100 border-2 border-transparent'
+              }`}
             >
-              <Calendar className="w-5 h-5 text-gray-600 group-hover:text-black" />
-              <span className="text-sm text-gray-600 group-hover:text-black font-medium">
+              <Calendar className={`w-5 h-5 ${selectorFechaOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
+              <span className={`text-sm font-medium whitespace-nowrap ${
+                selectorFechaOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
+              }`}>
                 {obtenerRangoSemana(fechaSemana)}
               </span>
             </button>
@@ -341,14 +347,15 @@ export default function DietasPage() {
 
         {/* Selector de fecha personalizado */}
         {selectorFechaOpen && (
-          <div className="mb-6 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+          <div className="mb-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-blue-200 rounded-lg animate-fadeIn">
             <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium text-gray-700">
-                Selecciona una fecha de la semana
+              <label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                Selecciona cualquier día de la semana
               </label>
               <button
                 onClick={() => setSelectorFechaOpen(false)}
-                className="text-gray-500 hover:text-black transition"
+                className="text-gray-500 hover:text-red-600 transition p-1 hover:bg-white rounded"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -357,14 +364,20 @@ export default function DietasPage() {
               type="date"
               value={fechaSemana.toISOString().split('T')[0]}
               onChange={(e) => {
-                setFechaSemana(new Date(e.target.value))
+                const nuevaFecha = new Date(e.target.value + 'T12:00:00')
+                setFechaSemana(nuevaFecha)
                 setSelectorFechaOpen(false)
               }}
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-2">
-              El plan se mostrará para toda la semana que contiene esta fecha
-            </p>
+            <div className="mt-3 p-3 bg-white rounded-lg border border-blue-200">
+              <p className="text-xs text-gray-600 flex items-start gap-2">
+                <span className="text-blue-600 font-bold">ℹ️</span>
+                <span>
+                  Selecciona <strong>cualquier día</strong> y se mostrará el plan completo de esa semana (de lunes a domingo)
+                </span>
+              </p>
+            </div>
           </div>
         )}
 
