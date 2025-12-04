@@ -377,7 +377,7 @@ export default function DietasPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-lg font-semibold text-black">Plan Semanal</h2>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 relative">
             {/* Botones de navegación */}
             <button
               onClick={() => cambiarPeriodo('anterior')}
@@ -388,43 +388,26 @@ export default function DietasPage() {
             </button>
             
             {/* Selector de rango */}
-            <button
-              onClick={() => setCalendarioOpen(!calendarioOpen)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition group ${
-                calendarioOpen 
-                  ? 'bg-blue-100 border-2 border-blue-300' 
-                  : 'hover:bg-gray-100 border-2 border-transparent'
-              }`}
-            >
-              <Calendar className={`w-5 h-5 ${calendarioOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
-              <span className={`text-sm font-medium whitespace-nowrap ${
-                calendarioOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
-              }`}>
-                {obtenerRangoSemana()}
-              </span>
-            </button>
-            
-            <button
-              onClick={() => cambiarPeriodo('siguiente')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
-              title="Período siguiente"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setCalendarioOpen(!calendarioOpen)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition group ${
+                  calendarioOpen 
+                    ? 'bg-blue-100 border-2 border-blue-300' 
+                    : 'hover:bg-gray-100 border-2 border-transparent'
+                }`}
+              >
+                <Calendar className={`w-5 h-5 ${calendarioOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
+                <span className={`text-sm font-medium whitespace-nowrap ${
+                  calendarioOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
+                }`}>
+                  {obtenerRangoSemana()}
+                </span>
+              </button>
 
-            {/* Botón ir a hoy */}
-            <button
-              onClick={irAHoy}
-              className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition"
-            >
-              Hoy
-            </button>
-          </div>
-        </div>
-
-        {/* Calendario de selección de rango - COMPACTO */}
-        {calendarioOpen && (
-          <div className="mb-4 p-3 bg-white border-2 border-blue-200 rounded-lg shadow-lg max-w-sm">
+              {/* Calendario de selección de rango - COMPACTO - DROPDOWN */}
+              {calendarioOpen && (
+          <div className="absolute top-full mt-2 right-0 z-50 p-3 bg-white border-2 border-blue-200 rounded-lg shadow-xl w-80">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-gray-800">
                 Selecciona rango
@@ -526,7 +509,26 @@ export default function DietasPage() {
               </p>
             </div>
           </div>
-        )}
+              )}
+            </div>
+            
+            <button
+              onClick={() => cambiarPeriodo('siguiente')}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              title="Período siguiente"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {/* Botón ir a hoy */}
+            <button
+              onClick={irAHoy}
+              className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition"
+            >
+              Hoy
+            </button>
+          </div>
+        </div>
 
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
