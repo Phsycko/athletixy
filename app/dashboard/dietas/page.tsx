@@ -58,22 +58,30 @@ export default function DietasPage() {
   // Cargar dietas desde localStorage al iniciar
   useEffect(() => {
     const dietasGuardadas = localStorage.getItem('athletixy_dietas')
-    if (dietasGuardadas) {
+    const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
+    
+    if (primeraVez) {
+      // Ya se inicializó antes, cargar lo que haya (incluso si es vacío)
       try {
-        const dietas = JSON.parse(dietasGuardadas)
+        const dietas = JSON.parse(dietasGuardadas || '[]')
         setDietaPlan(dietas)
       } catch (error) {
         console.error('Error cargando dietas:', error)
-        setDietaPlan(dietasIniciales)
+        setDietaPlan([])
       }
     } else {
+      // Primera vez, cargar dietas de ejemplo
       setDietaPlan(dietasIniciales)
+      localStorage.setItem('athletixy_dietas', JSON.stringify(dietasIniciales))
+      localStorage.setItem('athletixy_dietas_initialized', 'true')
     }
   }, [])
 
   // Guardar dietas en localStorage cada vez que cambien
   useEffect(() => {
-    if (dietaPlan.length > 0) {
+    const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
+    if (primeraVez) {
+      // Solo guardar si ya se inicializó
       localStorage.setItem('athletixy_dietas', JSON.stringify(dietaPlan))
     }
   }, [dietaPlan])
