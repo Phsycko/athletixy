@@ -268,16 +268,6 @@ export default function DietasPage() {
     setTipoComidaCalculando(null)
   }
 
-  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipo]: {
-        ...nuevaDieta[tipo],
-        [campo]: valor
-      }
-    })
-  }
-
   const [datosUsuario, setDatosUsuario] = useState<DatosUsuario>({
     peso: 75,
     altura: 175,
@@ -290,6 +280,16 @@ export default function DietasPage() {
     carbsObjetivo: 320,
     grasasObjetivo: 80,
   })
+
+  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
+    setNuevaDieta({
+      ...nuevaDieta,
+      [tipo]: {
+        ...nuevaDieta[tipo],
+        [campo]: valor
+      }
+    })
+  }
 
   const macrosObjetivo = {
     calorias: 2800,
