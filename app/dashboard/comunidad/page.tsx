@@ -87,7 +87,7 @@ export default function ComunidadPage() {
         {/* Feed Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Crear Publicación */}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                 <span className="text-black font-bold">AH</span>
@@ -95,19 +95,19 @@ export default function ComunidadPage() {
               <input
                 type="text"
                 placeholder="¿Qué estás logrando hoy?"
-                className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                className="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border-2 border-gray-200">
                 <ImageIcon className="w-4 h-4" />
                 Foto
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border-2 border-gray-200">
                 <Video className="w-4 h-4" />
                 Video
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border-2 border-gray-200">
                 <TrendingUp className="w-4 h-4" />
                 Progreso
               </button>
@@ -116,7 +116,7 @@ export default function ComunidadPage() {
 
           {/* Publicaciones */}
           {publicaciones.map((post, index) => (
-            <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition">
+            <div key={index} className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition">
               {/* Header de la publicación */}
               <div className="p-6 pb-4">
                 <div className="flex items-center gap-3 mb-4">
@@ -125,7 +125,7 @@ export default function ComunidadPage() {
                   </div>
                   <div>
                     <p className="text-black font-semibold">{post.autor}</p>
-                    <p className="text-gray-500 text-xs">{post.tiempo}</p>
+                    <p className="text-gray-600 text-xs">{post.tiempo}</p>
                   </div>
                 </div>
                 <p className="text-gray-700 mb-4">{post.contenido}</p>
@@ -169,7 +169,7 @@ export default function ComunidadPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Grupos Populares */}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
             <h2 className="text-black font-semibold mb-4 flex items-center gap-2">
               <Users className="w-5 h-5 text-gray-700" />
               Grupos Populares
@@ -178,11 +178,11 @@ export default function ComunidadPage() {
               {gruposPopulares.map((grupo, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
+                  className="p-3 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
                 >
                   <p className="text-black font-medium text-sm mb-1">{grupo.nombre}</p>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-500">{grupo.miembros.toLocaleString()} miembros</span>
+                    <span className="text-gray-600">{grupo.miembros.toLocaleString()} miembros</span>
                     <span className="text-green-400">+{grupo.nuevos} hoy</span>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function ComunidadPage() {
           </div>
 
           {/* Eventos Cercanos */}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
             <h2 className="text-black font-semibold mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-gray-700" />
               Eventos Cercanos
@@ -203,11 +203,11 @@ export default function ComunidadPage() {
               {eventosCercanos.map((evento, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
+                  className="p-3 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
                 >
                   <p className="text-black font-medium text-sm mb-1">{evento.titulo}</p>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-500">{evento.fecha}</span>
+                    <span className="text-gray-600">{evento.fecha}</span>
                     <span className="text-gray-700">{evento.participantes} inscritos</span>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ export default function ComunidadPage() {
           </div>
 
           {/* Sugerencias */}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
             <h2 className="text-black font-semibold mb-4">Atletas Sugeridos</h2>
             <div className="space-y-3">
               {['Martín López', 'Carmen Ruiz', 'Pablo Jiménez'].map((nombre, index) => (
@@ -228,14 +228,14 @@ export default function ComunidadPage() {
                   className="flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
                       <span className="text-black text-xs font-bold">
                         {nombre.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
                     <div>
                       <p className="text-black text-sm font-medium">{nombre}</p>
-                      <p className="text-gray-500 text-xs">Atleta</p>
+                      <p className="text-gray-600 text-xs">Atleta</p>
                     </div>
                   </div>
                   <button className="px-3 py-1 bg-black hover:bg-gray-800 text-white text-xs rounded-lg transition">

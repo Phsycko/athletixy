@@ -42,7 +42,7 @@ export default function SoportePage() {
 
       {/* Contacto Rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
           <div className="bg-white/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
             <MessageSquare className="w-6 h-6 text-gray-700" />
           </div>
@@ -53,7 +53,7 @@ export default function SoportePage() {
           </button>
         </div>
 
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
           <div className="bg-green-600/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
             <Mail className="w-6 h-6 text-green-400" />
           </div>
@@ -64,7 +64,7 @@ export default function SoportePage() {
           </button>
         </div>
 
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-gray-600 transition cursor-pointer">
           <div className="bg-blue-600/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
             <Phone className="w-6 h-6 text-blue-400" />
           </div>
@@ -77,7 +77,7 @@ export default function SoportePage() {
       </div>
 
       {/* Nuevo Ticket */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Send className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Enviar Nuevo Ticket</h2>
@@ -88,12 +88,12 @@ export default function SoportePage() {
             <input
               type="text"
               placeholder="¿En qué podemos ayudarte?"
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-            <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
+            <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
               <option>Problema técnico</option>
               <option>Consulta de facturación</option>
               <option>Pregunta sobre entrenamientos</option>
@@ -106,7 +106,7 @@ export default function SoportePage() {
             <textarea
               rows={5}
               placeholder="Describe tu consulta o problema..."
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white resize-none"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white resize-none"
             ></textarea>
           </div>
           <button
@@ -120,7 +120,7 @@ export default function SoportePage() {
       </div>
 
       {/* Tickets Recientes */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Book className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Tickets Recientes</h2>
@@ -129,7 +129,7 @@ export default function SoportePage() {
           {ticketsRecientes.map((ticket, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
+              className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-3 mb-1">
@@ -146,14 +146,14 @@ export default function SoportePage() {
                 </div>
                 <p className="text-black font-medium">{ticket.asunto}</p>
               </div>
-              <span className="text-gray-500 text-sm">{ticket.fecha}</span>
+              <span className="text-gray-600 text-sm">{ticket.fecha}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Preguntas Frecuentes */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <HelpCircle className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Preguntas Frecuentes</h2>
@@ -162,9 +162,9 @@ export default function SoportePage() {
           {preguntasFrecuentes.map((faq, index) => (
             <details
               key={index}
-              className="group bg-white rounded-lg border border-gray-300 overflow-hidden"
+              className="group bg-white rounded-lg border-2 border-gray-200 overflow-hidden"
             >
-              <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition">
+              <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-white transition">
                 <span className="text-black font-medium">{faq.pregunta}</span>
                 <svg
                   className="w-5 h-5 text-gray-600 transition-transform group-open:rotate-180"

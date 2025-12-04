@@ -42,7 +42,7 @@ export default function ProgresoPage() {
 
       {/* Resumen Actual */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-50 border border-green-500/20 rounded-xl p-6">
+        <div className="bg-white border border-green-500/20 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-green-500/10 p-2 rounded-lg">
               <Scale className="w-5 h-5 text-green-400" />
@@ -56,7 +56,7 @@ export default function ProgresoPage() {
           </div>
         </div>
 
-        <div className="bg-gray-50 border border-blue-500/20 rounded-xl p-6">
+        <div className="bg-white border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-blue-500/10 p-2 rounded-lg">
               <Activity className="w-5 h-5 text-blue-400" />
@@ -70,7 +70,7 @@ export default function ProgresoPage() {
           </div>
         </div>
 
-        <div className="bg-gray-50 border border-purple-500/20 rounded-xl p-6">
+        <div className="bg-white border border-purple-500/20 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-purple-500/10 p-2 rounded-lg">
               <Ruler className="w-5 h-5 text-purple-400" />
@@ -84,7 +84,7 @@ export default function ProgresoPage() {
           </div>
         </div>
 
-        <div className="bg-gray-50 border border-cyan-500/20 rounded-xl p-6">
+        <div className="bg-white border border-cyan-500/20 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-cyan-500/10 p-2 rounded-lg">
               <Activity className="w-5 h-5 text-cyan-400" />
@@ -101,33 +101,33 @@ export default function ProgresoPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Historial de Mediciones */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Historial de Mediciones</h2>
           <div className="space-y-4">
             {mediciones.map((med, index) => (
               <div
                 key={index}
-                className="p-4 bg-white rounded-lg border border-gray-300"
+                className="p-4 bg-white rounded-lg border-2 border-gray-200"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <Calendar className="w-4 h-4 text-gray-600" />
                   <span className="text-gray-600 text-sm">{med.fecha}</span>
                 </div>
                 <div className="grid grid-cols-4 gap-3 text-sm">
                   <div>
-                    <p className="text-gray-500 mb-1">Peso</p>
+                    <p className="text-gray-600 mb-1">Peso</p>
                     <p className="text-black font-semibold">{med.peso} kg</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Grasa</p>
+                    <p className="text-gray-600 mb-1">Grasa</p>
                     <p className="text-blue-400 font-semibold">{med.grasa}%</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Músculo</p>
+                    <p className="text-gray-600 mb-1">Músculo</p>
                     <p className="text-purple-400 font-semibold">{med.musculo} kg</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Agua</p>
+                    <p className="text-gray-600 mb-1">Agua</p>
                     <p className="text-cyan-400 font-semibold">{med.agua}%</p>
                   </div>
                 </div>
@@ -137,16 +137,16 @@ export default function ProgresoPage() {
         </div>
 
         {/* Mediciones Corporales */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Mediciones Corporales (cm)</h2>
           <div className="space-y-4">
             {medicionesCorporales.map((medicion, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300"
+                className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200"
               >
                 <div className="flex items-center gap-3">
-                  <Ruler className="w-5 h-5 text-gray-500" />
+                  <Ruler className="w-5 h-5 text-gray-600" />
                   <span className="text-black font-medium">{medicion.parte}</span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -166,7 +166,7 @@ export default function ProgresoPage() {
       </div>
 
       {/* Objetivos */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Objetivos</h2>
         <div className="space-y-6">
           {objetivos.map((objetivo, index) => (
@@ -189,13 +189,13 @@ export default function ProgresoPage() {
       </div>
 
       {/* Rendimiento en Ejercicios */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Rendimiento en Ejercicios</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {rendimiento.map((ejercicio, index) => (
             <div
               key={index}
-              className="p-4 bg-white rounded-lg border border-gray-300"
+              className="p-4 bg-white rounded-lg border-2 border-gray-200"
             >
               <p className="text-black font-medium mb-3">{ejercicio.ejercicio}</p>
               <div className="flex items-center justify-between mb-2">

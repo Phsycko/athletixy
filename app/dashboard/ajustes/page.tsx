@@ -12,7 +12,7 @@ export default function AjustesPage() {
       </div>
 
       {/* Perfil Personal */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <User className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Perfil Personal</h2>
@@ -24,7 +24,7 @@ export default function AjustesPage() {
               <input
                 type="text"
                 defaultValue="Alex Hernández"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div>
@@ -32,7 +32,7 @@ export default function AjustesPage() {
               <input
                 type="email"
                 defaultValue="alex@athletixy.com"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
           </div>
@@ -42,12 +42,12 @@ export default function AjustesPage() {
               <input
                 type="number"
                 defaultValue="28"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Género</label>
-              <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
+              <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
                 <option>Masculino</option>
                 <option>Femenino</option>
                 <option>Otro</option>
@@ -61,7 +61,7 @@ export default function AjustesPage() {
       </div>
 
       {/* Seguridad */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Lock className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Seguridad</h2>
@@ -72,7 +72,7 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function AjustesPage() {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
           <button className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium">
@@ -98,7 +98,7 @@ export default function AjustesPage() {
       </div>
 
       {/* Notificaciones */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Bell className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Preferencias de Notificaciones</h2>
@@ -111,7 +111,7 @@ export default function AjustesPage() {
             { label: 'Actualizaciones de la comunidad', checked: false },
             { label: 'Ofertas del marketplace', checked: false },
           ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300">
+            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200">
               <span className="text-gray-700">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />
@@ -123,7 +123,7 @@ export default function AjustesPage() {
       </div>
 
       {/* Preferencias */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Globe className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Preferencias</h2>
@@ -131,7 +131,7 @@ export default function AjustesPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
-            <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
+            <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
               <option>Español</option>
               <option>English</option>
               <option>Português</option>
@@ -139,7 +139,7 @@ export default function AjustesPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Zona Horaria</label>
-            <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
+            <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
               <option>GMT-6 (Ciudad de México)</option>
               <option>GMT-5 (New York)</option>
               <option>GMT+1 (Madrid)</option>
@@ -147,7 +147,7 @@ export default function AjustesPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Unidades</label>
-            <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
+            <select className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
               <option>Métricas (kg, cm)</option>
               <option>Imperiales (lb, in)</option>
             </select>
@@ -156,7 +156,7 @@ export default function AjustesPage() {
       </div>
 
       {/* Privacidad */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Shield className="w-5 h-5 text-gray-700" />
           <h2 className="text-lg font-semibold text-black">Privacidad</h2>
@@ -167,7 +167,7 @@ export default function AjustesPage() {
             { label: 'Mostrar progreso en comunidad', checked: false },
             { label: 'Permitir mensajes directos', checked: true },
           ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300">
+            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200">
               <span className="text-gray-700">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />

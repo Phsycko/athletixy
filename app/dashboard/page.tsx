@@ -69,7 +69,7 @@ export default function DashboardPage() {
           return (
             <div
               key={index}
-              className={`bg-gray-50 border ${stat.borderColor} rounded-xl p-6 hover:shadow-xl transition-shadow`}
+              className={`bg-white border ${stat.borderColor} rounded-xl p-6 hover:shadow-xl transition-shadow`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className={`${stat.bgColor} p-3 rounded-lg`}>
@@ -80,7 +80,7 @@ export default function DashboardPage() {
                 <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-black">{stat.value}</span>
-                  <span className="text-gray-500 text-sm">{stat.target}</span>
+                  <span className="text-gray-600 text-sm">{stat.target}</span>
                 </div>
               </div>
             </div>
@@ -91,13 +91,13 @@ export default function DashboardPage() {
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Activities */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Actividad Reciente</h2>
           <div className="space-y-4">
             {recentActivities.map((activity, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition"
+                className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition"
               >
                 <div className="flex items-center gap-4">
                   <div className="bg-white/10 p-2 rounded-lg">
@@ -105,12 +105,12 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-black font-medium">{activity.name}</p>
-                    <p className="text-gray-500 text-sm">{activity.date}</p>
+                    <p className="text-gray-600 text-sm">{activity.date}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-black font-semibold">{activity.duration}</p>
-                  <p className="text-gray-500 text-sm">{activity.calories} kcal</p>
+                  <p className="text-gray-600 text-sm">{activity.calories} kcal</p>
                 </div>
               </div>
             ))}
@@ -118,20 +118,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Upcoming Events */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Próximos Eventos</h2>
           <div className="space-y-4">
             {upcomingEvents.map((event, index) => (
               <div
                 key={index}
-                className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-300"
+                className="flex items-center gap-4 p-4 bg-white rounded-lg border-2 border-gray-200"
               >
                 <div className="bg-purple-600/10 p-2 rounded-lg">
                   <Calendar className="w-5 h-5 text-purple-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-black font-medium">{event.title}</p>
-                  <p className="text-gray-500 text-sm">{event.time}</p>
+                  <p className="text-gray-600 text-sm">{event.time}</p>
                 </div>
                 <span className="px-3 py-1 bg-white/10 text-black text-xs font-medium rounded-full">
                   {event.type}
@@ -143,7 +143,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Weekly Goals */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Objetivos Semanales</h2>
         <div className="space-y-4">
           <div>

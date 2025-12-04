@@ -103,7 +103,7 @@ export default function NotificacionesPage() {
           </div>
           <p className="text-gray-600">Mantente al día con tus actividades</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-200 text-black rounded-lg transition border border-gray-300">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition border-2 border-gray-200">
           <Check className="w-5 h-5" />
           Marcar todas como leídas
         </button>
@@ -117,7 +117,7 @@ export default function NotificacionesPage() {
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
               index === 0
                 ? 'bg-white text-black'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-200 hover:text-black border border-gray-300'
+                : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-black border-2 border-gray-200'
             }`}
           >
             {filtro}
@@ -135,7 +135,7 @@ export default function NotificacionesPage() {
               className={`flex items-start gap-4 p-5 rounded-xl border transition-all cursor-pointer ${
                 !notif.leido
                   ? 'bg-white/5 border-gray-600/30 hover:border-gray-600'
-                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                  : 'bg-white border-gray-200 hover:border-gray-300'
               }`}
             >
               <div className={`${notif.bgColor} p-3 rounded-lg flex-shrink-0`}>
@@ -151,7 +151,7 @@ export default function NotificacionesPage() {
                 </div>
                 <p className="text-gray-600 text-sm mb-2">{notif.mensaje}</p>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-500 text-xs flex items-center gap-1">
+                  <span className="text-gray-600 text-xs flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {notif.fecha}
                   </span>
@@ -168,7 +168,7 @@ export default function NotificacionesPage() {
       </div>
 
       {/* Preferencias de Notificación */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-4">Preferencias de Notificación</h2>
         <p className="text-gray-600 text-sm mb-4">
           Configura qué notificaciones deseas recibir. Puedes ajustar estas preferencias en{' '}

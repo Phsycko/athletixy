@@ -144,16 +144,16 @@ export default function MarketplacePage() {
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Buscar productos..."
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-200 text-black rounded-lg transition border border-gray-300">
+          <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition border-2 border-gray-200">
             <Filter className="w-5 h-5" />
             Filtros
           </button>
@@ -168,7 +168,7 @@ export default function MarketplacePage() {
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
               index === 0
                 ? 'bg-white text-black'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-200 hover:text-black border border-gray-300'
+                : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-black border-2 border-gray-200'
             }`}
           >
             {cat}
@@ -181,7 +181,7 @@ export default function MarketplacePage() {
         {productosDestacados.map((producto, index) => (
           <div
             key={index}
-            className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden hover:border-gray-600 transition-all hover:shadow-xl group"
+            className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-600 transition-all hover:shadow-xl group"
           >
             {/* Imagen placeholder */}
             <div className="relative h-56 bg-gradient-to-br from-primary-600/20 to-purple-600/20 flex items-center justify-center">
@@ -215,13 +215,13 @@ export default function MarketplacePage() {
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-black text-sm font-semibold">{producto.rating}</span>
                 </div>
-                <span className="text-gray-500 text-xs">({producto.reviews} reseñas)</span>
+                <span className="text-gray-600 text-xs">({producto.reviews} reseñas)</span>
               </div>
 
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-2xl font-bold text-black">${producto.precio}</span>
                 {producto.precioAnterior && (
-                  <span className="text-gray-500 text-sm line-through">${producto.precioAnterior}</span>
+                  <span className="text-gray-600 text-sm line-through">${producto.precioAnterior}</span>
                 )}
               </div>
 
@@ -236,21 +236,21 @@ export default function MarketplacePage() {
 
       {/* Información Adicional */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center">
           <div className="bg-green-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
             <ShoppingCart className="w-6 h-6 text-green-400" />
           </div>
           <h3 className="text-black font-semibold mb-2">Envío Gratis</h3>
           <p className="text-gray-600 text-sm">En compras mayores a $1000</p>
         </div>
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center">
           <div className="bg-blue-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
             <Star className="w-6 h-6 text-blue-400" />
           </div>
           <h3 className="text-black font-semibold mb-2">Calidad Premium</h3>
           <p className="text-gray-600 text-sm">Productos verificados y certificados</p>
         </div>
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center">
           <div className="bg-purple-500/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
             <ShoppingBag className="w-6 h-6 text-purple-400" />
           </div>

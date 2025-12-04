@@ -122,7 +122,7 @@ export default function MembresiasPage() {
               className={`rounded-xl p-6 border-2 transition-all ${
                 plan.popular
                   ? 'bg-white/10 border-gray-600 shadow-xl'
-                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                  : 'bg-white border-gray-200 hover:border-gray-300'
               }`}
             >
               {plan.popular && (
@@ -163,13 +163,13 @@ export default function MembresiasPage() {
       </div>
 
       {/* Historial de Pagos */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Historial de Pagos</h2>
         <div className="space-y-4">
           {historialPagos.map((pago, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-300"
+              className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-gray-200"
             >
               <div className="flex items-center gap-4">
                 <div className="bg-green-500/10 p-2 rounded-lg">
@@ -177,12 +177,12 @@ export default function MembresiasPage() {
                 </div>
                 <div>
                   <p className="text-black font-medium">${pago.monto}</p>
-                  <p className="text-gray-500 text-sm">{pago.metodo}</p>
+                  <p className="text-gray-600 text-sm">{pago.metodo}</p>
                 </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-2 mb-1">
-                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <Calendar className="w-4 h-4 text-gray-600" />
                   <span className="text-gray-600 text-sm">{pago.fecha}</span>
                 </div>
                 <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-full">

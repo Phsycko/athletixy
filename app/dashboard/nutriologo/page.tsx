@@ -105,7 +105,7 @@ export default function NutriologoPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Próxima Consulta */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Próxima Consulta</h2>
           <div className="bg-white/10 border border-gray-600/30 rounded-lg p-5 mb-6">
             <div className="flex items-center gap-3 mb-4">
@@ -133,20 +133,20 @@ export default function NutriologoPage() {
             <button className="flex-1 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium">
               Unirse a la Consulta
             </button>
-            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border border-gray-300">
+            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border-2 border-gray-200">
               Reagendar
             </button>
           </div>
         </div>
 
         {/* Recomendaciones Actuales */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Recomendaciones Actuales</h2>
           <div className="space-y-3">
             {recomendaciones.map((recomendacion, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-300"
+                className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-gray-200"
               >
                 <div className="w-6 h-6 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-green-400 text-xs font-bold">{index + 1}</span>
@@ -159,18 +159,18 @@ export default function NutriologoPage() {
       </div>
 
       {/* Consultas Anteriores */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Historial de Consultas</h2>
         <div className="space-y-4">
           {consultasAnteriores.map((consulta, index) => (
             <div
               key={index}
-              className="p-5 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
+              className="p-5 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-black font-semibold mb-1">{consulta.tipo}</h3>
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <div className="flex items-center gap-2 text-gray-600 text-sm">
                     <Calendar className="w-4 h-4" />
                     <span>{consulta.fecha}</span>
                   </div>
@@ -191,7 +191,7 @@ export default function NutriologoPage() {
       </div>
 
       {/* Documentos */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-black">Documentos Compartidos</h2>
           <button className="text-gray-700 text-sm hover:text-primary-300 transition">
@@ -202,7 +202,7 @@ export default function NutriologoPage() {
           {documentos.map((doc, index) => (
             <div
               key={index}
-              className="p-4 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
+              className="p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
             >
               <div className="flex items-start gap-3">
                 <div className="bg-red-500/10 p-2 rounded">
@@ -210,7 +210,7 @@ export default function NutriologoPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-black font-medium text-sm mb-1 truncate">{doc.nombre}</p>
-                  <p className="text-gray-500 text-xs">{doc.tipo} • {doc.fecha}</p>
+                  <p className="text-gray-600 text-xs">{doc.tipo} • {doc.fecha}</p>
                 </div>
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function NutriologoPage() {
       </div>
 
       {/* Agendar Nueva Consulta */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-4">Agendar Nueva Consulta</h2>
         <p className="text-gray-600 text-sm mb-6">
           Selecciona un horario disponible para tu próxima consulta nutricional

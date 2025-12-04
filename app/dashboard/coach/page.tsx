@@ -76,7 +76,7 @@ export default function CoachPage() {
       </div>
 
       {/* Perfil del Coach */}
-      <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl p-6 shadow-xl">
+      <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-3xl text-black font-bold">RS</span>
@@ -119,7 +119,7 @@ export default function CoachPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Próxima Sesión */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Próxima Sesión</h2>
           <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-5 mb-6">
             <div className="flex items-center gap-3 mb-4">
@@ -151,14 +151,14 @@ export default function CoachPage() {
             <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-black rounded-lg transition font-medium">
               Confirmar Asistencia
             </button>
-            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border border-gray-300">
+            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border-2 border-gray-200">
               Reagendar
             </button>
           </div>
         </div>
 
         {/* Objetivos Actuales */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-semibold text-black mb-6">Objetivos de Fuerza</h2>
           <div className="space-y-5">
             {objetivosActuales.map((obj, index) => (
@@ -185,18 +185,18 @@ export default function CoachPage() {
       </div>
 
       {/* Sesiones Previas */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Historial de Sesiones</h2>
         <div className="space-y-4">
           {sesionesPrevias.map((sesion, index) => (
             <div
               key={index}
-              className="p-5 bg-white rounded-lg border border-gray-300 hover:border-blue-600 transition"
+              className="p-5 bg-white rounded-lg border-2 border-gray-200 hover:border-blue-600 transition"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-black font-semibold mb-1">{sesion.enfoque}</h3>
-                  <div className="flex items-center gap-4 text-gray-500 text-sm">
+                  <div className="flex items-center gap-4 text-gray-600 text-sm">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       <span>{sesion.fecha}</span>
@@ -220,7 +220,7 @@ export default function CoachPage() {
       </div>
 
       {/* Chat Rápido */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Mensajes Recientes</h2>
         <div className="space-y-4 mb-6">
           {mensajesRecientes.map((msg, index) => (
@@ -232,11 +232,11 @@ export default function CoachPage() {
                 className={`max-w-[70%] p-4 rounded-lg ${
                   msg.remitente === 'usuario'
                     ? 'bg-blue-600 text-black'
-                    : 'bg-white text-gray-700 border border-gray-300'
+                    : 'bg-white text-gray-700 border-2 border-gray-200'
                 }`}
               >
                 <p className="text-sm mb-1">{msg.mensaje}</p>
-                <span className={`text-xs ${msg.remitente === 'usuario' ? 'text-blue-200' : 'text-gray-500'}`}>
+                <span className={`text-xs ${msg.remitente === 'usuario' ? 'text-blue-200' : 'text-gray-600'}`}>
                   {msg.fecha}
                 </span>
               </div>
@@ -247,7 +247,7 @@ export default function CoachPage() {
           <input
             type="text"
             placeholder="Escribe un mensaje..."
-            className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
           <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-black rounded-lg transition">
             Enviar
@@ -256,7 +256,7 @@ export default function CoachPage() {
       </div>
 
       {/* Agendar Nueva Sesión */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-4">Agendar Nueva Sesión</h2>
         <p className="text-gray-600 text-sm mb-6">
           Reserva tu próxima sesión de entrenamiento personalizado

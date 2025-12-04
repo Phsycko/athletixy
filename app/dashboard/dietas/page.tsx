@@ -46,42 +46,42 @@ export default function DietasPage() {
       </div>
 
       {/* Macros Objetivo */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-black mb-6">Objetivos Diarios</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <div className="bg-orange-500/10 p-4 rounded-lg border border-orange-500/20">
               <p className="text-gray-600 text-sm mb-1">Calorías</p>
               <p className="text-3xl font-bold text-orange-400">{macrosObjetivo.calorias}</p>
-              <p className="text-gray-500 text-xs mt-1">kcal/día</p>
+              <p className="text-gray-600 text-xs mt-1">kcal/día</p>
             </div>
           </div>
           <div>
             <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/20">
               <p className="text-gray-600 text-sm mb-1">Proteína</p>
               <p className="text-3xl font-bold text-red-400">{macrosObjetivo.proteina}</p>
-              <p className="text-gray-500 text-xs mt-1">g/día</p>
+              <p className="text-gray-600 text-xs mt-1">g/día</p>
             </div>
           </div>
           <div>
             <div className="bg-blue-500/10 p-4 rounded-lg border border-blue-500/20">
               <p className="text-gray-600 text-sm mb-1">Carbohidratos</p>
               <p className="text-3xl font-bold text-blue-400">{macrosObjetivo.carbohidratos}</p>
-              <p className="text-gray-500 text-xs mt-1">g/día</p>
+              <p className="text-gray-600 text-xs mt-1">g/día</p>
             </div>
           </div>
           <div>
             <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/20">
               <p className="text-gray-600 text-sm mb-1">Grasas</p>
               <p className="text-3xl font-bold text-yellow-400">{macrosObjetivo.grasas}</p>
-              <p className="text-gray-500 text-xs mt-1">g/día</p>
+              <p className="text-gray-600 text-xs mt-1">g/día</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Plan Semanal */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-black">Plan Semanal</h2>
           <div className="flex items-center gap-2 text-gray-600">
@@ -92,7 +92,7 @@ export default function DietasPage() {
 
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
-            <div key={index} className="bg-white rounded-lg border border-gray-300 overflow-hidden">
+            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
               <div className="bg-white/10 px-6 py-3 border-b border-gray-300">
                 <h3 className="text-black font-semibold">{dia.dia}</h3>
               </div>
@@ -105,8 +105,8 @@ export default function DietasPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-yellow-400 text-sm font-medium">Desayuno</span>
-                      <span className="text-gray-500">•</span>
-                      <span className="text-gray-500 text-sm flex items-center gap-1">
+                      <span className="text-gray-600">•</span>
+                      <span className="text-gray-600 text-sm flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         7:00 AM
                       </span>
@@ -129,8 +129,8 @@ export default function DietasPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-orange-400 text-sm font-medium">Almuerzo</span>
-                      <span className="text-gray-500">•</span>
-                      <span className="text-gray-500 text-sm flex items-center gap-1">
+                      <span className="text-gray-600">•</span>
+                      <span className="text-gray-600 text-sm flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         2:00 PM
                       </span>
@@ -153,8 +153,8 @@ export default function DietasPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-purple-400 text-sm font-medium">Cena</span>
-                      <span className="text-gray-500">•</span>
-                      <span className="text-gray-500 text-sm flex items-center gap-1">
+                      <span className="text-gray-600">•</span>
+                      <span className="text-gray-600 text-sm flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         8:00 PM
                       </span>
