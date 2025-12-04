@@ -56,11 +56,12 @@ http://localhost:3000
 
 ## 🎨 Diseño
 
-La aplicación utiliza una paleta de colores oscuros profesionales:
-- Fondo principal: Dark slate (950)
-- Elementos: Tonos de gris oscuro (800-900)
-- Acentos: Púrpura/Violeta primario
+La aplicación utiliza una paleta monocromática limpia:
+- Fondo principal: Blanco puro (#ffffff)
+- Elementos: Blancos con bordes grises
+- Acentos: Negro para elementos activos
 - Estados: Verde (éxito), Rojo (error), Amarillo (advertencia)
+- Textos: Negro y grises oscuros para máximo contraste
 
 ## 📱 Responsive
 
