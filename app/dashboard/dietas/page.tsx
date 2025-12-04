@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2, ChevronLeft, ChevronRight, Zap } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -113,6 +113,11 @@ export default function DietasPage() {
   const [dropdownDesayunoOpen, setDropdownDesayunoOpen] = useState(false)
   const [dropdownAlmuerzoOpen, setDropdownAlmuerzoOpen] = useState(false)
   const [dropdownCenaOpen, setDropdownCenaOpen] = useState(false)
+  const [esPremium] = useState(true) // true = Premium, false = Básico
+  const [calculandoMacros, setCalculandoMacros] = useState(false)
+  const [porcionModalOpen, setPorcionModalOpen] = useState(false)
+  const [tipoComidaCalculando, setTipoComidaCalculando] = useState<'desayuno' | 'almuerzo' | 'cena' | null>(null)
+  const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
 
   // Biblioteca de alimentos con macros
   const alimentosDisponibles = {
@@ -166,6 +171,94 @@ export default function DietasPage() {
       }
     })
     return Array.from(alimentosUnicos)
+  }
+
+  const calcularMacrosConIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
+    const nombreAlimento = nuevaDieta[tipo].nombre
+    if (!nombreAlimento.trim()) {
+      alert('Por favor escribe el nombre del alimento primero')
+      return
+    }
+    setTipoComidaCalculando(tipo)
+    setPorcionModalOpen(true)
+  }
+
+  const generarMacrosConIA = async () => {
+    if (!tipoComidaCalculando || !porcionInfo.cantidad) {
+      alert('Por favor indica la cantidad/porción')
+      return
+    }
+
+    setCalculandoMacros(true)
+    
+    // Simulación de llamada a IA (aquí integrarías OpenAI, Claude, etc.)
+    // La IA analizaría el nombre del alimento + porción y devolvería los macros
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    const nombreAlimento = nuevaDieta[tipoComidaCalculando].nombre.toLowerCase()
+    const cantidad = parseFloat(porcionInfo.cantidad)
+    
+    // Simulación inteligente basada en el nombre del alimento
+    let macros = { calorias: 0, proteina: 0, carbs: 0, grasas: 0 }
+    
+    // Base de datos simplificada de alimentos comunes (por 100g)
+    const alimentosBase: { [key: string]: any } = {
+      'pollo': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
+      'arroz': { calorias: 130, proteina: 2.7, carbs: 28, grasas: 0.3 },
+      'salmón': { calorias: 206, proteina: 22, carbs: 0, grasas: 13 },
+      'avena': { calorias: 389, proteina: 17, carbs: 66, grasas: 7 },
+      'huevo': { calorias: 155, proteina: 13, carbs: 1.1, grasas: 11 },
+      'atún': { calorias: 132, proteina: 28, carbs: 0, grasas: 1.3 },
+      'pechuga': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
+      'pescado': { calorias: 110, proteina: 24, carbs: 0, grasas: 1.5 },
+      'carne': { calorias: 250, proteina: 26, carbs: 0, grasas: 15 },
+      'quinoa': { calorias: 120, proteina: 4.4, carbs: 21, grasas: 1.9 },
+      'batata': { calorias: 86, proteina: 1.6, carbs: 20, grasas: 0.1 },
+      'aguacate': { calorias: 160, proteina: 2, carbs: 9, grasas: 15 },
+    }
+    
+    // Buscar coincidencias en el nombre
+    let baseEncontrada = false
+    for (const [key, valores] of Object.entries(alimentosBase)) {
+      if (nombreAlimento.includes(key)) {
+        const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
+        macros = {
+          calorias: Math.round(valores.calorias * factor),
+          proteina: Math.round(valores.proteina * factor),
+          carbs: Math.round(valores.carbs * factor),
+          grasas: Math.round(valores.grasas * factor),
+        }
+        baseEncontrada = true
+        break
+      }
+    }
+    
+    // Si no se encuentra, hacer estimación genérica
+    if (!baseEncontrada) {
+      const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
+      macros = {
+        calorias: Math.round(150 * factor),
+        proteina: Math.round(8 * factor),
+        carbs: Math.round(20 * factor),
+        grasas: Math.round(5 * factor),
+      }
+    }
+    
+    setNuevaDieta({
+      ...nuevaDieta,
+      [tipoComidaCalculando]: {
+        ...nuevaDieta[tipoComidaCalculando],
+        calorias: macros.calorias,
+        proteina: macros.proteina,
+        carbs: macros.carbs,
+        grasas: macros.grasas,
+      }
+    })
+    
+    setCalculandoMacros(false)
+    setPorcionModalOpen(false)
+    setPorcionInfo({ cantidad: '', unidad: 'gramos' })
+    setTipoComidaCalculando(null)
   }
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
@@ -802,21 +895,23 @@ export default function DietasPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
                       </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Ej: Avena con frutas"
-                          value={nuevaDieta.desayuno.nombre}
-                          onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDropdownDesayunoOpen(!dropdownDesayunoOpen)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                        >
-                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownDesayunoOpen ? 'rotate-90' : ''}`} />
-                        </button>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            placeholder="Ej: Avena con frutas"
+                            value={nuevaDieta.desayuno.nombre}
+                            onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
+                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setDropdownDesayunoOpen(!dropdownDesayunoOpen)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                            title="Ver alimentos guardados"
+                          >
+                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownDesayunoOpen ? 'rotate-90' : ''}`} />
+                          </button>
                         
                         {/* Dropdown de alimentos guardados */}
                         {dropdownDesayunoOpen && (
@@ -901,21 +996,23 @@ export default function DietasPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
                       </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Ej: Pollo con arroz"
-                          value={nuevaDieta.almuerzo.nombre}
-                          onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDropdownAlmuerzoOpen(!dropdownAlmuerzoOpen)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                        >
-                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownAlmuerzoOpen ? 'rotate-90' : ''}`} />
-                        </button>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            placeholder="Ej: Pollo con arroz"
+                            value={nuevaDieta.almuerzo.nombre}
+                            onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
+                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setDropdownAlmuerzoOpen(!dropdownAlmuerzoOpen)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                            title="Ver alimentos guardados"
+                          >
+                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownAlmuerzoOpen ? 'rotate-90' : ''}`} />
+                          </button>
                         
                         {/* Dropdown de alimentos guardados */}
                         {dropdownAlmuerzoOpen && (
@@ -1000,21 +1097,23 @@ export default function DietasPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         NOMBRE DEL ALIMENTO
                       </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Ej: Salmón con vegetales"
-                          value={nuevaDieta.cena.nombre}
-                          onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                          className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDropdownCenaOpen(!dropdownCenaOpen)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                        >
-                          <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownCenaOpen ? 'rotate-90' : ''}`} />
-                        </button>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            placeholder="Ej: Salmón con vegetales"
+                            value={nuevaDieta.cena.nombre}
+                            onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
+                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setDropdownCenaOpen(!dropdownCenaOpen)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
+                            title="Ver alimentos guardados"
+                          >
+                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownCenaOpen ? 'rotate-90' : ''}`} />
+                          </button>
                         
                         {/* Dropdown de alimentos guardados */}
                         {dropdownCenaOpen && (
@@ -1045,6 +1144,19 @@ export default function DietasPage() {
                               <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
                             </div>
                           </div>
+                        )}
+                        </div>
+                        
+                        {esPremium && (
+                          <button
+                            type="button"
+                            onClick={() => calcularMacrosConIA('cena')}
+                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2 shadow-lg"
+                            title="Calcular macros con IA"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            IA
+                          </button>
                         )}
                       </div>
                     </div>
@@ -1278,6 +1390,97 @@ export default function DietasPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Porción para IA */}
+      {porcionModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-black">Calcular Macros con IA</h3>
+                <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaCalculando || 'desayuno'].nombre}</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-700 mb-4 text-sm">
+              Para calcular los macronutrientes correctamente, necesitamos saber la cantidad:
+            </p>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cantidad
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ej: 150, 200..."
+                  value={porcionInfo.cantidad}
+                  onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Unidad
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['gramos', 'piezas', 'tazas'].map((unidad) => (
+                    <button
+                      key={unidad}
+                      type="button"
+                      onClick={() => setPorcionInfo({...porcionInfo, unidad})}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                        porcionInfo.unidad === unidad
+                          ? 'border-purple-600 bg-purple-50 text-purple-900'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {unidad}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setPorcionModalOpen(false)
+                  setPorcionInfo({ cantidad: '', unidad: 'gramos' })
+                  setTipoComidaCalculando(null)
+                }}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={generarMacrosConIA}
+                disabled={calculandoMacros || !porcionInfo.cantidad}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {calculandoMacros ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Calculando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    Calcular
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
