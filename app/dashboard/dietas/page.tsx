@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2, ChevronLeft, ChevronRight, Zap } from 'lucide-react'
+import { useState } from 'react'
+import { Calendar, Clock, ChefHat, Plus, X } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -18,21 +18,8 @@ type DiaPlan = {
   cena: Comida
 }
 
-type DatosUsuario = {
-  peso: number
-  altura: number
-  edad: number
-  sexo: 'masculino' | 'femenino'
-  objetivo: 'perder' | 'mantener' | 'ganar'
-  nivelActividad: 'sedentario' | 'ligero' | 'moderado' | 'intenso' | 'atleta'
-  caloriasObjetivo: number
-  proteinaObjetivo: number
-  carbsObjetivo: number
-  grasasObjetivo: number
-}
-
 export default function DietasPage() {
-  const dietasIniciales = [
+  const [dietaPlan, setDietaPlan] = useState<DiaPlan[]>([
     {
       dia: 'Lunes',
       desayuno: { nombre: 'Avena con Proteína', calorias: 450, proteina: 30, carbs: 52, grasas: 12 },
@@ -51,245 +38,15 @@ export default function DietasPage() {
       almuerzo: { nombre: 'Atún con Pasta Integral', calorias: 650, proteina: 52, carbs: 72, grasas: 12 },
       cena: { nombre: 'Pescado al Horno', calorias: 440, proteina: 45, carbs: 18, grasas: 20 },
     },
-  ]
-
-  const [dietaPlan, setDietaPlan] = useState<DiaPlan[]>([])
-
-  // Cargar dietas desde localStorage al iniciar
-  useEffect(() => {
-    const dietasGuardadas = localStorage.getItem('athletixy_dietas')
-    const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
-    
-    if (primeraVez) {
-      // Ya se inicializó antes, cargar lo que haya (incluso si es vacío)
-      try {
-        const dietas = JSON.parse(dietasGuardadas || '[]')
-        setDietaPlan(dietas)
-      } catch (error) {
-        console.error('Error cargando dietas:', error)
-        setDietaPlan([])
-      }
-    } else {
-      // Primera vez, cargar dietas de ejemplo
-      setDietaPlan(dietasIniciales)
-      localStorage.setItem('athletixy_dietas', JSON.stringify(dietasIniciales))
-      localStorage.setItem('athletixy_dietas_initialized', 'true')
-    }
-  }, [])
-
-  // Guardar dietas en localStorage cada vez que cambien
-  useEffect(() => {
-    const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
-    if (primeraVez && dietaPlan !== null) {
-      // Guardar incluso si está vacío (array vacío significa que el usuario eliminó todo)
-      localStorage.setItem('athletixy_dietas', JSON.stringify(dietaPlan))
-    }
-  }, [dietaPlan])
+  ])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
-  const [generandoIA, setGenerandoIA] = useState(false)
-  const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
-  const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
-  const [fechaInicio, setFechaInicio] = useState<Date>(() => {
-    const hoy = new Date()
-    const dia = hoy.getDay()
-    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
-    return new Date(hoy.getFullYear(), hoy.getMonth(), diff)
-  })
-  const [fechaFin, setFechaFin] = useState<Date>(() => {
-    const hoy = new Date()
-    const dia = hoy.getDay()
-    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
-    const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), diff)
-    const fin = new Date(inicio)
-    fin.setDate(inicio.getDate() + 6)
-    return fin
-  })
-  const [calendarioOpen, setCalendarioOpen] = useState(false)
-  const [mesCalendario, setMesCalendario] = useState(new Date())
-  const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
-  const [dropdownDesayunoOpen, setDropdownDesayunoOpen] = useState(false)
-  const [dropdownAlmuerzoOpen, setDropdownAlmuerzoOpen] = useState(false)
-  const [dropdownCenaOpen, setDropdownCenaOpen] = useState(false)
-  const [esPremium] = useState(true) // true = Premium, false = Básico
-  const [calculandoMacros, setCalculandoMacros] = useState(false)
-  const [porcionModalOpen, setPorcionModalOpen] = useState(false)
-  const [tipoComidaCalculando, setTipoComidaCalculando] = useState<'desayuno' | 'almuerzo' | 'cena' | null>(null)
-  const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
-  
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
     desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
   })
-
-  // Biblioteca de alimentos con macros
-  const alimentosDisponibles = {
-    desayuno: [
-      { nombre: 'Avena con Proteína', calorias: 450, proteina: 30, carbs: 52, grasas: 12 },
-      { nombre: 'Huevos Revueltos con Aguacate', calorias: 420, proteina: 28, carbs: 18, grasas: 28 },
-      { nombre: 'Batido de Proteína con Banana', calorias: 380, proteina: 35, carbs: 42, grasas: 8 },
-      { nombre: 'Tortilla de Claras y Espinacas', calorias: 280, proteina: 32, carbs: 8, grasas: 12 },
-      { nombre: 'Yogurt Griego con Granola', calorias: 350, proteina: 25, carbs: 45, grasas: 10 },
-      { nombre: 'Tostadas Integrales con Mantequilla de Maní', calorias: 420, proteina: 18, carbs: 48, grasas: 18 },
-      { nombre: 'Pancakes de Proteína', calorias: 400, proteina: 30, carbs: 40, grasas: 12 },
-    ],
-    almuerzo: [
-      { nombre: 'Pollo con Arroz Integral', calorias: 680, proteina: 55, carbs: 68, grasas: 15 },
-      { nombre: 'Carne Magra con Quinoa', calorias: 720, proteina: 58, carbs: 65, grasas: 18 },
-      { nombre: 'Atún con Pasta Integral', calorias: 650, proteina: 52, carbs: 72, grasas: 12 },
-      { nombre: 'Salmón con Batata', calorias: 620, proteina: 48, carbs: 55, grasas: 20 },
-      { nombre: 'Pechuga con Arroz Basmati', calorias: 700, proteina: 60, carbs: 70, grasas: 14 },
-      { nombre: 'Lentejas con Vegetales', calorias: 520, proteina: 28, carbs: 72, grasas: 8 },
-    ],
-    cena: [
-      { nombre: 'Salmón con Vegetales', calorias: 520, proteina: 42, carbs: 28, grasas: 25 },
-      { nombre: 'Pechuga con Ensalada', calorias: 480, proteina: 48, carbs: 22, grasas: 18 },
-      { nombre: 'Pescado al Horno con Brócoli', calorias: 440, proteina: 45, carbs: 18, grasas: 20 },
-      { nombre: 'Atún con Ensalada Mixta', calorias: 380, proteina: 40, carbs: 15, grasas: 16 },
-      { nombre: 'Pollo a la Plancha con Espárragos', calorias: 420, proteina: 46, carbs: 20, grasas: 14 },
-      { nombre: 'Merluza con Vegetales al Vapor', calorias: 360, proteina: 38, carbs: 18, grasas: 12 },
-    ],
-  }
-
-  const seleccionarAlimentoPredefinido = (tipo: 'desayuno' | 'almuerzo' | 'cena', nombreAlimento: string) => {
-    const alimento = alimentosDisponibles[tipo].find(a => a.nombre === nombreAlimento)
-    if (alimento) {
-      setNuevaDieta({
-        ...nuevaDieta,
-        [tipo]: alimento
-      })
-    }
-    // Cerrar dropdowns
-    setDropdownDesayunoOpen(false)
-    setDropdownAlmuerzoOpen(false)
-    setDropdownCenaOpen(false)
-  }
-
-  // Obtener alimentos únicos de las dietas guardadas
-  const obtenerAlimentosGuardados = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
-    const alimentosUnicos = new Set<string>()
-    dietaPlan.forEach(dia => {
-      if (dia[tipo].nombre) {
-        alimentosUnicos.add(dia[tipo].nombre)
-      }
-    })
-    return Array.from(alimentosUnicos)
-  }
-
-  const calcularMacrosConIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
-    const nombreAlimento = nuevaDieta[tipo].nombre
-    if (!nombreAlimento.trim()) {
-      alert('Por favor escribe el nombre del alimento primero')
-      return
-    }
-    setTipoComidaCalculando(tipo)
-    setPorcionModalOpen(true)
-  }
-
-  const generarMacrosConIA = async () => {
-    if (!tipoComidaCalculando || !porcionInfo.cantidad) {
-      alert('Por favor indica la cantidad/porción')
-      return
-    }
-
-    setCalculandoMacros(true)
-    
-    // Simulación de llamada a IA (aquí integrarías OpenAI, Claude, etc.)
-    // La IA analizaría el nombre del alimento + porción y devolvería los macros
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    const nombreAlimento = nuevaDieta[tipoComidaCalculando].nombre.toLowerCase()
-    const cantidad = parseFloat(porcionInfo.cantidad)
-    
-    // Simulación inteligente basada en el nombre del alimento
-    let macros = { calorias: 0, proteina: 0, carbs: 0, grasas: 0 }
-    
-    // Base de datos simplificada de alimentos comunes (por 100g)
-    const alimentosBase: { [key: string]: any } = {
-      'pollo': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
-      'arroz': { calorias: 130, proteina: 2.7, carbs: 28, grasas: 0.3 },
-      'salmón': { calorias: 206, proteina: 22, carbs: 0, grasas: 13 },
-      'avena': { calorias: 389, proteina: 17, carbs: 66, grasas: 7 },
-      'huevo': { calorias: 155, proteina: 13, carbs: 1.1, grasas: 11 },
-      'atún': { calorias: 132, proteina: 28, carbs: 0, grasas: 1.3 },
-      'pechuga': { calorias: 165, proteina: 31, carbs: 0, grasas: 3.6 },
-      'pescado': { calorias: 110, proteina: 24, carbs: 0, grasas: 1.5 },
-      'carne': { calorias: 250, proteina: 26, carbs: 0, grasas: 15 },
-      'quinoa': { calorias: 120, proteina: 4.4, carbs: 21, grasas: 1.9 },
-      'batata': { calorias: 86, proteina: 1.6, carbs: 20, grasas: 0.1 },
-      'aguacate': { calorias: 160, proteina: 2, carbs: 9, grasas: 15 },
-    }
-    
-    // Buscar coincidencias en el nombre
-    let baseEncontrada = false
-    for (const [key, valores] of Object.entries(alimentosBase)) {
-      if (nombreAlimento.includes(key)) {
-        const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
-        macros = {
-          calorias: Math.round(valores.calorias * factor),
-          proteina: Math.round(valores.proteina * factor),
-          carbs: Math.round(valores.carbs * factor),
-          grasas: Math.round(valores.grasas * factor),
-        }
-        baseEncontrada = true
-        break
-      }
-    }
-    
-    // Si no se encuentra, hacer estimación genérica
-    if (!baseEncontrada) {
-      const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
-      macros = {
-        calorias: Math.round(150 * factor),
-        proteina: Math.round(8 * factor),
-        carbs: Math.round(20 * factor),
-        grasas: Math.round(5 * factor),
-      }
-    }
-    
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipoComidaCalculando]: {
-        ...nuevaDieta[tipoComidaCalculando],
-        calorias: macros.calorias,
-        proteina: macros.proteina,
-        carbs: macros.carbs,
-        grasas: macros.grasas,
-      }
-    })
-    
-    setCalculandoMacros(false)
-    setPorcionModalOpen(false)
-    setPorcionInfo({ cantidad: '', unidad: 'gramos' })
-    setTipoComidaCalculando(null)
-  }
-
-  const [datosUsuario, setDatosUsuario] = useState<DatosUsuario>({
-    peso: 75,
-    altura: 175,
-    edad: 28,
-    sexo: 'masculino',
-    objetivo: 'mantener',
-    nivelActividad: 'moderado',
-    caloriasObjetivo: 2800,
-    proteinaObjetivo: 180,
-    carbsObjetivo: 320,
-    grasasObjetivo: 80,
-  })
-
-  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipo]: {
-        ...nuevaDieta[tipo],
-        [campo]: valor
-      }
-    })
-  }
 
   const macrosObjetivo = {
     calorias: 2800,
@@ -300,207 +57,28 @@ export default function DietasPage() {
 
   const handleAgregarDieta = () => {
     if (nuevaDieta.dia && nuevaDieta.desayuno.nombre && nuevaDieta.almuerzo.nombre && nuevaDieta.cena.nombre) {
-      if (editandoIndex !== null) {
-        // Editar dieta existente
-        const nuevoPlan = [...dietaPlan]
-        nuevoPlan[editandoIndex] = nuevaDieta
-        setDietaPlan(nuevoPlan)
-        setEditandoIndex(null)
-      } else {
-        // Agregar nueva dieta
-        setDietaPlan([...dietaPlan, nuevaDieta])
-      }
+      setDietaPlan([...dietaPlan, nuevaDieta])
       setIsModalOpen(false)
-      resetForm()
+      // Reset form
+      setNuevaDieta({
+        dia: '',
+        desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+        almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+        cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+      })
     } else {
       alert('Por favor completa todos los campos')
     }
   }
 
-  const handleEditarDieta = (index: number) => {
-    setEditandoIndex(index)
-    setNuevaDieta(dietaPlan[index])
-    setModoCreacion('manual')
-    setIsModalOpen(true)
-  }
-
-  const handleEliminarDieta = (index: number) => {
-    setDietaAEliminar(index)
-    setConfirmDeleteOpen(true)
-  }
-
-  const confirmarEliminacion = () => {
-    if (dietaAEliminar !== null) {
-      const nuevoPlan = dietaPlan.filter((_, i) => i !== dietaAEliminar)
-      setDietaPlan(nuevoPlan)
-      setConfirmDeleteOpen(false)
-      setDietaAEliminar(null)
-    }
-  }
-
-  const cancelarEliminacion = () => {
-    setConfirmDeleteOpen(false)
-    setDietaAEliminar(null)
-  }
-
-  const formatoFecha = (d: Date) => {
-    return `${d.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}`
-  }
-
-  const obtenerRangoSemana = () => {
-    return `${formatoFecha(fechaInicio)} - ${formatoFecha(fechaFin)}`
-  }
-
-  const cambiarPeriodo = (direccion: 'anterior' | 'siguiente') => {
-    const dias = Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    const nuevaInicio = new Date(fechaInicio)
-    const nuevaFin = new Date(fechaFin)
-    
-    if (direccion === 'anterior') {
-      nuevaInicio.setDate(nuevaInicio.getDate() - dias)
-      nuevaFin.setDate(nuevaFin.getDate() - dias)
-    } else {
-      nuevaInicio.setDate(nuevaInicio.getDate() + dias)
-      nuevaFin.setDate(nuevaFin.getDate() + dias)
-    }
-    
-    setFechaInicio(nuevaInicio)
-    setFechaFin(nuevaFin)
-  }
-
-  const irAHoy = () => {
-    const hoy = new Date()
-    const dia = hoy.getDay()
-    const diff = hoy.getDate() - dia + (dia === 0 ? -6 : 1)
-    const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), diff)
-    const fin = new Date(inicio)
-    fin.setDate(inicio.getDate() + 6)
-    setFechaInicio(inicio)
-    setFechaFin(fin)
-  }
-
-  const getDiasDelMes = (fecha: Date) => {
-    const año = fecha.getFullYear()
-    const mes = fecha.getMonth()
-    const primerDia = new Date(año, mes, 1)
-    const ultimoDia = new Date(año, mes + 1, 0)
-    
-    const dias: Date[] = []
-    const diaInicio = primerDia.getDay()
-    const diasAnteriores = diaInicio === 0 ? 6 : diaInicio - 1
-    
-    for (let i = diasAnteriores; i > 0; i--) {
-      const dia = new Date(año, mes, 1 - i)
-      dias.push(dia)
-    }
-    
-    for (let i = 1; i <= ultimoDia.getDate(); i++) {
-      dias.push(new Date(año, mes, i))
-    }
-    
-    const diasRestantes = 42 - dias.length
-    for (let i = 1; i <= diasRestantes; i++) {
-      dias.push(new Date(año, mes + 1, i))
-    }
-    
-    return dias
-  }
-
-  const seleccionarDia = (dia: Date) => {
-    if (seleccionandoRango === 'inicio') {
-      setFechaInicio(dia)
-      setSeleccionandoRango('fin')
-    } else {
-      if (dia >= fechaInicio) {
-        setFechaFin(dia)
-        setCalendarioOpen(false)
-        setSeleccionandoRango('inicio')
-      } else {
-        setFechaInicio(dia)
-      }
-    }
-  }
-
-  const estaEnRango = (dia: Date) => {
-    return dia >= fechaInicio && dia <= fechaFin
-  }
-
-  const esMismoDia = (d1: Date, d2: Date) => {
-    return d1.getDate() === d2.getDate() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getFullYear() === d2.getFullYear()
-  }
-
-  const resetForm = () => {
+  const updateComida = (tipo: 'desayuno' | 'almuerzo' | 'cena', campo: string, valor: string | number) => {
     setNuevaDieta({
-      dia: '',
-      desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-      almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
-      cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
+      ...nuevaDieta,
+      [tipo]: {
+        ...nuevaDieta[tipo],
+        [campo]: valor
+      }
     })
-    setEditandoIndex(null)
-  }
-
-  const generarNombrePlato = (objetivo: string, tipoComida: string): string => {
-    const platosDesayuno = {
-      perder: ['Claras de Huevo con Espinacas', 'Avena con Frutos Rojos', 'Yogurt Griego con Semillas'],
-      mantener: ['Huevos Revueltos con Aguacate', 'Avena con Proteína y Banana', 'Tostadas Integrales con Mantequilla de Maní'],
-      ganar: ['Tortilla de 4 Huevos con Queso', 'Avena con Proteína, Nueces y Miel', 'Pan Integral con Mantequilla y Mermelada'],
-    }
-    
-    const platosAlmuerzo = {
-      perder: ['Pechuga de Pollo con Ensalada', 'Pescado al Vapor con Brócoli', 'Atún con Quinoa y Vegetales'],
-      mantener: ['Pollo con Arroz Integral y Vegetales', 'Salmón con Batata y Espárragos', 'Carne Magra con Quinoa'],
-      ganar: ['Pollo con Arroz Blanco y Aguacate', 'Carne Roja con Pasta Integral', 'Salmón con Arroz Basmati'],
-    }
-    
-    const platosCena = {
-      perder: ['Pescado a la Plancha con Ensalada', 'Pechuga con Vegetales al Vapor', 'Merluza con Espárragos'],
-      mantener: ['Salmón con Brócoli', 'Pollo con Ensalada Mixta', 'Pescado con Vegetales Asados'],
-      ganar: ['Carne con Batata', 'Pollo con Arroz y Aguacate', 'Salmón con Quinoa'],
-    }
-    
-    const platos = tipoComida === 'desayuno' ? platosDesayuno : tipoComida === 'almuerzo' ? platosAlmuerzo : platosCena
-    const opciones = platos[objetivo as keyof typeof platos]
-    return opciones[Math.floor(Math.random() * opciones.length)]
-  }
-
-  const generarDietaConIA = async () => {
-    setGenerandoIA(true)
-    
-    // Simulación de llamada a API de IA (aquí integrarías OpenAI, Claude, etc.)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Generación simulada basada en los datos del usuario
-    const dietaGenerada: DiaPlan = {
-      dia: 'Jueves (Generado por IA)',
-      desayuno: {
-        nombre: generarNombrePlato(datosUsuario.objetivo, 'desayuno'),
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.3),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.35),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.25),
-      },
-      almuerzo: {
-        nombre: generarNombrePlato(datosUsuario.objetivo, 'almuerzo'),
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.45),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.45),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.45),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.40),
-      },
-      cena: {
-        nombre: generarNombrePlato(datosUsuario.objetivo, 'cena'),
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.25),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.25),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.20),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.35),
-      },
-    }
-    
-    setGenerandoIA(false)
-    setDietaPlan([...dietaPlan, dietaGenerada])
-    setIsModalOpen(false)
-    setModoCreacion('manual')
   }
 
   return (
@@ -557,183 +135,19 @@ export default function DietasPage() {
 
       {/* Plan Semanal */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-black">Plan Semanal</h2>
-          
-          <div className="flex items-center gap-2 relative">
-            {/* Botones de navegación */}
-            <button
-              onClick={() => cambiarPeriodo('anterior')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
-              title="Período anterior"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            
-            {/* Selector de rango */}
-            <div className="relative">
-              <button
-                onClick={() => setCalendarioOpen(!calendarioOpen)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition group ${
-                  calendarioOpen 
-                    ? 'bg-blue-100 border-2 border-blue-300' 
-                    : 'hover:bg-gray-100 border-2 border-transparent'
-                }`}
-              >
-                <Calendar className={`w-5 h-5 ${calendarioOpen ? 'text-blue-600' : 'text-gray-600 group-hover:text-black'}`} />
-                <span className={`text-sm font-medium whitespace-nowrap ${
-                  calendarioOpen ? 'text-blue-700' : 'text-gray-600 group-hover:text-black'
-                }`}>
-                  {obtenerRangoSemana()}
-                </span>
-              </button>
-
-              {/* Calendario de selección de rango - COMPACTO - DROPDOWN */}
-              {calendarioOpen && (
-          <div className="absolute top-full mt-2 right-0 z-50 p-3 bg-white border-2 border-blue-200 rounded-lg shadow-xl w-80">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs font-semibold text-gray-800">
-                Selecciona rango
-              </h3>
-              <button
-                onClick={() => {
-                  setCalendarioOpen(false)
-                  setSeleccionandoRango('inicio')
-                }}
-                className="text-gray-500 hover:text-red-600 transition p-0.5 hover:bg-gray-100 rounded"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="bg-blue-50 px-2 py-1 rounded mb-2">
-              <p className="text-xs text-gray-700">
-                {seleccionandoRango === 'inicio' ? (
-                  <>📅 <strong>Paso 1:</strong> Inicio</>
-                ) : (
-                  <>📅 <strong>Paso 2:</strong> Final</>
-                )}
-              </p>
-            </div>
-
-            {/* Navegación del mes */}
-            <div className="flex items-center justify-between mb-2">
-              <button
-                onClick={() => {
-                  const nuevoMes = new Date(mesCalendario)
-                  nuevoMes.setMonth(nuevoMes.getMonth() - 1)
-                  setMesCalendario(nuevoMes)
-                }}
-                className="p-1 hover:bg-gray-100 rounded transition"
-              >
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
-              </button>
-              
-              <span className="text-sm font-bold text-gray-800">
-                {['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][mesCalendario.getMonth()]} {mesCalendario.getFullYear()}
-              </span>
-              
-              <button
-                onClick={() => {
-                  const nuevoMes = new Date(mesCalendario)
-                  nuevoMes.setMonth(nuevoMes.getMonth() + 1)
-                  setMesCalendario(nuevoMes)
-                }}
-                className="p-1 hover:bg-gray-100 rounded transition"
-              >
-                <ChevronRight className="w-4 h-4 text-gray-600" />
-              </button>
-            </div>
-
-            {/* Días de la semana */}
-            <div className="grid grid-cols-7 gap-0.5 mb-1">
-              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((dia, i) => (
-                <div key={i} className="text-center text-xs font-semibold text-gray-600 py-1">
-                  {dia}
-                </div>
-              ))}
-            </div>
-
-            {/* Días del mes */}
-            <div className="grid grid-cols-7 gap-0.5">
-              {getDiasDelMes(mesCalendario).map((dia, index) => {
-                const esOtroMes = dia.getMonth() !== mesCalendario.getMonth()
-                const enRango = estaEnRango(dia)
-                const esInicio = esMismoDia(dia, fechaInicio)
-                const esFin = esMismoDia(dia, fechaFin)
-                const esHoy = esMismoDia(dia, new Date())
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => !esOtroMes && seleccionarDia(dia)}
-                    disabled={esOtroMes}
-                    className={`
-                      p-1.5 text-xs rounded transition
-                      ${esOtroMes ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'}
-                      ${enRango && !esOtroMes ? 'bg-blue-100' : ''}
-                      ${(esInicio || esFin) && !esOtroMes ? 'bg-blue-600 text-white font-bold' : ''}
-                      ${esHoy && !esOtroMes && !enRango ? 'border border-blue-400' : ''}
-                    `}
-                  >
-                    {dia.getDate()}
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Resumen del rango seleccionado */}
-            <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-              <p className="text-xs font-semibold text-gray-800">
-                {formatoFecha(fechaInicio)} - {formatoFecha(fechaFin)}
-                <span className="ml-1 text-gray-500 font-normal">
-                  ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1}d)
-                </span>
-              </p>
-            </div>
-          </div>
-              )}
-            </div>
-            
-            <button
-              onClick={() => cambiarPeriodo('siguiente')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
-              title="Período siguiente"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </button>
-
-            {/* Botón ir a hoy */}
-            <button
-              onClick={irAHoy}
-              className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition"
-            >
-              Hoy
-            </button>
+          <div className="flex items-center gap-2 text-gray-600">
+            <Calendar className="w-5 h-5" />
+            <span className="text-sm">Semana del 4-10 Dic</span>
           </div>
         </div>
 
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
-            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-gray-300 transition">
-              <div className="bg-gray-50 px-6 py-3 border-b border-gray-300 flex items-center justify-between">
+            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
+              <div className="bg-gray-50 px-6 py-3 border-b border-gray-300">
                 <h3 className="text-black font-semibold">{dia.dia}</h3>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEditarDieta(index)}
-                    className="p-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-blue-600"
-                    title="Editar dieta"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleEliminarDieta(index)}
-                    className="p-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-red-600"
-                    title="Eliminar dieta"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
               </div>
               <div className="p-6 space-y-4">
                 {/* Desayuno */}
@@ -817,705 +231,217 @@ export default function DietasPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-              <h2 className="text-2xl font-bold text-black">
-                {editandoIndex !== null ? 'Editar Dieta' : 'Nueva Dieta'}
-              </h2>
+            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-black">Nueva Dieta</h2>
               <button
-                onClick={() => {
-                  setIsModalOpen(false)
-                  setModoCreacion('manual')
-                  resetForm()
-                }}
+                onClick={() => setIsModalOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            {/* Toggle Manual / IA */}
-            <div className="px-6 pt-6">
-              <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
-                <button
-                  onClick={() => setModoCreacion('manual')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
-                    modoCreacion === 'manual'
-                      ? 'bg-white text-black shadow-sm'
-                      : 'text-gray-600 hover:text-black'
-                  }`}
-                >
-                  Crear Manual
-                </button>
-                <button
-                  onClick={() => setModoCreacion('ia')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
-                    modoCreacion === 'ia'
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-black'
-                  }`}
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Generar con IA
-                  <span className="ml-2 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                    PREMIUM
-                  </span>
-                </button>
+            <div className="p-6 space-y-6">
+              {/* Día de la semana */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Día de la semana
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej: Jueves, Viernes..."
+                  value={nuevaDieta.dia}
+                  onChange={(e) => setNuevaDieta({...nuevaDieta, dia: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
               </div>
-            </div>
 
-            {modoCreacion === 'manual' ? (
-              // FORMULARIO MANUAL
-              <div className="p-6 space-y-6">
-                {/* Día de la semana */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Día de la semana
-                  </label>
-                  <select
-                    value={nuevaDieta.dia}
-                    onChange={(e) => setNuevaDieta({...nuevaDieta, dia: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white cursor-pointer"
-                  >
-                    <option value="">Selecciona un día...</option>
-                    <option value="Lunes">Lunes</option>
-                    <option value="Martes">Martes</option>
-                    <option value="Miércoles">Miércoles</option>
-                    <option value="Jueves">Jueves</option>
-                    <option value="Viernes">Viernes</option>
-                    <option value="Sábado">Sábado</option>
-                    <option value="Domingo">Domingo</option>
-                  </select>
-                </div>
-
-                {/* Desayuno */}
-                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        NOMBRE DEL ALIMENTO
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            placeholder="Ej: Avena con frutas"
-                            value={nuevaDieta.desayuno.nombre}
-                            onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
-                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setDropdownDesayunoOpen(!dropdownDesayunoOpen)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                            title="Ver alimentos guardados"
-                          >
-                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownDesayunoOpen ? 'rotate-90' : ''}`} />
-                          </button>
-                        
-                        {/* Dropdown de alimentos guardados */}
-                        {dropdownDesayunoOpen && (
-                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            <div className="p-2 border-b border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
-                            </div>
-                            {obtenerAlimentosGuardados('desayuno').length > 0 ? (
-                              obtenerAlimentosGuardados('desayuno').map((alimento, idx) => (
-                                <button
-                                  key={idx}
-                                  type="button"
-                                  onClick={() => {
-                                    updateComida('desayuno', 'nombre', alimento)
-                                    setDropdownDesayunoOpen(false)
-                                  }}
-                                  className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition text-sm text-gray-700 hover:text-black"
-                                >
-                                  {alimento}
-                                </button>
-                              ))
-                            ) : (
-                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                                No hay alimentos guardados aún
-                              </div>
-                            )}
-                            <div className="p-2 border-t border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                      <input
-                        type="number"
-                        placeholder="450"
-                        value={nuevaDieta.desayuno.calorias || ''}
-                        onChange={(e) => updateComida('desayuno', 'calorias', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                      <input
-                        type="number"
-                        placeholder="30"
-                        value={nuevaDieta.desayuno.proteina || ''}
-                        onChange={(e) => updateComida('desayuno', 'proteina', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                      <input
-                        type="number"
-                        placeholder="52"
-                        value={nuevaDieta.desayuno.carbs || ''}
-                        onChange={(e) => updateComida('desayuno', 'carbs', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                      <input
-                        type="number"
-                        placeholder="12"
-                        value={nuevaDieta.desayuno.grasas || ''}
-                        onChange={(e) => updateComida('desayuno', 'grasas', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      />
-                    </div>
+              {/* Desayuno */}
+              <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-yellow-600 mb-4">Desayuno</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Avena con frutas"
+                      value={nuevaDieta.desayuno.nombre}
+                      onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                    <input
+                      type="number"
+                      placeholder="450"
+                      value={nuevaDieta.desayuno.calorias || ''}
+                      onChange={(e) => updateComida('desayuno', 'calorias', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                    <input
+                      type="number"
+                      placeholder="30"
+                      value={nuevaDieta.desayuno.proteina || ''}
+                      onChange={(e) => updateComida('desayuno', 'proteina', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                    <input
+                      type="number"
+                      placeholder="52"
+                      value={nuevaDieta.desayuno.carbs || ''}
+                      onChange={(e) => updateComida('desayuno', 'carbs', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                    <input
+                      type="number"
+                      placeholder="12"
+                      value={nuevaDieta.desayuno.grasas || ''}
+                      onChange={(e) => updateComida('desayuno', 'grasas', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Almuerzo */}
-                <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        NOMBRE DEL ALIMENTO
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            placeholder="Ej: Pollo con arroz"
-                            value={nuevaDieta.almuerzo.nombre}
-                            onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
-                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setDropdownAlmuerzoOpen(!dropdownAlmuerzoOpen)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                            title="Ver alimentos guardados"
-                          >
-                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownAlmuerzoOpen ? 'rotate-90' : ''}`} />
-                          </button>
-                        
-                        {/* Dropdown de alimentos guardados */}
-                        {dropdownAlmuerzoOpen && (
-                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            <div className="p-2 border-b border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
-                            </div>
-                            {obtenerAlimentosGuardados('almuerzo').length > 0 ? (
-                              obtenerAlimentosGuardados('almuerzo').map((alimento, idx) => (
-                                <button
-                                  key={idx}
-                                  type="button"
-                                  onClick={() => {
-                                    updateComida('almuerzo', 'nombre', alimento)
-                                    setDropdownAlmuerzoOpen(false)
-                                  }}
-                                  className="w-full text-left px-4 py-2 hover:bg-orange-50 transition text-sm text-gray-700 hover:text-black"
-                                >
-                                  {alimento}
-                                </button>
-                              ))
-                            ) : (
-                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                                No hay alimentos guardados aún
-                              </div>
-                            )}
-                            <div className="p-2 border-t border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                      <input
-                        type="number"
-                        placeholder="680"
-                        value={nuevaDieta.almuerzo.calorias || ''}
-                        onChange={(e) => updateComida('almuerzo', 'calorias', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                      <input
-                        type="number"
-                        placeholder="55"
-                        value={nuevaDieta.almuerzo.proteina || ''}
-                        onChange={(e) => updateComida('almuerzo', 'proteina', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                      <input
-                        type="number"
-                        placeholder="68"
-                        value={nuevaDieta.almuerzo.carbs || ''}
-                        onChange={(e) => updateComida('almuerzo', 'carbs', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                      <input
-                        type="number"
-                        placeholder="15"
-                        value={nuevaDieta.almuerzo.grasas || ''}
-                        onChange={(e) => updateComida('almuerzo', 'grasas', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
+              {/* Almuerzo */}
+              <div className="bg-orange-50 border-2 border-orange-200 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-orange-600 mb-4">Almuerzo</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Pollo con arroz"
+                      value={nuevaDieta.almuerzo.nombre}
+                      onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                    <input
+                      type="number"
+                      placeholder="680"
+                      value={nuevaDieta.almuerzo.calorias || ''}
+                      onChange={(e) => updateComida('almuerzo', 'calorias', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                    <input
+                      type="number"
+                      placeholder="55"
+                      value={nuevaDieta.almuerzo.proteina || ''}
+                      onChange={(e) => updateComida('almuerzo', 'proteina', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                    <input
+                      type="number"
+                      placeholder="68"
+                      value={nuevaDieta.almuerzo.carbs || ''}
+                      onChange={(e) => updateComida('almuerzo', 'carbs', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                    <input
+                      type="number"
+                      placeholder="15"
+                      value={nuevaDieta.almuerzo.grasas || ''}
+                      onChange={(e) => updateComida('almuerzo', 'grasas', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Cena */}
-                <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        NOMBRE DEL ALIMENTO
-                      </label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <input
-                            type="text"
-                            placeholder="Ej: Salmón con vegetales"
-                            value={nuevaDieta.cena.nombre}
-                            onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
-                            className="w-full pl-4 pr-12 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setDropdownCenaOpen(!dropdownCenaOpen)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded transition"
-                            title="Ver alimentos guardados"
-                          >
-                            <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${dropdownCenaOpen ? 'rotate-90' : ''}`} />
-                          </button>
-                        
-                        {/* Dropdown de alimentos guardados */}
-                        {dropdownCenaOpen && (
-                          <div className="absolute z-10 top-full mt-1 w-full bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            <div className="p-2 border-b border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-600 font-semibold">Alimentos guardados:</p>
-                            </div>
-                            {obtenerAlimentosGuardados('cena').length > 0 ? (
-                              obtenerAlimentosGuardados('cena').map((alimento, idx) => (
-                                <button
-                                  key={idx}
-                                  type="button"
-                                  onClick={() => {
-                                    updateComida('cena', 'nombre', alimento)
-                                    setDropdownCenaOpen(false)
-                                  }}
-                                  className="w-full text-left px-4 py-2 hover:bg-purple-50 transition text-sm text-gray-700 hover:text-black"
-                                >
-                                  {alimento}
-                                </button>
-                              ))
-                            ) : (
-                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                                No hay alimentos guardados aún
-                              </div>
-                            )}
-                            <div className="p-2 border-t border-gray-200 bg-gray-50">
-                              <p className="text-xs text-gray-500">💡 Los alimentos se guardan al crear dietas</p>
-                            </div>
-                          </div>
-                        )}
-                        </div>
-                        
-                        {esPremium && (
-                          <button
-                            type="button"
-                            onClick={() => calcularMacrosConIA('cena')}
-                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2 shadow-lg"
-                            title="Calcular macros con IA"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                            IA
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
-                      <input
-                        type="number"
-                        placeholder="520"
-                        value={nuevaDieta.cena.calorias || ''}
-                        onChange={(e) => updateComida('cena', 'calorias', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
-                      <input
-                        type="number"
-                        placeholder="42"
-                        value={nuevaDieta.cena.proteina || ''}
-                        onChange={(e) => updateComida('cena', 'proteina', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
-                      <input
-                        type="number"
-                        placeholder="28"
-                        value={nuevaDieta.cena.carbs || ''}
-                        onChange={(e) => updateComida('cena', 'carbs', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
-                      <input
-                        type="number"
-                        placeholder="25"
-                        value={nuevaDieta.cena.grasas || ''}
-                        onChange={(e) => updateComida('cena', 'grasas', Number(e.target.value))}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
+              {/* Cena */}
+              <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Salmón con vegetales"
+                      value={nuevaDieta.cena.nombre}
+                      onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                    <input
+                      type="number"
+                      placeholder="520"
+                      value={nuevaDieta.cena.calorias || ''}
+                      onChange={(e) => updateComida('cena', 'calorias', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                    <input
+                      type="number"
+                      placeholder="42"
+                      value={nuevaDieta.cena.proteina || ''}
+                      onChange={(e) => updateComida('cena', 'proteina', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                    <input
+                      type="number"
+                      placeholder="28"
+                      value={nuevaDieta.cena.carbs || ''}
+                      onChange={(e) => updateComida('cena', 'carbs', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                    <input
+                      type="number"
+                      placeholder="25"
+                      value={nuevaDieta.cena.grasas || ''}
+                      onChange={(e) => updateComida('cena', 'grasas', Number(e.target.value))}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Botones */}
-                <div className="flex gap-4 pt-4">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
-                  >
-                    Cancelar
-                  </button>
+              {/* Botones */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
                 <button
                   onClick={handleAgregarDieta}
                   className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
                 >
-                  {editandoIndex !== null ? 'Guardar Cambios' : 'Agregar Dieta'}
+                  Agregar Dieta
                 </button>
-                </div>
               </div>
-            ) : (
-              // FORMULARIO IA
-              <div className="p-6 space-y-6">
-                <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Sparkles className="w-6 h-6 text-purple-600" />
-                    <h3 className="text-xl font-bold text-purple-900">Generación Inteligente de Dieta</h3>
-                  </div>
-                  <p className="text-gray-700 text-sm">
-                    Nuestra IA creará un plan nutricional personalizado basado en tus objetivos, datos físicos y nivel de actividad.
-                  </p>
-                </div>
-
-                {/* Datos Personales */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      Peso (kg)
-                    </label>
-                    <input
-                      type="number"
-                      value={datosUsuario.peso}
-                      onChange={(e) => setDatosUsuario({...datosUsuario, peso: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <Activity className="w-4 h-4" />
-                      Altura (cm)
-                    </label>
-                    <input
-                      type="number"
-                      value={datosUsuario.altura}
-                      onChange={(e) => setDatosUsuario({...datosUsuario, altura: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
-                    <input
-                      type="number"
-                      value={datosUsuario.edad}
-                      onChange={(e) => setDatosUsuario({...datosUsuario, edad: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
-                    <select
-                      value={datosUsuario.sexo}
-                      onChange={(e) => setDatosUsuario({...datosUsuario, sexo: e.target.value as 'masculino' | 'femenino'})}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    >
-                      <option value="masculino">Masculino</option>
-                      <option value="femenino">Femenino</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Objetivo */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                    <Target className="w-4 h-4" />
-                    Objetivo Principal
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {(['perder', 'mantener', 'ganar'] as const).map((obj) => (
-                      <button
-                        key={obj}
-                        onClick={() => setDatosUsuario({...datosUsuario, objetivo: obj})}
-                        className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
-                          datosUsuario.objetivo === obj
-                            ? 'border-purple-600 bg-purple-50 text-purple-900'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                        }`}
-                      >
-                        {obj === 'perder' ? 'Perder Peso' : obj === 'mantener' ? 'Mantener' : 'Ganar Músculo'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Nivel de Actividad */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad</label>
-                  <select
-                    value={datosUsuario.nivelActividad}
-                    onChange={(e) => setDatosUsuario({...datosUsuario, nivelActividad: e.target.value as any})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  >
-                    <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
-                    <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
-                    <option value="moderado">Moderado (ejercicio 3-5 días/semana)</option>
-                    <option value="intenso">Intenso (ejercicio 6-7 días/semana)</option>
-                    <option value="atleta">Atleta (entrenamiento 2 veces al día)</option>
-                  </select>
-                </div>
-
-                {/* Macros Objetivo */}
-                <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Objetivo Diarios</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">Calorías</label>
-                      <input
-                        type="number"
-                        value={datosUsuario.caloriasObjetivo}
-                        onChange={(e) => setDatosUsuario({...datosUsuario, caloriasObjetivo: Number(e.target.value)})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">Proteína (g)</label>
-                      <input
-                        type="number"
-                        value={datosUsuario.proteinaObjetivo}
-                        onChange={(e) => setDatosUsuario({...datosUsuario, proteinaObjetivo: Number(e.target.value)})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">Carbohidratos (g)</label>
-                      <input
-                        type="number"
-                        value={datosUsuario.carbsObjetivo}
-                        onChange={(e) => setDatosUsuario({...datosUsuario, carbsObjetivo: Number(e.target.value)})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">Grasas (g)</label>
-                      <input
-                        type="number"
-                        value={datosUsuario.grasasObjetivo}
-                        onChange={(e) => setDatosUsuario({...datosUsuario, grasasObjetivo: Number(e.target.value)})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Botones */}
-                <div className="flex gap-4 pt-4">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={generarDietaConIA}
-                    disabled={generandoIA}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {generandoIA ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Generando...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-5 h-5" />
-                        Generar Dieta con IA
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Porción para IA */}
-      {porcionModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-black">Calcular Macros con IA</h3>
-                <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaCalculando || 'desayuno'].nombre}</p>
-              </div>
-            </div>
-            
-            <p className="text-gray-700 mb-4 text-sm">
-              Para calcular los macronutrientes correctamente, necesitamos saber la cantidad:
-            </p>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Cantidad
-                </label>
-                <input
-                  type="number"
-                  placeholder="Ej: 150, 200..."
-                  value={porcionInfo.cantidad}
-                  onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Unidad
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['gramos', 'piezas', 'tazas'].map((unidad) => (
-                    <button
-                      key={unidad}
-                      type="button"
-                      onClick={() => setPorcionInfo({...porcionInfo, unidad})}
-                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
-                        porcionInfo.unidad === unidad
-                          ? 'border-purple-600 bg-purple-50 text-purple-900'
-                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                      }`}
-                    >
-                      {unidad}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setPorcionModalOpen(false)
-                  setPorcionInfo({ cantidad: '', unidad: 'gramos' })
-                  setTipoComidaCalculando(null)
-                }}
-                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={generarMacrosConIA}
-                disabled={calculandoMacros || !porcionInfo.cantidad}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {calculandoMacros ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Calculando...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    Calcular
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Confirmación de Eliminación */}
-      {confirmDeleteOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-black">Eliminar Dieta</h3>
-                <p className="text-gray-600 text-sm">Esta acción no se puede deshacer</p>
-              </div>
-            </div>
-            
-            <p className="text-gray-700 mb-6">
-              ¿Estás seguro de que quieres eliminar la dieta de <span className="font-semibold text-black">{dietaAEliminar !== null ? dietaPlan[dietaAEliminar]?.dia : ''}</span>?
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={cancelarEliminacion}
-                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmarEliminacion}
-                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium shadow-lg"
-              >
-                Eliminar
-              </button>
             </div>
           </div>
         </div>
