@@ -70,10 +70,10 @@ export default function RutinasPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Rutinas</h1>
-          <p className="text-gray-400">Plan de entrenamiento estructurado</p>
+          <h1 className="text-2xl font-bold text-black mb-2">Rutinas</h1>
+          <p className="text-gray-600">Plan de entrenamiento estructurado</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Rutina
         </button>
@@ -82,12 +82,12 @@ export default function RutinasPage() {
       {/* Stats de Progreso */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {statsProgreso.map((stat, index) => (
-          <div key={index} className="bg-dark-800 border border-dark-700 rounded-xl p-6">
+          <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-white/10 p-2 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-gray-300" />
+                <TrendingUp className="w-5 h-5 text-gray-700" />
               </div>
-              <span className="text-gray-400 text-sm">{stat.label}</span>
+              <span className="text-gray-600 text-sm">{stat.label}</span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className={`text-3xl font-bold ${stat.color}`}>{stat.valor}</span>
@@ -98,17 +98,17 @@ export default function RutinasPage() {
       </div>
 
       {/* Rutina Semanal */}
-      <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-6">Plan Semanal</h2>
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-black mb-6">Plan Semanal</h2>
         <div className="space-y-6">
           {rutinaSemanal.map((dia, index) => (
-            <div key={index} className="bg-dark-900 rounded-lg border border-dark-600 overflow-hidden">
-              <div className="bg-white/10 px-6 py-4 border-b border-dark-600 flex items-center justify-between">
+            <div key={index} className="bg-white rounded-lg border border-gray-300 overflow-hidden">
+              <div className="bg-white/10 px-6 py-4 border-b border-gray-300 flex items-center justify-between">
                 <div>
-                  <h3 className="text-white font-semibold text-lg">{dia.dia}</h3>
-                  <p className="text-gray-300 text-sm mt-1">{dia.grupo}</p>
+                  <h3 className="text-black font-semibold text-lg">{dia.dia}</h3>
+                  <p className="text-gray-700 text-sm mt-1">{dia.grupo}</p>
                 </div>
-                <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex items-center gap-2 text-gray-600">
                   <Clock className="w-4 h-4" />
                   <span className="text-sm">{dia.duracion}</span>
                 </div>
@@ -118,14 +118,14 @@ export default function RutinasPage() {
                   {dia.ejercicios.map((ejercicio, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-4 bg-dark-800 rounded-lg border border-dark-600 hover:border-gray-600 transition"
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-300 hover:border-gray-600 transition"
                     >
                       <div className="flex items-center gap-4">
                         <div className="bg-white/20 w-10 h-10 rounded-lg flex items-center justify-center">
-                          <Dumbbell className="w-5 h-5 text-gray-300" />
+                          <Dumbbell className="w-5 h-5 text-gray-700" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">{ejercicio.nombre}</p>
+                          <p className="text-black font-medium">{ejercicio.nombre}</p>
                           <p className="text-gray-500 text-sm">
                             {ejercicio.series} series × {ejercicio.reps} reps
                           </p>
@@ -134,7 +134,7 @@ export default function RutinasPage() {
                       <div className="text-right">
                         <div className="flex items-center gap-2">
                           <Target className="w-4 h-4 text-gray-500" />
-                          <span className="text-gray-300 font-semibold">{ejercicio.peso}</span>
+                          <span className="text-gray-700 font-semibold">{ejercicio.peso}</span>
                         </div>
                       </div>
                     </div>

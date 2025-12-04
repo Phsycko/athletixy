@@ -29,26 +29,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="w-full max-w-md">
         {/* Logo y título */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
-            <div className="bg-white p-4 rounded-2xl shadow-2xl">
-              <Dumbbell className="w-12 h-12 text-black" />
+            <div className="bg-black p-4 rounded-2xl shadow-2xl">
+              <Dumbbell className="w-12 h-12 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Athletixy</h1>
-          <p className="text-gray-400">Gestión profesional de atletas</p>
+          <h1 className="text-3xl font-bold text-black mb-2">Athletixy</h1>
+          <p className="text-gray-600">Gestión profesional de atletas</p>
         </div>
 
         {/* Formulario de login */}
-        <div className="bg-dark-800 rounded-2xl shadow-2xl p-8 border border-dark-700">
-          <h2 className="text-xl font-semibold mb-6 text-white">Iniciar Sesión</h2>
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-200">
+          <h2 className="text-xl font-semibold mb-6 text-black">Iniciar Sesión</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -56,13 +56,13 @@ export default function LoginPage() {
                 type="email"
                 value={credentials.email}
                 onChange={(e) => setCredentials({...credentials, email: e.target.value})}
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Contraseña
               </label>
               <input
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 type="password"
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
                 placeholder="••••••••"
               />
             </div>
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-white hover:bg-gray-200 text-black font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
+              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
             >
               <LogIn className="w-5 h-5" />
               Ingresar
@@ -91,7 +91,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <a href="#" className="text-sm text-gray-400 hover:text-white transition">
+            <a href="#" className="text-sm text-gray-600 hover:text-black transition">
               ¿Olvidaste tu contraseña?
             </a>
           </div>

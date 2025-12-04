@@ -71,25 +71,25 @@ export default function CoachPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Coach Personal</h1>
-        <p className="text-gray-400">Tu entrenador personal dedicado</p>
+        <h1 className="text-2xl font-bold text-black mb-2">Coach Personal</h1>
+        <p className="text-gray-600">Tu entrenador personal dedicado</p>
       </div>
 
       {/* Perfil del Coach */}
       <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-3xl text-white font-bold">RS</span>
+            <span className="text-3xl text-black font-bold">RS</span>
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-white mb-1">{coach.nombre}</h2>
-            <p className="text-white/80 mb-3">{coach.especialidad}</p>
+            <h2 className="text-2xl font-bold text-black mb-1">{coach.nombre}</h2>
+            <p className="text-black/80 mb-3">{coach.especialidad}</p>
             <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-2 text-white/90">
+              <div className="flex items-center gap-2 text-black/90">
                 <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
                 <span>{coach.calificacion} / 5.0</span>
               </div>
-              <div className="text-white/90">{coach.experiencia} de experiencia</div>
+              <div className="text-black/90">{coach.experiencia} de experiencia</div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -97,18 +97,18 @@ export default function CoachPage() {
               <MessageCircle className="w-4 h-4" />
               Mensaje
             </button>
-            <button className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg hover:bg-white/20 transition border border-white/20">
+            <button className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm text-black rounded-lg hover:bg-white/20 transition border border-white/20">
               <Phone className="w-4 h-4" />
             </button>
           </div>
         </div>
         <div className="mt-6 pt-6 border-t border-white/20">
-          <p className="text-white/80 text-sm mb-3">Certificaciones:</p>
+          <p className="text-black/80 text-sm mb-3">Certificaciones:</p>
           <div className="flex flex-wrap gap-2">
             {coach.certificaciones.map((cert, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white text-xs rounded-full border border-white/20"
+                className="px-3 py-1 bg-white/10 backdrop-blur-sm text-black text-xs rounded-full border border-white/20"
               >
                 {cert}
               </span>
@@ -119,57 +119,57 @@ export default function CoachPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Próxima Sesión */}
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">Próxima Sesión</h2>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-black mb-6">Próxima Sesión</h2>
           <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-5 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-blue-600 p-2 rounded-lg">
-                <Dumbbell className="w-5 h-5 text-white" />
+                <Dumbbell className="w-5 h-5 text-black" />
               </div>
               <span className="text-blue-400 font-medium">{proximaSesion.enfoque}</span>
             </div>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Fecha</span>
-                <span className="text-white font-semibold">{proximaSesion.fecha}</span>
+                <span className="text-gray-600">Fecha</span>
+                <span className="text-black font-semibold">{proximaSesion.fecha}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Hora</span>
-                <span className="text-white font-semibold">{proximaSesion.hora}</span>
+                <span className="text-gray-600">Hora</span>
+                <span className="text-black font-semibold">{proximaSesion.hora}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Tipo</span>
-                <span className="text-white font-semibold">{proximaSesion.tipo}</span>
+                <span className="text-gray-600">Tipo</span>
+                <span className="text-black font-semibold">{proximaSesion.tipo}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-400">Ubicación</span>
-                <span className="text-white font-semibold">{proximaSesion.ubicacion}</span>
+                <span className="text-gray-600">Ubicación</span>
+                <span className="text-black font-semibold">{proximaSesion.ubicacion}</span>
               </div>
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium">
+            <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-black rounded-lg transition font-medium">
               Confirmar Asistencia
             </button>
-            <button className="px-4 py-3 bg-dark-900 hover:bg-dark-700 text-gray-400 hover:text-white rounded-lg transition border border-dark-600">
+            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border border-gray-300">
               Reagendar
             </button>
           </div>
         </div>
 
         {/* Objetivos Actuales */}
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">Objetivos de Fuerza</h2>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-black mb-6">Objetivos de Fuerza</h2>
           <div className="space-y-5">
             {objetivosActuales.map((obj, index) => (
               <div key={index}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white font-medium">{obj.objetivo}</span>
-                  <span className="text-gray-400 text-sm">
+                  <span className="text-black font-medium">{obj.objetivo}</span>
+                  <span className="text-gray-600 text-sm">
                     {obj.actual}kg / {obj.meta}kg
                   </span>
                 </div>
-                <div className="w-full bg-dark-900 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-white rounded-full h-2.5 overflow-hidden">
                   <div
                     className="bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all"
                     style={{ width: `${obj.progreso}%` }}
@@ -185,17 +185,17 @@ export default function CoachPage() {
       </div>
 
       {/* Sesiones Previas */}
-      <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-6">Historial de Sesiones</h2>
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-black mb-6">Historial de Sesiones</h2>
         <div className="space-y-4">
           {sesionesPrevias.map((sesion, index) => (
             <div
               key={index}
-              className="p-5 bg-dark-900 rounded-lg border border-dark-600 hover:border-blue-600 transition"
+              className="p-5 bg-white rounded-lg border border-gray-300 hover:border-blue-600 transition"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <h3 className="text-white font-semibold mb-1">{sesion.enfoque}</h3>
+                  <h3 className="text-black font-semibold mb-1">{sesion.enfoque}</h3>
                   <div className="flex items-center gap-4 text-gray-500 text-sm">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -213,15 +213,15 @@ export default function CoachPage() {
                   ))}
                 </div>
               </div>
-              <p className="text-gray-400 text-sm">{sesion.notas}</p>
+              <p className="text-gray-600 text-sm">{sesion.notas}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Chat Rápido */}
-      <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-6">Mensajes Recientes</h2>
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-black mb-6">Mensajes Recientes</h2>
         <div className="space-y-4 mb-6">
           {mensajesRecientes.map((msg, index) => (
             <div
@@ -231,8 +231,8 @@ export default function CoachPage() {
               <div
                 className={`max-w-[70%] p-4 rounded-lg ${
                   msg.remitente === 'usuario'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-dark-900 text-gray-300 border border-dark-600'
+                    ? 'bg-blue-600 text-black'
+                    : 'bg-white text-gray-700 border border-gray-300'
                 }`}
               >
                 <p className="text-sm mb-1">{msg.mensaje}</p>
@@ -247,21 +247,21 @@ export default function CoachPage() {
           <input
             type="text"
             placeholder="Escribe un mensaje..."
-            className="flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-          <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+          <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-black rounded-lg transition">
             Enviar
           </button>
         </div>
       </div>
 
       {/* Agendar Nueva Sesión */}
-      <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Agendar Nueva Sesión</h2>
-        <p className="text-gray-400 text-sm mb-6">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-black mb-4">Agendar Nueva Sesión</h2>
+        <p className="text-gray-600 text-sm mb-6">
           Reserva tu próxima sesión de entrenamiento personalizado
         </p>
-        <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium">
+        <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-black rounded-lg transition font-medium">
           <Calendar className="w-5 h-5" />
           Ver Horarios Disponibles
         </button>

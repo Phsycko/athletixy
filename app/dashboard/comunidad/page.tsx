@@ -74,10 +74,10 @@ export default function ComunidadPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Comunidad</h1>
-          <p className="text-gray-400">Conecta con otros atletas</p>
+          <h1 className="text-2xl font-bold text-black mb-2">Comunidad</h1>
+          <p className="text-gray-600">Conecta con otros atletas</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition shadow-lg">
+        <button className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition shadow-lg">
           <Plus className="w-5 h-5" />
           Nueva Publicación
         </button>
@@ -87,27 +87,27 @@ export default function ComunidadPage() {
         {/* Feed Principal */}
         <div className="lg:col-span-2 space-y-6">
           {/* Crear Publicación */}
-          <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">AH</span>
+                <span className="text-black font-bold">AH</span>
               </div>
               <input
                 type="text"
                 placeholder="¿Qué estás logrando hoy?"
-                className="flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-dark-900 hover:bg-dark-700 text-gray-400 hover:text-white rounded-lg transition text-sm border border-dark-600">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
                 <ImageIcon className="w-4 h-4" />
                 Foto
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-dark-900 hover:bg-dark-700 text-gray-400 hover:text-white rounded-lg transition text-sm border border-dark-600">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
                 <Video className="w-4 h-4" />
                 Video
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-dark-900 hover:bg-dark-700 text-gray-400 hover:text-white rounded-lg transition text-sm border border-dark-600">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition text-sm border border-gray-300">
                 <TrendingUp className="w-4 h-4" />
                 Progreso
               </button>
@@ -116,47 +116,47 @@ export default function ComunidadPage() {
 
           {/* Publicaciones */}
           {publicaciones.map((post, index) => (
-            <div key={index} className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden hover:border-dark-600 transition">
+            <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition">
               {/* Header de la publicación */}
               <div className="p-6 pb-4">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">{post.avatar}</span>
+                    <span className="text-black text-sm font-bold">{post.avatar}</span>
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{post.autor}</p>
+                    <p className="text-black font-semibold">{post.autor}</p>
                     <p className="text-gray-500 text-xs">{post.tiempo}</p>
                   </div>
                 </div>
-                <p className="text-gray-300 mb-4">{post.contenido}</p>
+                <p className="text-gray-700 mb-4">{post.contenido}</p>
               </div>
 
               {/* Imagen (simulada) */}
               {post.imagen && (
-                <div className="h-80 bg-gradient-to-br from-primary-600/20 to-purple-600/20 flex items-center justify-center border-y border-dark-700">
+                <div className="h-80 bg-gradient-to-br from-primary-600/20 to-purple-600/20 flex items-center justify-center border-y border-gray-200">
                   <ImageIcon className="w-16 h-16 text-gray-600" />
                 </div>
               )}
 
               {/* Acciones */}
               <div className="p-6 pt-4">
-                <div className="flex items-center justify-between text-gray-400 text-sm mb-4">
+                <div className="flex items-center justify-between text-gray-600 text-sm mb-4">
                   <span>{post.likes} me gusta</span>
                   <div className="flex gap-3">
                     <span>{post.comentarios} comentarios</span>
                     <span>{post.compartidos} compartidos</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 pt-4 border-t border-dark-700">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-dark-900 rounded-lg transition text-gray-400 hover:text-red-400">
+                <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-red-400">
                     <Heart className="w-5 h-5" />
                     <span className="text-sm font-medium">Me gusta</span>
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-dark-900 rounded-lg transition text-gray-400 hover:text-blue-400">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-blue-400">
                     <MessageCircle className="w-5 h-5" />
                     <span className="text-sm font-medium">Comentar</span>
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-dark-900 rounded-lg transition text-gray-400 hover:text-green-400">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-green-400">
                     <Share2 className="w-5 h-5" />
                     <span className="text-sm font-medium">Compartir</span>
                   </button>
@@ -169,18 +169,18 @@ export default function ComunidadPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Grupos Populares */}
-          <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-gray-300" />
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <h2 className="text-black font-semibold mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-gray-700" />
               Grupos Populares
             </h2>
             <div className="space-y-3">
               {gruposPopulares.map((grupo, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
+                  className="p-3 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
                 >
-                  <p className="text-white font-medium text-sm mb-1">{grupo.nombre}</p>
+                  <p className="text-black font-medium text-sm mb-1">{grupo.nombre}</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-500">{grupo.miembros.toLocaleString()} miembros</span>
                     <span className="text-green-400">+{grupo.nuevos} hoy</span>
@@ -188,39 +188,39 @@ export default function ComunidadPage() {
                 </div>
               ))}
             </div>
-            <button className="w-full mt-4 py-2 text-gray-300 hover:text-primary-300 text-sm font-medium transition">
+            <button className="w-full mt-4 py-2 text-gray-700 hover:text-primary-300 text-sm font-medium transition">
               Ver todos los grupos
             </button>
           </div>
 
           {/* Eventos Cercanos */}
-          <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-gray-300" />
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <h2 className="text-black font-semibold mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-gray-700" />
               Eventos Cercanos
             </h2>
             <div className="space-y-3">
               {eventosCercanos.map((evento, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-dark-900 rounded-lg border border-dark-600 hover:border-gray-600 transition cursor-pointer"
+                  className="p-3 bg-white rounded-lg border border-gray-300 hover:border-gray-600 transition cursor-pointer"
                 >
-                  <p className="text-white font-medium text-sm mb-1">{evento.titulo}</p>
+                  <p className="text-black font-medium text-sm mb-1">{evento.titulo}</p>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-500">{evento.fecha}</span>
-                    <span className="text-gray-300">{evento.participantes} inscritos</span>
+                    <span className="text-gray-700">{evento.participantes} inscritos</span>
                   </div>
                 </div>
               ))}
             </div>
-            <button className="w-full mt-4 py-2 text-gray-300 hover:text-primary-300 text-sm font-medium transition">
+            <button className="w-full mt-4 py-2 text-gray-700 hover:text-primary-300 text-sm font-medium transition">
               Ver todos los eventos
             </button>
           </div>
 
           {/* Sugerencias */}
-          <div className="bg-dark-800 border border-dark-700 rounded-xl p-6">
-            <h2 className="text-white font-semibold mb-4">Atletas Sugeridos</h2>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <h2 className="text-black font-semibold mb-4">Atletas Sugeridos</h2>
             <div className="space-y-3">
               {['Martín López', 'Carmen Ruiz', 'Pablo Jiménez'].map((nombre, index) => (
                 <div
@@ -229,16 +229,16 @@ export default function ComunidadPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">
+                      <span className="text-black text-xs font-bold">
                         {nombre.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
                     <div>
-                      <p className="text-white text-sm font-medium">{nombre}</p>
+                      <p className="text-black text-sm font-medium">{nombre}</p>
                       <p className="text-gray-500 text-xs">Atleta</p>
                     </div>
                   </div>
-                  <button className="px-3 py-1 bg-white hover:bg-gray-200 text-black text-xs rounded-lg transition">
+                  <button className="px-3 py-1 bg-black hover:bg-gray-800 text-white text-xs rounded-lg transition">
                     Seguir
                   </button>
                 </div>

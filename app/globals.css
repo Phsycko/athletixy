@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 10, 10, 10;
-  --background-end-rgb: 10, 10, 10;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #0a0a0a;
+  background: #ffffff;
 }
 
 @layer utilities {
@@ -26,15 +26,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #171717;
+  background: #f5f5f5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: #d4d4d4;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #525252;
+  background: #a3a3a3;
 }
 
