@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Target, Activity, User, Edit, Trash2 } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -56,6 +56,7 @@ export default function DietasPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
   const [generandoIA, setGenerandoIA] = useState(false)
+  const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
@@ -86,11 +87,34 @@ export default function DietasPage() {
 
   const handleAgregarDieta = () => {
     if (nuevaDieta.dia && nuevaDieta.desayuno.nombre && nuevaDieta.almuerzo.nombre && nuevaDieta.cena.nombre) {
-      setDietaPlan([...dietaPlan, nuevaDieta])
+      if (editandoIndex !== null) {
+        // Editar dieta existente
+        const nuevoPlan = [...dietaPlan]
+        nuevoPlan[editandoIndex] = nuevaDieta
+        setDietaPlan(nuevoPlan)
+        setEditandoIndex(null)
+      } else {
+        // Agregar nueva dieta
+        setDietaPlan([...dietaPlan, nuevaDieta])
+      }
       setIsModalOpen(false)
       resetForm()
     } else {
       alert('Por favor completa todos los campos')
+    }
+  }
+
+  const handleEditarDieta = (index: number) => {
+    setEditandoIndex(index)
+    setNuevaDieta(dietaPlan[index])
+    setModoCreacion('manual')
+    setIsModalOpen(true)
+  }
+
+  const handleEliminarDieta = (index: number) => {
+    if (confirm('¿Estás seguro de que quieres eliminar esta dieta?')) {
+      const nuevoPlan = dietaPlan.filter((_, i) => i !== index)
+      setDietaPlan(nuevoPlan)
     }
   }
 
@@ -101,6 +125,7 @@ export default function DietasPage() {
       almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
       cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     })
+    setEditandoIndex(null)
   }
 
   const generarDietaConIA = async () => {
@@ -239,9 +264,25 @@ export default function DietasPage() {
 
         <div className="space-y-6">
           {dietaPlan.map((dia, index) => (
-            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
-              <div className="bg-gray-50 px-6 py-3 border-b border-gray-300">
+            <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-gray-300 transition">
+              <div className="bg-gray-50 px-6 py-3 border-b border-gray-300 flex items-center justify-between">
                 <h3 className="text-black font-semibold">{dia.dia}</h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEditarDieta(index)}
+                    className="p-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-blue-600"
+                    title="Editar dieta"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleEliminarDieta(index)}
+                    className="p-2 hover:bg-white rounded-lg transition text-gray-600 hover:text-red-600"
+                    title="Eliminar dieta"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
               <div className="p-6 space-y-4">
                 {/* Desayuno */}
@@ -326,11 +367,14 @@ export default function DietasPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-              <h2 className="text-2xl font-bold text-black">Nueva Dieta</h2>
+              <h2 className="text-2xl font-bold text-black">
+                {editandoIndex !== null ? 'Editar Dieta' : 'Nueva Dieta'}
+              </h2>
               <button
                 onClick={() => {
                   setIsModalOpen(false)
                   setModoCreacion('manual')
+                  resetForm()
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
@@ -564,12 +608,12 @@ export default function DietasPage() {
                   >
                     Cancelar
                   </button>
-                  <button
-                    onClick={handleAgregarDieta}
-                    className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
-                  >
-                    Agregar Dieta
-                  </button>
+                <button
+                  onClick={handleAgregarDieta}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+                >
+                  {editandoIndex !== null ? 'Guardar Cambios' : 'Agregar Dieta'}
+                </button>
                 </div>
               </div>
             ) : (
