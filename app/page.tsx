@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
+import { LogIn, Dumbbell, UserPlus } from 'lucide-react'
 
 type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
 
