@@ -150,10 +150,10 @@ export default function MembresiasPage() {
               <button
                 className={`w-full py-3 rounded-lg font-semibold transition ${
                   membresiaActual.plan === plan.nombre
-                    ? 'bg-dark-600 text-gray-600 cursor-not-allowed'
+                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-2 border-gray-300'
                     : plan.popular
-                    ? 'bg-black hover:bg-gray-800 text-white'
-                    : 'bg-dark-700 hover:bg-dark-600 text-black'
+                    ? 'bg-black hover:bg-gray-800 text-white shadow-lg'
+                    : 'bg-white hover:bg-gray-50 text-black border-2 border-gray-300 hover:border-black'
                 }`}
                 disabled={membresiaActual.plan === plan.nombre}
               >
