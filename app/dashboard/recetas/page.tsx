@@ -484,7 +484,7 @@ export default function RecetasPage() {
                   <button
                     onClick={generarListaSupermercado}
                     disabled={generandoLista}
-                    className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-semibold transition shadow-lg flex items-center justify-center gap-3 disabled:opacity-70"
+                    className="w-full py-4 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 hover:scale-[1.01] active:scale-[0.99]"
                   >
                     {generandoLista ? (
                       <>
@@ -496,7 +496,7 @@ export default function RecetasPage() {
                         <Sparkles className="w-5 h-5" />
                         <ShoppingCart className="w-5 h-5" />
                         Generar Lista de Supermercado con IA
-                        <span className="ml-1 px-2 py-0.5 bg-white/20 text-xs rounded-full">PREMIUM</span>
+                        <span className="ml-1 px-2 py-0.5 bg-white/20 text-xs rounded-full font-bold">PREMIUM</span>
                       </>
                     )}
                   </button>
@@ -504,14 +504,14 @@ export default function RecetasPage() {
                   <div className="relative">
                     <button
                       disabled
-                      className="w-full py-4 bg-gray-200 text-gray-400 rounded-xl font-semibold flex items-center justify-center gap-3 cursor-not-allowed"
+                      className="w-full py-4 bg-gray-100 border-2 border-gray-200 text-gray-400 rounded-xl font-semibold flex items-center justify-center gap-3 cursor-not-allowed"
                     >
                       <Lock className="w-5 h-5" />
                       <ShoppingCart className="w-5 h-5" />
                       Generar Lista de Supermercado con IA
                     </button>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full flex items-center gap-1">
+                      <span className="px-3 py-1 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center gap-1">
                         <Crown className="w-3 h-3" />
                         Solo Premium
                       </span>
@@ -522,13 +522,13 @@ export default function RecetasPage() {
 
               {/* Lista de Supermercado Generada */}
               {mostrarLista && listaSupermercado.length > 0 && (
-                <div className="mt-6 p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200">
+                <div className="mt-6 p-5 bg-gray-50 rounded-xl border-2 border-gray-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                      <ShoppingCart className="w-5 h-5 text-amber-600" />
+                      <ShoppingCart className="w-5 h-5 text-gray-700" />
                       Lista de Supermercado
                     </h3>
-                    <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
+                    <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs font-semibold rounded-full">
                       {listaSupermercado.length} items
                     </span>
                   </div>
@@ -536,12 +536,12 @@ export default function RecetasPage() {
                   <div className="space-y-4">
                     {Array.from(new Set(listaSupermercado.map(i => i.seccion))).map(seccion => (
                       <div key={seccion}>
-                        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">{seccion}</p>
+                        <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">{seccion}</p>
                         <ul className="space-y-2">
                           {listaSupermercado.filter(i => i.seccion === seccion).map((item, idx) => (
-                            <li key={idx} className="flex items-center justify-between bg-white px-3 py-2 rounded-lg shadow-sm">
+                            <li key={idx} className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-gray-200">
                               <div className="flex items-center gap-2">
-                                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500" />
+                                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500" />
                                 <span className="text-gray-800">{item.producto}</span>
                               </div>
                               <span className="text-sm text-gray-500 font-medium">{item.cantidad}</span>
@@ -552,19 +552,19 @@ export default function RecetasPage() {
                     ))}
                   </div>
 
-                  <div className="flex gap-3 mt-5 pt-4 border-t border-amber-200">
+                  <div className="flex gap-3 mt-5 pt-4 border-t border-gray-200">
                     <button 
                       onClick={() => {
                         const texto = listaSupermercado.map(i => `☐ ${i.producto} - ${i.cantidad}`).join('\n')
                         navigator.clipboard.writeText(texto)
                       }}
-                      className="flex-1 py-2 bg-white border-2 border-amber-300 text-amber-700 rounded-lg font-medium hover:bg-amber-50 transition text-sm"
+                      className="flex-1 py-2 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition text-sm"
                     >
                       📋 Copiar Lista
                     </button>
                     <button 
                       onClick={() => setMostrarLista(false)}
-                      className="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition text-sm"
+                      className="flex-1 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition text-sm"
                     >
                       ✓ Listo
                     </button>
