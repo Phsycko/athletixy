@@ -121,6 +121,90 @@ export default function DietasPage() {
     { tipo: 'Merienda', hora: '4:00 PM' },
   ]
 
+  // Lista de palabras prohibidas (groserías y términos inapropiados)
+  const palabrasProhibidas = [
+    'mierda', 'caca', 'popo', 'culo', 'verga', 'pene', 'pito', 'chingada', 'pendejo', 'pendeja',
+    'cabron', 'cabrón', 'puta', 'puto', 'joder', 'coño', 'carajo', 'maldito', 'maldita',
+    'idiota', 'estupido', 'estúpido', 'imbecil', 'imbécil', 'basura', 'porqueria', 'porquería',
+    'shit', 'fuck', 'ass', 'dick', 'cock', 'pussy', 'bitch', 'damn', 'crap', 'bastard',
+    'veneno', 'droga', 'cocaina', 'heroina', 'marihuana', 'crack', 'metanfetamina',
+    'tierra', 'piedra', 'cemento', 'plastico', 'plástico', 'metal', 'vidrio', 'papel',
+    'jabon', 'jabón', 'detergente', 'cloro', 'lejia', 'lejía', 'gasolina', 'aceite motor'
+  ]
+
+  // Lista de palabras clave de alimentos válidos
+  const alimentosValidos = [
+    // Proteínas
+    'pollo', 'pechuga', 'carne', 'res', 'cerdo', 'pescado', 'salmon', 'salmón', 'atun', 'atún',
+    'huevo', 'huevos', 'clara', 'claras', 'jamon', 'jamón', 'pavo', 'camarón', 'camaron',
+    'camarones', 'langosta', 'pulpo', 'mariscos', 'sardina', 'tilapia', 'merluza', 'bacalao',
+    'bistec', 'filete', 'lomo', 'costilla', 'tocino', 'salchicha', 'chorizo', 'proteina', 'proteína',
+    // Carbohidratos
+    'arroz', 'pasta', 'spaguetti', 'spaghetti', 'espagueti', 'fideo', 'fideos', 'pan', 'tortilla',
+    'avena', 'cereal', 'quinoa', 'quinua', 'papa', 'papas', 'patata', 'batata', 'camote',
+    'frijol', 'frijoles', 'lenteja', 'lentejas', 'garbanzo', 'maiz', 'maíz', 'elote',
+    // Frutas
+    'manzana', 'platano', 'plátano', 'banana', 'naranja', 'mandarina', 'fresa', 'fresas',
+    'uva', 'uvas', 'mango', 'piña', 'papaya', 'melon', 'melón', 'sandia', 'sandía',
+    'kiwi', 'pera', 'durazno', 'cereza', 'mora', 'arandano', 'arándano', 'coco', 'limon', 'limón',
+    'fruta', 'frutas', 'frutos', 'berry', 'berries',
+    // Vegetales
+    'lechuga', 'espinaca', 'brocoli', 'brócoli', 'coliflor', 'zanahoria', 'tomate', 'jitomate',
+    'pepino', 'cebolla', 'ajo', 'pimiento', 'chile', 'calabaza', 'calabacin', 'calabacín',
+    'apio', 'champiñon', 'champiñones', 'hongo', 'hongos', 'aguacate', 'ejote', 'chicharo',
+    'vegetales', 'verduras', 'ensalada', 'espárrago', 'esparragos',
+    // Lácteos
+    'leche', 'queso', 'yogurt', 'yogur', 'crema', 'mantequilla', 'requesón', 'cottage',
+    // Grasas saludables
+    'aceite', 'oliva', 'almendra', 'almendras', 'nuez', 'nueces', 'cacahuate', 'mani', 'maní',
+    'semilla', 'semillas', 'chia', 'chía', 'linaza', 'ajonjoli', 'ajonjolí',
+    // Bebidas y otros
+    'agua', 'cafe', 'café', 'te', 'té', 'jugo', 'smoothie', 'batido', 'licuado',
+    'miel', 'azucar', 'azúcar', 'sal', 'pimienta', 'especias', 'salsa', 'aderezo',
+    // Comidas preparadas comunes
+    'bowl', 'wrap', 'burrito', 'taco', 'sandwich', 'sándwich', 'hamburguesa', 'pizza',
+    'sopa', 'caldo', 'guiso', 'estofado', 'asado', 'frito', 'horneado', 'vapor',
+    'granola', 'barra', 'galleta', 'pan', 'tostada', 'panqueque', 'hotcake', 'waffle',
+    'snack', 'colacion', 'colación', 'merienda', 'desayuno', 'almuerzo', 'cena'
+  ]
+
+  // Función para validar si el texto contiene alimentos válidos
+  const validarAlimento = (texto: string): { valido: boolean, mensaje: string } => {
+    const textoLower = texto.toLowerCase().trim()
+    
+    // Verificar si está vacío
+    if (!textoLower) {
+      return { valido: false, mensaje: 'Por favor escribe el nombre del alimento' }
+    }
+
+    // Verificar palabras prohibidas
+    for (const palabra of palabrasProhibidas) {
+      if (textoLower.includes(palabra)) {
+        return { 
+          valido: false, 
+          mensaje: 'El texto contiene palabras no permitidas. Por favor ingresa solo alimentos válidos.' 
+        }
+      }
+    }
+
+    // Verificar si contiene al menos una palabra de alimento válido
+    const palabrasTexto = textoLower.split(/[\s,]+/)
+    const contieneAlimento = palabrasTexto.some(palabra => 
+      alimentosValidos.some(alimento => 
+        palabra.includes(alimento) || alimento.includes(palabra)
+      )
+    ) || alimentosValidos.some(alimento => textoLower.includes(alimento))
+
+    if (!contieneAlimento) {
+      return { 
+        valido: false, 
+        mensaje: 'No se reconoce como alimento válido. Intenta con nombres de comida reales (ej: pollo, arroz, ensalada).' 
+      }
+    }
+
+    return { valido: true, mensaje: '' }
+  }
+
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
     const dietasGuardadas = localStorage.getItem('athletixy_dietas')
@@ -392,6 +476,14 @@ export default function DietasPage() {
       showToast('Por favor escribe el nombre del alimento primero', 'error')
       return
     }
+
+    // Validar que sea un alimento válido
+    const validacion = validarAlimento(comidaExtra.comida.nombre)
+    if (!validacion.valido) {
+      showToast(validacion.mensaje, 'error')
+      return
+    }
+
     setComidaExtraActualId(id)
     setTipoComidaActual('extra')
     
@@ -415,6 +507,14 @@ export default function DietasPage() {
       showToast('Por favor escribe el nombre del alimento primero', 'error')
       return
     }
+
+    // Validar que sea un alimento válido
+    const validacion = validarAlimento(nuevaDieta[tipo].nombre)
+    if (!validacion.valido) {
+      showToast(validacion.mensaje, 'error')
+      return
+    }
+
     setTipoComidaActual(tipo)
     
     // Detectar si es comida compuesta
