@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock, Trash2 } from 'lucide-react'
@@ -24,7 +24,7 @@ type ItemSupermercado = {
 export default function RecetasPage() {
   const [recetaSeleccionada, setRecetaSeleccionada] = useState<Receta | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [esPremium] = useState(true) // Cambiar a false para simular usuario básico
+  const [esPremium] = useState(true) // Cambiar a false para simular usuario bÃ¡sico
   const [listaSupermercado, setListaSupermercado] = useState<ItemSupermercado[]>([])
   const [generandoLista, setGenerandoLista] = useState(false)
   const [mostrarLista, setMostrarLista] = useState(false)
@@ -33,15 +33,15 @@ export default function RecetasPage() {
   
   const recetasIniciales: Receta[] = [
     {
-      nombre: 'Bowl de Proteína con Quinoa',
+      nombre: 'Bowl de ProteÃ­na con Quinoa',
       categoria: 'Almuerzo',
       tiempo: 25,
       calorias: 520,
       proteina: 45,
-      dificultad: 'Fácil',
+      dificultad: 'FÃ¡cil',
       porciones: 2,
       ingredientes: ['150g quinoa cocida', '200g pechuga de pollo', '100g espinaca', '50g aguacate', 'Tomate cherry'],
-      preparacion: ['Cocina la quinoa según las instrucciones del paquete', 'Cocina la pechuga de pollo a la plancha', 'Mezcla todos los ingredientes en un bowl', 'Añade aderezo al gusto'],
+      preparacion: ['Cocina la quinoa segÃºn las instrucciones del paquete', 'Cocina la pechuga de pollo a la plancha', 'Mezcla todos los ingredientes en un bowl', 'AÃ±ade aderezo al gusto'],
     },
     {
       nombre: 'Batido Post-Entreno',
@@ -49,10 +49,10 @@ export default function RecetasPage() {
       tiempo: 5,
       calorias: 380,
       proteina: 35,
-      dificultad: 'Muy Fácil',
+      dificultad: 'Muy FÃ¡cil',
       porciones: 1,
-      ingredientes: ['1 scoop proteína de suero', '1 plátano', '200ml leche de almendras', '1 cucharada mantequilla de maní', 'Hielo'],
-      preparacion: ['Añade todos los ingredientes a la licuadora', 'Licua hasta obtener consistencia suave', 'Sirve inmediatamente'],
+      ingredientes: ['1 scoop proteÃ­na de suero', '1 plÃ¡tano', '200ml leche de almendras', '1 cucharada mantequilla de manÃ­', 'Hielo'],
+      preparacion: ['AÃ±ade todos los ingredientes a la licuadora', 'Licua hasta obtener consistencia suave', 'Sirve inmediatamente'],
     },
     {
       nombre: 'Avena Proteica con Frutas',
@@ -60,21 +60,21 @@ export default function RecetasPage() {
       tiempo: 15,
       calorias: 450,
       proteina: 30,
-      dificultad: 'Fácil',
+      dificultad: 'FÃ¡cil',
       porciones: 1,
-      ingredientes: ['80g avena', '1 scoop proteína vainilla', '250ml leche', 'Frutos rojos', '1 cucharada miel'],
-      preparacion: ['Cocina la avena con la leche', 'Añade la proteína y mezcla bien', 'Decora con frutos rojos y miel'],
+      ingredientes: ['80g avena', '1 scoop proteÃ­na vainilla', '250ml leche', 'Frutos rojos', '1 cucharada miel'],
+      preparacion: ['Cocina la avena con la leche', 'AÃ±ade la proteÃ­na y mezcla bien', 'Decora con frutos rojos y miel'],
     },
     {
-      nombre: 'Salmón al Horno con Vegetales',
+      nombre: 'SalmÃ³n al Horno con Vegetales',
       categoria: 'Cena',
       tiempo: 35,
       calorias: 520,
       proteina: 42,
       dificultad: 'Media',
       porciones: 2,
-      ingredientes: ['300g filete de salmón', 'Brócoli', 'Pimientos', 'Aceite de oliva', 'Limón y especias'],
-      preparacion: ['Precalienta el horno a 180°C', 'Coloca el salmón y vegetales en bandeja', 'Rocía con aceite y especias', 'Hornea por 25 minutos'],
+      ingredientes: ['300g filete de salmÃ³n', 'BrÃ³coli', 'Pimientos', 'Aceite de oliva', 'LimÃ³n y especias'],
+      preparacion: ['Precalienta el horno a 180Â°C', 'Coloca el salmÃ³n y vegetales en bandeja', 'RocÃ­a con aceite y especias', 'Hornea por 25 minutos'],
     },
     {
       nombre: 'Tortilla de Claras y Espinacas',
@@ -82,21 +82,21 @@ export default function RecetasPage() {
       tiempo: 10,
       calorias: 280,
       proteina: 32,
-      dificultad: 'Fácil',
+      dificultad: 'FÃ¡cil',
       porciones: 1,
       ingredientes: ['6 claras de huevo', '100g espinaca fresca', '50g queso bajo en grasa', 'Cebolla', 'Tomate'],
-      preparacion: ['Saltea la espinaca y cebolla', 'Bate las claras y vierte en la sartén', 'Añade el queso y cocina hasta cuajar'],
+      preparacion: ['Saltea la espinaca y cebolla', 'Bate las claras y vierte en la sartÃ©n', 'AÃ±ade el queso y cocina hasta cuajar'],
     },
     {
-      nombre: 'Wrap de Atún con Vegetales',
+      nombre: 'Wrap de AtÃºn con Vegetales',
       categoria: 'Snacks',
       tiempo: 10,
       calorias: 320,
       proteina: 28,
-      dificultad: 'Muy Fácil',
+      dificultad: 'Muy FÃ¡cil',
       porciones: 1,
-      ingredientes: ['1 tortilla integral', '150g atún en agua', 'Lechuga', 'Tomate', 'Yogur griego'],
-      preparacion: ['Mezcla el atún con yogur griego', 'Coloca los vegetales en la tortilla', 'Añade el atún y enrolla'],
+      ingredientes: ['1 tortilla integral', '150g atÃºn en agua', 'Lechuga', 'Tomate', 'Yogur griego'],
+      preparacion: ['Mezcla el atÃºn con yogur griego', 'Coloca los vegetales en la tortilla', 'AÃ±ade el atÃºn y enrolla'],
     },
   ]
   
@@ -107,7 +107,7 @@ export default function RecetasPage() {
     tiempo: 0,
     calorias: 0,
     proteina: 0,
-    dificultad: 'Fácil',
+    dificultad: 'FÃ¡cil',
     porciones: 1,
     ingredientes: [''],
     preparacion: ['']
@@ -133,7 +133,7 @@ export default function RecetasPage() {
       tiempo: 0,
       calorias: 0,
       proteina: 0,
-      dificultad: 'Fácil',
+      dificultad: 'FÃ¡cil',
       porciones: 1,
       ingredientes: [''],
       preparacion: ['']
@@ -194,7 +194,7 @@ export default function RecetasPage() {
       return
     }
     if (nuevaReceta.preparacion.filter(p => p.trim()).length === 0) {
-      alert('Por favor agrega al menos un paso de preparación')
+      alert('Por favor agrega al menos un paso de preparaciÃ³n')
       return
     }
 
@@ -219,470 +219,315 @@ export default function RecetasPage() {
 
     const nombre = nuevaReceta.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
     
-    // DETECTAR TIPO DE RECETA (DULCE vs SALADA)
-    const esRecetaDulce = nombre.includes('bowl') || nombre.includes('batido') || nombre.includes('smoothie') || 
-                          nombre.includes('postre') || nombre.includes('dulce') || nombre.includes('fruta') ||
-                          nombre.includes('yogur') || nombre.includes('avena') || nombre.includes('granola') ||
-                          nombre.includes('helado') || nombre.includes('pastel') || nombre.includes('panque') ||
-                          nombre.includes('hotcake') || nombre.includes('waffle') || nombre.includes('cereal')
+    // =====================================================
+    // BASE DE DATOS DE RECETAS COMPLETAS PREDEFINIDAS
+    // =====================================================
+    type RecetaDB = {
+      keywords: string[]
+      ingredientes: string[]
+      preparacion: string[]
+      tiempo: number
+      calorias: number
+      proteina: number
+      porciones: number
+    }
 
-    // BASE DE DATOS COMPLETA DE INGREDIENTES
-    const ingredientesDB: { [key: string]: { nombre: string, cantidad: string, calorias: number, proteina: number, tipo: string } } = {
-      // ============ PROTEÍNAS ANIMALES ============
-      'huevo': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18, tipo: 'proteina' },
-      'huevos': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18, tipo: 'proteina' },
-      'clara': { nombre: 'Claras de huevo', cantidad: '4 unidades', calorias: 60, proteina: 14, tipo: 'proteina' },
-      'claras': { nombre: 'Claras de huevo', cantidad: '4 unidades', calorias: 60, proteina: 14, tipo: 'proteina' },
-      'jamon': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21, tipo: 'proteina' },
-      'tocino': { nombre: 'Tocino', cantidad: '80g', calorias: 420, proteina: 12, tipo: 'proteina' },
-      'bacon': { nombre: 'Bacon', cantidad: '80g', calorias: 420, proteina: 12, tipo: 'proteina' },
-      'pollo': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55, tipo: 'proteina' },
-      'pechuga': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55, tipo: 'proteina' },
-      'muslo': { nombre: 'Muslos de pollo', cantidad: '300g', calorias: 350, proteina: 45, tipo: 'proteina' },
-      'alita': { nombre: 'Alitas de pollo', cantidad: '400g', calorias: 400, proteina: 40, tipo: 'proteina' },
-      'alitas': { nombre: 'Alitas de pollo', cantidad: '400g', calorias: 400, proteina: 40, tipo: 'proteina' },
-      'carne': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50, tipo: 'proteina' },
-      'res': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50, tipo: 'proteina' },
-      'bistec': { nombre: 'Bistec', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'proteina' },
-      'filete': { nombre: 'Filete', cantidad: '200g', calorias: 380, proteina: 42, tipo: 'proteina' },
-      'cerdo': { nombre: 'Carne de cerdo', cantidad: '200g', calorias: 450, proteina: 40, tipo: 'proteina' },
-      'costilla': { nombre: 'Costillas', cantidad: '300g', calorias: 600, proteina: 35, tipo: 'proteina' },
-      'costillas': { nombre: 'Costillas', cantidad: '300g', calorias: 600, proteina: 35, tipo: 'proteina' },
-      'chorizo': { nombre: 'Chorizo', cantidad: '100g', calorias: 300, proteina: 14, tipo: 'proteina' },
-      'salchicha': { nombre: 'Salchichas', cantidad: '100g', calorias: 300, proteina: 12, tipo: 'proteina' },
-      'longaniza': { nombre: 'Longaniza', cantidad: '100g', calorias: 320, proteina: 15, tipo: 'proteina' },
-      'carnitas': { nombre: 'Carnitas', cantidad: '200g', calorias: 450, proteina: 35, tipo: 'proteina' },
-      'barbacoa': { nombre: 'Barbacoa', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'proteina' },
-      'pastor': { nombre: 'Carne al pastor', cantidad: '200g', calorias: 380, proteina: 35, tipo: 'proteina' },
-      
+    const recetasDB: RecetaDB[] = [
+      // ============ BOWLS Y DESAYUNOS DULCES ============
+      {
+        keywords: ['bowl', 'frutos rojos', 'yogurt', 'yogur', 'yogurth', 'berries'],
+        ingredientes: ['200g de yogurt natural o griego', '80g de fresas frescas', '60g de arÃ¡ndanos', '50g de frambuesas', '50g de moras', '40g de granola', '1 cucharada de miel', '10g de semillas de chÃ­a'],
+        preparacion: ['Lava todas las frutas frescas', 'Corta las fresas en mitades o cuartos', 'Coloca el yogurt como base en un bowl', 'Distribuye las frutas de forma decorativa', 'AÃ±ade la granola crujiente', 'RocÃ­a con miel al gusto', 'Espolvorea las semillas de chÃ­a', 'Sirve inmediatamente'],
+        tiempo: 10, calorias: 380, proteina: 18, porciones: 1
+      },
+      {
+        keywords: ['avena', 'frutas', 'desayuno'],
+        ingredientes: ['80g de avena', '250ml de leche', '1 plÃ¡tano maduro', '50g de fresas', '30g de arÃ¡ndanos', '1 cucharada de miel', '1 pizca de canela', '20g de nueces picadas'],
+        preparacion: ['Calienta la leche en una olla', 'AÃ±ade la avena y cocina 5-7 minutos revolviendo', 'Agrega la canela mientras cocina', 'Sirve en un bowl', 'Corta el plÃ¡tano en rodajas y las fresas', 'Decora con las frutas y nueces', 'RocÃ­a con miel', 'Sirve caliente'],
+        tiempo: 15, calorias: 450, proteina: 15, porciones: 1
+      },
+      {
+        keywords: ['hotcakes', 'pancakes', 'panqueques', 'hot cakes'],
+        ingredientes: ['200g de harina', '2 huevos', '250ml de leche', '30g de mantequilla derretida', '2 cucharadas de azÃºcar', '1 cucharadita de polvo para hornear', '1 pizca de sal', 'Miel o maple para servir', 'Frutas frescas al gusto'],
+        preparacion: ['Mezcla la harina, azÃºcar, polvo para hornear y sal', 'En otro bowl bate los huevos con la leche', 'Combina los ingredientes secos con los lÃ­quidos', 'AÃ±ade la mantequilla derretida y mezcla bien', 'Calienta un sartÃ©n antiadherente a fuego medio', 'Vierte porciones de masa y cocina hasta que salgan burbujas', 'Voltea y cocina 1-2 minutos mÃ¡s', 'Sirve con miel y frutas'],
+        tiempo: 25, calorias: 520, proteina: 14, porciones: 4
+      },
+      {
+        keywords: ['waffles', 'waffle', 'gofres'],
+        ingredientes: ['250g de harina', '2 huevos', '300ml de leche', '60g de mantequilla derretida', '3 cucharadas de azÃºcar', '2 cucharaditas de polvo para hornear', '1 cucharadita de vainilla', 'Frutas y crema batida para servir'],
+        preparacion: ['Precalienta la wafflera', 'Mezcla los ingredientes secos en un bowl', 'Bate los huevos con leche, mantequilla y vainilla', 'Combina todo hasta obtener una masa homogÃ©nea', 'Vierte en la wafflera caliente', 'Cocina hasta que estÃ©n dorados (3-5 min)', 'Sirve con frutas frescas y crema batida', 'AÃ±ade miel o maple al gusto'],
+        tiempo: 20, calorias: 480, proteina: 12, porciones: 4
+      },
+      {
+        keywords: ['smoothie', 'batido', 'licuado', 'proteina'],
+        ingredientes: ['1 plÃ¡tano congelado', '150g de fresas', '200ml de leche de almendras', '1 scoop de proteÃ­na (opcional)', '1 cucharada de mantequilla de manÃ­', '1 cucharada de miel', 'Hielo al gusto'],
+        preparacion: ['AÃ±ade el plÃ¡tano y fresas a la licuadora', 'Agrega la leche de almendras', 'AÃ±ade la proteÃ­na y mantequilla de manÃ­', 'Agrega el hielo', 'LicÃºa hasta obtener consistencia suave', 'Prueba y ajusta dulzor con miel', 'Sirve inmediatamente', 'Decora con fruta picada si deseas'],
+        tiempo: 5, calorias: 350, proteina: 28, porciones: 1
+      },
+      {
+        keywords: ['acai', 'aÃ§aÃ­', 'acai bowl'],
+        ingredientes: ['100g de pulpa de aÃ§aÃ­ congelada', '1 plÃ¡tano congelado', '100ml de leche de coco', '50g de granola', '30g de coco rallado', '50g de fresas', '30g de arÃ¡ndanos', '1 cucharada de miel'],
+        preparacion: ['LicÃºa el aÃ§aÃ­ con plÃ¡tano y leche de coco', 'La mezcla debe quedar espesa como helado', 'Vierte en un bowl', 'AÃ±ade la granola en un lado', 'Coloca las frutas de forma decorativa', 'Espolvorea el coco rallado', 'RocÃ­a con miel', 'Sirve inmediatamente'],
+        tiempo: 10, calorias: 420, proteina: 8, porciones: 1
+      },
+      {
+        keywords: ['french toast', 'tostadas francesas', 'torrijas'],
+        ingredientes: ['4 rebanadas de pan brioche', '2 huevos', '100ml de leche', '1 cucharadita de canela', '1 cucharadita de vainilla', '30g de mantequilla', 'AzÃºcar glass para decorar', 'Frutas frescas y miel para servir'],
+        preparacion: ['Bate los huevos con leche, canela y vainilla', 'Sumerge cada rebanada de pan en la mezcla', 'Deja que absorba bien por ambos lados', 'Calienta la mantequilla en un sartÃ©n', 'Cocina el pan 2-3 minutos por lado hasta dorar', 'Espolvorea con azÃºcar glass', 'Sirve con frutas frescas', 'AÃ±ade miel al gusto'],
+        tiempo: 15, calorias: 450, proteina: 14, porciones: 2
+      },
+
+      // ============ HUEVOS Y DESAYUNOS SALADOS ============
+      {
+        keywords: ['huevos revueltos', 'huevo revuelto', 'scrambled'],
+        ingredientes: ['3 huevos', '30ml de leche', '20g de mantequilla', 'Sal al gusto', 'Pimienta al gusto', 'CebollÃ­n picado para decorar'],
+        preparacion: ['Bate los huevos con la leche, sal y pimienta', 'Derrite la mantequilla en sartÃ©n a fuego bajo', 'Vierte los huevos batidos', 'Revuelve suavemente con espÃ¡tula', 'Cocina hasta que estÃ©n cremosos (no secos)', 'Retira del fuego cuando aÃºn estÃ©n hÃºmedos', 'Decora con cebollÃ­n', 'Sirve inmediatamente'],
+        tiempo: 8, calorias: 280, proteina: 18, porciones: 1
+      },
+      {
+        keywords: ['huevos estrellados', 'huevo estrellado', 'huevo frito', 'huevos fritos'],
+        ingredientes: ['2 huevos', '2 cucharadas de aceite', 'Sal al gusto', 'Pimienta al gusto'],
+        preparacion: ['Calienta el aceite en sartÃ©n a fuego medio', 'Rompe los huevos con cuidado en el sartÃ©n', 'Cocina sin mover hasta que la clara estÃ© blanca', 'Sazona con sal y pimienta', 'Para yema suave: 2-3 minutos', 'Para yema cocida: 4-5 minutos', 'Retira con espÃ¡tula', 'Sirve inmediatamente'],
+        tiempo: 5, calorias: 220, proteina: 12, porciones: 1
+      },
+      {
+        keywords: ['omelette', 'omelet', 'tortilla francesa'],
+        ingredientes: ['3 huevos', '50g de jamÃ³n picado', '30g de queso rallado', '20g de mantequilla', '1/4 de cebolla picada', 'Sal y pimienta al gusto'],
+        preparacion: ['Bate los huevos con sal y pimienta', 'Derrite la mantequilla en sartÃ©n antiadherente', 'Saltea la cebolla y jamÃ³n brevemente', 'Vierte los huevos y deja que cuajen por debajo', 'AÃ±ade el queso en el centro', 'Dobla el omelette por la mitad', 'Cocina 30 segundos mÃ¡s', 'Sirve inmediatamente'],
+        tiempo: 10, calorias: 380, proteina: 26, porciones: 1
+      },
+      {
+        keywords: ['huevos benedictinos', 'eggs benedict', 'benedictine'],
+        ingredientes: ['2 huevos', '1 muffin inglÃ©s', '2 rebanadas de jamÃ³n o tocino', '60ml de salsa holandesa', 'Vinagre blanco', 'CebollÃ­n para decorar', 'Sal y pimienta'],
+        preparacion: ['Hierve agua con un chorrito de vinagre', 'Crea un remolino y aÃ±ade los huevos para pochar', 'Cocina 3-4 minutos para yema lÃ­quida', 'Tuesta el muffin inglÃ©s', 'Calienta el jamÃ³n o tocino', 'Coloca jamÃ³n sobre cada mitad del muffin', 'AÃ±ade el huevo pochado encima', 'Cubre con salsa holandesa y cebollÃ­n'],
+        tiempo: 20, calorias: 520, proteina: 24, porciones: 1
+      },
+      {
+        keywords: ['chilaquiles', 'chilaquil'],
+        ingredientes: ['200g de totopos', '400ml de salsa verde o roja', '100g de pollo deshebrado', '100g de crema', '80g de queso fresco', '1/4 de cebolla en aros', 'Cilantro fresco', '2 huevos estrellados (opcional)'],
+        preparacion: ['Calienta la salsa en un sartÃ©n amplio', 'AÃ±ade los totopos y mezcla bien', 'Cocina 2-3 minutos hasta que absorban salsa', 'Agrega el pollo deshebrado', 'Sirve en plato hondo', 'Decora con crema, queso y cebolla', 'AÃ±ade cilantro fresco', 'AcompaÃ±a con huevos estrellados'],
+        tiempo: 15, calorias: 580, proteina: 32, porciones: 2
+      },
+
+      // ============ CARNES Y PROTEÃNAS ============
+      {
+        keywords: ['pollo', 'pechuga', 'grilled chicken', 'pollo a la plancha'],
+        ingredientes: ['2 pechugas de pollo (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', '1 cucharadita de paprika', '1 cucharadita de orÃ©gano', 'Jugo de 1 limÃ³n', 'Sal y pimienta al gusto'],
+        preparacion: ['Aplana las pechugas para grosor uniforme', 'Mezcla aceite, ajo, paprika, orÃ©gano y limÃ³n', 'Marina el pollo mÃ­nimo 30 minutos', 'Calienta un sartÃ©n o grill a fuego alto', 'Cocina 6-7 minutos por lado', 'Verifica que estÃ© bien cocido por dentro', 'Deja reposar 5 minutos antes de cortar', 'Sirve con ensalada o vegetales'],
+        tiempo: 25, calorias: 350, proteina: 52, porciones: 2
+      },
+      {
+        keywords: ['bistec', 'steak', 'carne asada', 'res'],
+        ingredientes: ['400g de bistec de res', '2 cucharadas de aceite', '3 dientes de ajo', '1 rama de romero', '30g de mantequilla', 'Sal gruesa', 'Pimienta negra molida'],
+        preparacion: ['Saca la carne del refrigerador 30 min antes', 'Sazona generosamente con sal y pimienta', 'Calienta el sartÃ©n a fuego muy alto', 'AÃ±ade aceite y coloca el bistec', 'Cocina 3-4 min por lado (tÃ©rmino medio)', 'AÃ±ade mantequilla, ajo y romero al final', 'BaÃ±a la carne con la mantequilla derretida', 'Deja reposar 5 minutos antes de servir'],
+        tiempo: 20, calorias: 480, proteina: 45, porciones: 2
+      },
+      {
+        keywords: ['tacos', 'taco', 'carne'],
+        ingredientes: ['300g de carne para tacos', '8 tortillas de maÃ­z', '1 cebolla picada', '1 manojo de cilantro', '2 limones', 'Salsa verde y roja', 'Sal al gusto'],
+        preparacion: ['Sazona la carne con sal', 'Cocina en sartÃ©n caliente hasta dorar', 'Pica finamente la cebolla y cilantro', 'Calienta las tortillas en comal', 'Arma los tacos con carne', 'AÃ±ade cebolla y cilantro', 'Exprime limÃ³n al gusto', 'AcompaÃ±a con salsas'],
+        tiempo: 20, calorias: 450, proteina: 35, porciones: 2
+      },
+      {
+        keywords: ['hamburguesa', 'burger', 'hamburgesa'],
+        ingredientes: ['400g de carne molida de res', '2 panes para hamburguesa', '2 rebanadas de queso americano', '4 hojas de lechuga', '4 rodajas de tomate', '1/2 cebolla en aros', 'Ketchup y mostaza', 'Sal y pimienta'],
+        preparacion: ['Forma 2 tortitas con la carne, sazona', 'Calienta sartÃ©n o grill a fuego alto', 'Cocina las tortitas 4-5 min por lado', 'AÃ±ade el queso al final para que se derrita', 'Tuesta los panes ligeramente', 'Arma: pan, lechuga, carne con queso, tomate', 'AÃ±ade cebolla y salsas al gusto', 'Tapa con el pan superior'],
+        tiempo: 20, calorias: 650, proteina: 42, porciones: 2
+      },
+      {
+        keywords: ['albondigas', 'albondiga', 'meatballs'],
+        ingredientes: ['500g de carne molida mixta', '1/2 taza de pan molido', '1 huevo', '1/4 de cebolla picada finamente', '2 dientes de ajo picados', '500ml de salsa de tomate', 'OrÃ©gano, sal y pimienta', 'Perejil para decorar'],
+        preparacion: ['Mezcla carne, pan molido, huevo, cebolla, ajo y especias', 'Forma bolitas del tamaÃ±o deseado', 'FrÃ­e las albÃ³ndigas hasta dorar por fuera', 'Calienta la salsa de tomate', 'AÃ±ade las albÃ³ndigas a la salsa', 'Cocina a fuego bajo 20 minutos', 'Verifica que estÃ©n cocidas por dentro', 'Sirve con arroz o pasta'],
+        tiempo: 40, calorias: 520, proteina: 38, porciones: 4
+      },
+
       // ============ PESCADOS Y MARISCOS ============
-      'salmon': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'pescado' },
-      'atun': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40, tipo: 'pescado' },
-      'pescado': { nombre: 'Filete de pescado', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'pescado' },
-      'tilapia': { nombre: 'Tilapia', cantidad: '200g', calorias: 200, proteina: 42, tipo: 'pescado' },
-      'robalo': { nombre: 'Robalo', cantidad: '200g', calorias: 180, proteina: 38, tipo: 'pescado' },
-      'mojarra': { nombre: 'Mojarra', cantidad: '250g', calorias: 200, proteina: 40, tipo: 'pescado' },
-      'trucha': { nombre: 'Trucha', cantidad: '200g', calorias: 190, proteina: 38, tipo: 'pescado' },
-      'bacalao': { nombre: 'Bacalao', cantidad: '200g', calorias: 160, proteina: 35, tipo: 'pescado' },
-      'sardina': { nombre: 'Sardinas', cantidad: '150g', calorias: 250, proteina: 30, tipo: 'pescado' },
-      'camaron': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'marisco' },
-      'camarones': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'marisco' },
-      'pulpo': { nombre: 'Pulpo', cantidad: '200g', calorias: 160, proteina: 30, tipo: 'marisco' },
-      'calamar': { nombre: 'Calamar', cantidad: '200g', calorias: 170, proteina: 32, tipo: 'marisco' },
-      'mejillon': { nombre: 'Mejillones', cantidad: '200g', calorias: 150, proteina: 24, tipo: 'marisco' },
-      'mejillones': { nombre: 'Mejillones', cantidad: '200g', calorias: 150, proteina: 24, tipo: 'marisco' },
-      'almeja': { nombre: 'Almejas', cantidad: '200g', calorias: 140, proteina: 25, tipo: 'marisco' },
-      'almejas': { nombre: 'Almejas', cantidad: '200g', calorias: 140, proteina: 25, tipo: 'marisco' },
-      'langosta': { nombre: 'Langosta', cantidad: '200g', calorias: 180, proteina: 35, tipo: 'marisco' },
-      'cangrejo': { nombre: 'Cangrejo', cantidad: '150g', calorias: 140, proteina: 28, tipo: 'marisco' },
-      'ostiones': { nombre: 'Ostiones', cantidad: '150g', calorias: 120, proteina: 20, tipo: 'marisco' },
-      
-      // ============ CARBOHIDRATOS ============
-      'arroz': { nombre: 'Arroz', cantidad: '200g', calorias: 260, proteina: 5, tipo: 'carbohidrato' },
-      'pasta': { nombre: 'Pasta', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'espagueti': { nombre: 'Espagueti', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'spaghetti': { nombre: 'Spaghetti', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'fideo': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'fideos': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'tallarines': { nombre: 'Tallarines', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
-      'lasana': { nombre: 'Láminas de lasaña', cantidad: '200g', calorias: 280, proteina: 10, tipo: 'carbohidrato' },
-      'papa': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
-      'papas': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
-      'patata': { nombre: 'Patatas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
-      'camote': { nombre: 'Camote', cantidad: '250g', calorias: 200, proteina: 4, tipo: 'carbohidrato' },
-      'pure': { nombre: 'Puré de papa', cantidad: '200g', calorias: 180, proteina: 4, tipo: 'carbohidrato' },
-      'pan': { nombre: 'Pan', cantidad: '100g', calorias: 265, proteina: 9, tipo: 'carbohidrato' },
-      'tortilla': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5, tipo: 'carbohidrato' },
-      'tortillas': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5, tipo: 'carbohidrato' },
-      'avena': { nombre: 'Avena', cantidad: '80g', calorias: 300, proteina: 13, tipo: 'carbohidrato' },
-      'quinoa': { nombre: 'Quinoa', cantidad: '150g', calorias: 180, proteina: 7, tipo: 'carbohidrato' },
-      'cuscus': { nombre: 'Cuscús', cantidad: '150g', calorias: 170, proteina: 6, tipo: 'carbohidrato' },
-      'lenteja': { nombre: 'Lentejas', cantidad: '150g', calorias: 230, proteina: 18, tipo: 'carbohidrato' },
-      'lentejas': { nombre: 'Lentejas', cantidad: '150g', calorias: 230, proteina: 18, tipo: 'carbohidrato' },
-      'garbanzo': { nombre: 'Garbanzos', cantidad: '150g', calorias: 270, proteina: 15, tipo: 'carbohidrato' },
-      'garbanzos': { nombre: 'Garbanzos', cantidad: '150g', calorias: 270, proteina: 15, tipo: 'carbohidrato' },
-      'frijol': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14, tipo: 'carbohidrato' },
-      'frijoles': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14, tipo: 'carbohidrato' },
-      
-      // ============ VEGETALES ============
-      'esparrago': { nombre: 'Espárragos', cantidad: '150g', calorias: 30, proteina: 3, tipo: 'vegetal' },
-      'esparragos': { nombre: 'Espárragos', cantidad: '150g', calorias: 30, proteina: 3, tipo: 'vegetal' },
-      'brocoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4, tipo: 'vegetal' },
-      'coliflor': { nombre: 'Coliflor', cantidad: '150g', calorias: 35, proteina: 3, tipo: 'vegetal' },
-      'espinaca': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3, tipo: 'vegetal' },
-      'espinacas': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3, tipo: 'vegetal' },
-      'acelga': { nombre: 'Acelgas', cantidad: '100g', calorias: 20, proteina: 2, tipo: 'vegetal' },
-      'kale': { nombre: 'Kale', cantidad: '100g', calorias: 35, proteina: 3, tipo: 'vegetal' },
-      'lechuga': { nombre: 'Lechuga', cantidad: '100g', calorias: 15, proteina: 1, tipo: 'vegetal' },
-      'arugula': { nombre: 'Arúgula', cantidad: '50g', calorias: 12, proteina: 1, tipo: 'vegetal' },
-      'cebolla': { nombre: 'Cebolla', cantidad: '1 unidad', calorias: 40, proteina: 1, tipo: 'vegetal' },
-      'ajo': { nombre: 'Ajo', cantidad: '3 dientes', calorias: 15, proteina: 1, tipo: 'vegetal' },
-      'tomate': { nombre: 'Tomates', cantidad: '2 unidades', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      'jitomate': { nombre: 'Jitomates', cantidad: '2 unidades', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      'zanahoria': { nombre: 'Zanahorias', cantidad: '2 unidades', calorias: 50, proteina: 1, tipo: 'vegetal' },
-      'zanahorias': { nombre: 'Zanahorias', cantidad: '2 unidades', calorias: 50, proteina: 1, tipo: 'vegetal' },
-      'pimiento': { nombre: 'Pimiento', cantidad: '1 unidad', calorias: 30, proteina: 1, tipo: 'vegetal' },
-      'pimientos': { nombre: 'Pimientos', cantidad: '2 unidades', calorias: 60, proteina: 2, tipo: 'vegetal' },
-      'chile': { nombre: 'Chile', cantidad: '2 unidades', calorias: 20, proteina: 1, tipo: 'vegetal' },
-      'jalapeno': { nombre: 'Jalapeño', cantidad: '2 unidades', calorias: 10, proteina: 0, tipo: 'vegetal' },
-      'aguacate': { nombre: 'Aguacate', cantidad: '1 unidad', calorias: 240, proteina: 3, tipo: 'vegetal' },
-      'pepino': { nombre: 'Pepino', cantidad: '1 unidad', calorias: 15, proteina: 1, tipo: 'vegetal' },
-      'calabaza': { nombre: 'Calabaza', cantidad: '200g', calorias: 50, proteina: 2, tipo: 'vegetal' },
-      'calabacin': { nombre: 'Calabacín', cantidad: '200g', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      'zucchini': { nombre: 'Zucchini', cantidad: '200g', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      'berenjena': { nombre: 'Berenjena', cantidad: '200g', calorias: 50, proteina: 2, tipo: 'vegetal' },
-      'champinon': { nombre: 'Champiñones', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
-      'champinones': { nombre: 'Champiñones', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
-      'hongo': { nombre: 'Hongos', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
-      'hongos': { nombre: 'Hongos', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
-      'elote': { nombre: 'Elote', cantidad: '1 unidad', calorias: 90, proteina: 3, tipo: 'vegetal' },
-      'maiz': { nombre: 'Maíz', cantidad: '100g', calorias: 90, proteina: 3, tipo: 'vegetal' },
-      'chicharo': { nombre: 'Chícharos', cantidad: '100g', calorias: 80, proteina: 5, tipo: 'vegetal' },
-      'chicharos': { nombre: 'Chícharos', cantidad: '100g', calorias: 80, proteina: 5, tipo: 'vegetal' },
-      'ejote': { nombre: 'Ejotes', cantidad: '100g', calorias: 30, proteina: 2, tipo: 'vegetal' },
-      'ejotes': { nombre: 'Ejotes', cantidad: '100g', calorias: 30, proteina: 2, tipo: 'vegetal' },
-      'nopales': { nombre: 'Nopales', cantidad: '150g', calorias: 25, proteina: 2, tipo: 'vegetal' },
-      'chayote': { nombre: 'Chayote', cantidad: '1 unidad', calorias: 40, proteina: 1, tipo: 'vegetal' },
-      'betabel': { nombre: 'Betabel', cantidad: '150g', calorias: 65, proteina: 2, tipo: 'vegetal' },
-      'apio': { nombre: 'Apio', cantidad: '2 tallos', calorias: 10, proteina: 0, tipo: 'vegetal' },
-      'col': { nombre: 'Col', cantidad: '150g', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      'repollo': { nombre: 'Repollo', cantidad: '150g', calorias: 35, proteina: 2, tipo: 'vegetal' },
-      
-      // ============ LÁCTEOS ============
-      'queso': { nombre: 'Queso', cantidad: '100g', calorias: 350, proteina: 25, tipo: 'lacteo' },
-      'quesillo': { nombre: 'Quesillo/Oaxaca', cantidad: '100g', calorias: 300, proteina: 22, tipo: 'lacteo' },
-      'panela': { nombre: 'Queso panela', cantidad: '100g', calorias: 250, proteina: 20, tipo: 'lacteo' },
-      'parmesano': { nombre: 'Queso parmesano', cantidad: '50g', calorias: 200, proteina: 18, tipo: 'lacteo' },
-      'mozzarella': { nombre: 'Mozzarella', cantidad: '100g', calorias: 280, proteina: 22, tipo: 'lacteo' },
-      'cheddar': { nombre: 'Queso cheddar', cantidad: '100g', calorias: 400, proteina: 25, tipo: 'lacteo' },
-      'crema': { nombre: 'Crema', cantidad: '100ml', calorias: 200, proteina: 2, tipo: 'lacteo' },
-      'leche': { nombre: 'Leche', cantidad: '250ml', calorias: 150, proteina: 8, tipo: 'lacteo' },
-      'yogurt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
-      'yogur': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
-      'yogurth': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
-      'yoghurt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
-      'yogourt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
-      'griego': { nombre: 'Yogurt griego', cantidad: '200g', calorias: 130, proteina: 15, tipo: 'lacteo_dulce' },
-      'mantequilla': { nombre: 'Mantequilla', cantidad: '30g', calorias: 215, proteina: 0, tipo: 'lacteo' },
-      'requesón': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
-      'requeson': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
-      
-      // ============ FRUTAS ============
-      'platano': { nombre: 'Plátano', cantidad: '1 unidad', calorias: 90, proteina: 1, tipo: 'fruta' },
-      'banana': { nombre: 'Banana', cantidad: '1 unidad', calorias: 90, proteina: 1, tipo: 'fruta' },
-      'manzana': { nombre: 'Manzana', cantidad: '1 unidad', calorias: 95, proteina: 0, tipo: 'fruta' },
-      'pera': { nombre: 'Pera', cantidad: '1 unidad', calorias: 100, proteina: 0, tipo: 'fruta' },
-      'naranja': { nombre: 'Naranja', cantidad: '1 unidad', calorias: 60, proteina: 1, tipo: 'fruta' },
-      'limon': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
-      'lima': { nombre: 'Lima', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
-      'fresa': { nombre: 'Fresas frescas', cantidad: '100g', calorias: 35, proteina: 1, tipo: 'fruta' },
-      'fresas': { nombre: 'Fresas frescas', cantidad: '100g', calorias: 35, proteina: 1, tipo: 'fruta' },
-      'mora': { nombre: 'Moras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
-      'moras': { nombre: 'Moras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
-      'zarzamora': { nombre: 'Zarzamoras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
-      'arandano': { nombre: 'Arándanos', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
-      'arandanos': { nombre: 'Arándanos', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
-      'blueberry': { nombre: 'Blueberries', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
-      'frambuesa': { nombre: 'Frambuesas', cantidad: '80g', calorias: 40, proteina: 1, tipo: 'fruta' },
-      'frambuesas': { nombre: 'Frambuesas', cantidad: '80g', calorias: 40, proteina: 1, tipo: 'fruta' },
-      'cereza': { nombre: 'Cerezas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
-      'cerezas': { nombre: 'Cerezas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
-      'mango': { nombre: 'Mango', cantidad: '1 unidad', calorias: 100, proteina: 1, tipo: 'fruta' },
-      'pina': { nombre: 'Piña', cantidad: '200g', calorias: 100, proteina: 1, tipo: 'fruta' },
-      'papaya': { nombre: 'Papaya', cantidad: '200g', calorias: 80, proteina: 1, tipo: 'fruta' },
-      'melon': { nombre: 'Melón', cantidad: '200g', calorias: 65, proteina: 1, tipo: 'fruta' },
-      'sandia': { nombre: 'Sandía', cantidad: '200g', calorias: 60, proteina: 1, tipo: 'fruta' },
-      'uva': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
-      'uvas': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
-      'durazno': { nombre: 'Durazno', cantidad: '2 unidades', calorias: 80, proteina: 2, tipo: 'fruta' },
-      'coco': { nombre: 'Coco rallado', cantidad: '30g', calorias: 100, proteina: 1, tipo: 'fruta' },
-      'kiwi': { nombre: 'Kiwi', cantidad: '2 unidades', calorias: 85, proteina: 2, tipo: 'fruta' },
-      
-      // ============ CEREALES Y TOPPINGS DULCES ============
-      'granola': { nombre: 'Granola', cantidad: '50g', calorias: 220, proteina: 5, tipo: 'cereal' },
-      'cereal': { nombre: 'Cereal', cantidad: '40g', calorias: 150, proteina: 3, tipo: 'cereal' },
-      'chia': { nombre: 'Semillas de chía', cantidad: '15g', calorias: 70, proteina: 2, tipo: 'semilla' },
-      'linaza': { nombre: 'Linaza', cantidad: '15g', calorias: 75, proteina: 3, tipo: 'semilla' },
-      'semilla': { nombre: 'Mix de semillas', cantidad: '20g', calorias: 100, proteina: 4, tipo: 'semilla' },
-      
-      // ============ CONDIMENTOS Y ESPECIAS ============
-      'sal': { nombre: 'Sal', cantidad: 'al gusto', calorias: 0, proteina: 0, tipo: 'condimento' },
-      'pimienta': { nombre: 'Pimienta negra', cantidad: 'al gusto', calorias: 0, proteina: 0, tipo: 'condimento' },
-      'comino': { nombre: 'Comino', cantidad: '1 cucharadita', calorias: 8, proteina: 0, tipo: 'condimento' },
-      'oregano': { nombre: 'Orégano', cantidad: '1 cucharadita', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'cilantro': { nombre: 'Cilantro fresco', cantidad: '1 manojo', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'perejil': { nombre: 'Perejil fresco', cantidad: '1 manojo', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'albahaca': { nombre: 'Albahaca fresca', cantidad: '10 hojas', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'romero': { nombre: 'Romero', cantidad: '1 rama', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'tomillo': { nombre: 'Tomillo', cantidad: '1 cucharadita', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'laurel': { nombre: 'Hojas de laurel', cantidad: '2 hojas', calorias: 0, proteina: 0, tipo: 'condimento' },
-      'canela': { nombre: 'Canela', cantidad: '1 raja', calorias: 5, proteina: 0, tipo: 'condimento' },
-      'curry': { nombre: 'Curry en polvo', cantidad: '1 cucharada', calorias: 20, proteina: 1, tipo: 'condimento' },
-      'paprika': { nombre: 'Paprika', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'condimento' },
-      'curcuma': { nombre: 'Cúrcuma', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'condimento' },
-      'jengibre': { nombre: 'Jengibre', cantidad: '1 cucharada rallado', calorias: 5, proteina: 0, tipo: 'condimento' },
-      
-      // ============ ACEITES Y GRASAS ============
-      'aceite': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
-      'oliva': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
-      'aceite de coco': { nombre: 'Aceite de coco', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
-      
-      // ============ SALSAS ============
-      'salsa': { nombre: 'Salsa', cantidad: '100ml', calorias: 30, proteina: 1, tipo: 'salsa' },
-      'soya': { nombre: 'Salsa de soya', cantidad: '2 cucharadas', calorias: 15, proteina: 2, tipo: 'salsa' },
-      'soja': { nombre: 'Salsa de soya', cantidad: '2 cucharadas', calorias: 15, proteina: 2, tipo: 'salsa' },
-      'teriyaki': { nombre: 'Salsa teriyaki', cantidad: '3 cucharadas', calorias: 45, proteina: 1, tipo: 'salsa' },
-      'bbq': { nombre: 'Salsa BBQ', cantidad: '3 cucharadas', calorias: 70, proteina: 0, tipo: 'salsa' },
-      'mayonesa': { nombre: 'Mayonesa', cantidad: '2 cucharadas', calorias: 180, proteina: 0, tipo: 'salsa' },
-      'mostaza': { nombre: 'Mostaza', cantidad: '1 cucharada', calorias: 10, proteina: 0, tipo: 'salsa' },
-      'ketchup': { nombre: 'Ketchup', cantidad: '2 cucharadas', calorias: 40, proteina: 0, tipo: 'salsa' },
-      'catsup': { nombre: 'Catsup', cantidad: '2 cucharadas', calorias: 40, proteina: 0, tipo: 'salsa' },
-      'vinagre': { nombre: 'Vinagre', cantidad: '1 cucharada', calorias: 5, proteina: 0, tipo: 'salsa' },
-      
-      // ============ DULCES/POSTRES ============
-      'azucar': { nombre: 'Azúcar', cantidad: '100g', calorias: 400, proteina: 0, tipo: 'dulce' },
-      'miel': { nombre: 'Miel', cantidad: '2 cucharadas', calorias: 120, proteina: 0, tipo: 'dulce' },
-      'chocolate': { nombre: 'Chocolate', cantidad: '50g', calorias: 270, proteina: 4, tipo: 'dulce' },
-      'vainilla': { nombre: 'Esencia de vainilla', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'dulce' },
-      'harina': { nombre: 'Harina', cantidad: '200g', calorias: 700, proteina: 20, tipo: 'dulce' },
-      
-      // ============ FRUTOS SECOS ============
-      'almendra': { nombre: 'Almendras', cantidad: '30g', calorias: 170, proteina: 6, tipo: 'fruto_seco' },
-      'almendras': { nombre: 'Almendras', cantidad: '30g', calorias: 170, proteina: 6, tipo: 'fruto_seco' },
-      'nuez': { nombre: 'Nueces', cantidad: '30g', calorias: 185, proteina: 4, tipo: 'fruto_seco' },
-      'nueces': { nombre: 'Nueces', cantidad: '30g', calorias: 185, proteina: 4, tipo: 'fruto_seco' },
-      'cacahuate': { nombre: 'Cacahuates', cantidad: '30g', calorias: 160, proteina: 7, tipo: 'fruto_seco' },
-      'mani': { nombre: 'Maní', cantidad: '30g', calorias: 160, proteina: 7, tipo: 'fruto_seco' },
-      'pistacho': { nombre: 'Pistachos', cantidad: '30g', calorias: 160, proteina: 6, tipo: 'fruto_seco' },
-      'avellana': { nombre: 'Avellanas', cantidad: '30g', calorias: 175, proteina: 4, tipo: 'fruto_seco' },
-      
-      // ============ OTROS ============
-      'proteina': { nombre: 'Proteína en polvo', cantidad: '1 scoop (30g)', calorias: 120, proteina: 24, tipo: 'suplemento' },
-      'whey': { nombre: 'Whey protein', cantidad: '1 scoop (30g)', calorias: 120, proteina: 24, tipo: 'suplemento' },
-    }
+      {
+        keywords: ['salmon', 'salmÃ³n'],
+        ingredientes: ['2 filetes de salmÃ³n (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', 'Jugo de 1 limÃ³n', '1 cucharadita de eneldo', 'Sal y pimienta al gusto', 'Rodajas de limÃ³n para decorar'],
+        preparacion: ['Precalienta el horno a 200Â°C', 'Sazona el salmÃ³n con sal, pimienta y eneldo', 'Coloca en bandeja con aceite de oliva', 'AÃ±ade el ajo picado encima', 'Exprime el jugo de limÃ³n', 'Hornea 12-15 minutos', 'El salmÃ³n debe estar rosado por dentro', 'Sirve con rodajas de limÃ³n'],
+        tiempo: 20, calorias: 420, proteina: 46, porciones: 2
+      },
+      {
+        keywords: ['salmon con esparrago', 'salmon esparrago', 'salmÃ³n con espÃ¡rragos', 'salmon y esparragos'],
+        ingredientes: ['2 filetes de salmÃ³n (400g)', '1 manojo de espÃ¡rragos (250g)', '3 cucharadas de aceite de oliva', '3 dientes de ajo picados', 'Jugo de 1 limÃ³n', 'Sal y pimienta', 'Eneldo fresco'],
+        preparacion: ['Precalienta el horno a 200Â°C', 'Corta los extremos duros de los espÃ¡rragos', 'Coloca salmÃ³n y espÃ¡rragos en bandeja', 'RocÃ­a con aceite de oliva', 'Sazona con sal, pimienta y ajo', 'Exprime limÃ³n sobre todo', 'Hornea 15-18 minutos', 'Decora con eneldo y sirve'],
+        tiempo: 25, calorias: 480, proteina: 48, porciones: 2
+      },
+      {
+        keywords: ['camarones', 'camaron', 'gambas', 'shrimp'],
+        ingredientes: ['400g de camarones limpios', '4 cucharadas de mantequilla', '4 dientes de ajo picados', '1/4 taza de vino blanco', 'Jugo de 1 limÃ³n', 'Perejil fresco picado', 'Sal y pimienta', 'Hojuelas de chile (opcional)'],
+        preparacion: ['Limpia y desena los camarones', 'Derrite la mantequilla a fuego medio', 'Saltea el ajo hasta que estÃ© fragante', 'AÃ±ade los camarones en una sola capa', 'Cocina 2 minutos, voltea', 'Agrega vino y limÃ³n', 'Cocina 2-3 minutos mÃ¡s hasta que estÃ©n rosados', 'Sirve con perejil encima'],
+        tiempo: 15, calorias: 320, proteina: 42, porciones: 2
+      },
+      {
+        keywords: ['ceviche', 'cebiche'],
+        ingredientes: ['500g de pescado blanco fresco', '1 taza de jugo de limÃ³n', '1/2 cebolla morada en juliana', '2 tomates picados', '1 pepino picado', '1 chile serrano picado', 'Cilantro fresco', 'Sal y pimienta', 'Aguacate para servir'],
+        preparacion: ['Corta el pescado en cubos pequeÃ±os', 'Coloca en bowl y cubre con jugo de limÃ³n', 'Refrigera 30-45 minutos hasta que estÃ© "cocido"', 'Escurre el exceso de limÃ³n', 'Mezcla con cebolla, tomate, pepino y chile', 'AÃ±ade cilantro picado', 'Sazona con sal y pimienta', 'Sirve con aguacate y tostadas'],
+        tiempo: 45, calorias: 250, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['atun', 'atÃºn', 'tuna'],
+        ingredientes: ['2 filetes de atÃºn (300g)', '2 cucharadas de aceite de sÃ©samo', '2 cucharadas de salsa de soya', '1 cucharada de miel', 'Semillas de sÃ©samo', 'Jengibre rallado', 'CebollÃ­n picado'],
+        preparacion: ['Mezcla soya, miel, sÃ©samo y jengibre', 'Marina el atÃºn 15 minutos', 'Calienta sartÃ©n a fuego muy alto', 'Sella el atÃºn 1-2 min por lado (sellado)', 'El centro debe quedar rosado', 'Corta en rebanadas', 'Espolvorea semillas de sÃ©samo', 'Decora con cebollÃ­n'],
+        tiempo: 20, calorias: 350, proteina: 45, porciones: 2
+      },
+      {
+        keywords: ['pescado empanizado', 'pescado frito', 'fish and chips'],
+        ingredientes: ['4 filetes de pescado blanco', '1 taza de harina', '2 huevos batidos', '1.5 tazas de pan molido', 'Aceite para freÃ­r', 'Sal y pimienta', 'Limones para servir', 'Salsa tÃ¡rtara'],
+        preparacion: ['Sazona el pescado con sal y pimienta', 'Prepara 3 platos: harina, huevo, pan molido', 'Pasa cada filete por harina, huevo y pan molido', 'Calienta abundante aceite a 180Â°C', 'FrÃ­e el pescado 3-4 minutos por lado', 'Escurre en papel absorbente', 'Sirve con limÃ³n', 'AcompaÃ±a con salsa tÃ¡rtara'],
+        tiempo: 25, calorias: 450, proteina: 38, porciones: 4
+      },
 
-    // Detectar ingredientes mencionados en el nombre
-    const ingredientesDetectados: string[] = []
-    const tiposDetectados: string[] = []
-    let caloriasTotal = 0
-    let proteinaTotal = 0
+      // ============ PASTAS ============
+      {
+        keywords: ['pasta', 'espagueti', 'spaghetti', 'carbonara'],
+        ingredientes: ['400g de espagueti', '200g de tocino o panceta', '4 yemas de huevo', '100g de queso parmesano rallado', '2 dientes de ajo', 'Pimienta negra', 'Sal para el agua'],
+        preparacion: ['Hierve agua con sal y cocina la pasta al dente', 'Corta el tocino en cubos y frÃ­e hasta crujiente', 'Mezcla yemas con parmesano y pimienta', 'Reserva 1 taza del agua de cocciÃ³n', 'Escurre la pasta y aÃ±ade al sartÃ©n con tocino', 'Retira del fuego y aÃ±ade la mezcla de huevo', 'Mezcla rÃ¡pidamente aÃ±adiendo agua si necesita', 'Sirve con mÃ¡s parmesano y pimienta'],
+        tiempo: 25, calorias: 680, proteina: 28, porciones: 4
+      },
+      {
+        keywords: ['lasana', 'lasagna', 'lasaÃ±a'],
+        ingredientes: ['12 lÃ¡minas de lasaÃ±a', '500g de carne molida', '700ml de salsa de tomate', '500ml de bechamel', '200g de queso mozzarella', '1 cebolla picada', '3 dientes de ajo', 'OrÃ©gano, sal y pimienta'],
+        preparacion: ['SofrÃ­e cebolla y ajo, aÃ±ade carne hasta dorar', 'Agrega salsa de tomate y cocina 15 min', 'Prepara la bechamel', 'En refractario: salsa, pasta, carne, bechamel', 'Repite las capas 3 veces', 'Termina con bechamel y mozzarella', 'Hornea a 180Â°C por 35-40 minutos', 'Deja reposar 10 min antes de servir'],
+        tiempo: 60, calorias: 720, proteina: 38, porciones: 6
+      },
+      {
+        keywords: ['alfredo', 'fettuccine', 'pasta blanca'],
+        ingredientes: ['400g de fettuccine', '300ml de crema para batir', '100g de mantequilla', '150g de queso parmesano', '2 dientes de ajo', 'Sal, pimienta y nuez moscada', 'Perejil para decorar'],
+        preparacion: ['Cocina la pasta al dente en agua con sal', 'Derrite mantequilla con ajo a fuego bajo', 'AÃ±ade la crema y calienta sin hervir', 'Incorpora el parmesano poco a poco', 'Sazona con sal, pimienta y nuez moscada', 'AÃ±ade la pasta escurrida a la salsa', 'Mezcla bien hasta cubrir toda la pasta', 'Sirve con perejil y mÃ¡s parmesano'],
+        tiempo: 25, calorias: 750, proteina: 22, porciones: 4
+      },
+      {
+        keywords: ['bolognesa', 'boloÃ±esa', 'ragu'],
+        ingredientes: ['400g de espagueti', '400g de carne molida', '1 cebolla picada', '2 zanahorias ralladas', '2 tallos de apio picados', '400ml de salsa de tomate', '100ml de vino tinto', 'Ajo, orÃ©gano, sal y pimienta'],
+        preparacion: ['SofrÃ­e cebolla, zanahoria y apio 5 min', 'AÃ±ade la carne y cocina hasta dorar', 'Agrega el ajo y el vino, deja reducir', 'Incorpora la salsa de tomate', 'Sazona y cocina a fuego bajo 30 min', 'Cocina la pasta al dente', 'Sirve la pasta con la salsa encima', 'AÃ±ade parmesano rallado'],
+        tiempo: 45, calorias: 620, proteina: 32, porciones: 4
+      },
 
-    // PRIMERO: Detectar frases compuestas especiales
-    if (nombre.includes('frutos rojos') || nombre.includes('fruto rojo') || nombre.includes('berries') || nombre.includes('frutas rojas')) {
-      ingredientesDetectados.push('80g de fresas frescas')
-      ingredientesDetectados.push('60g de arándanos')
-      ingredientesDetectados.push('60g de frambuesas')
-      ingredientesDetectados.push('50g de moras')
-      tiposDetectados.push('fruta')
-      caloriasTotal += 150
-      proteinaTotal += 3
-    }
+      // ============ ARROZ ============
+      {
+        keywords: ['arroz con leche', 'arroz dulce'],
+        ingredientes: ['200g de arroz', '1 litro de leche entera', '150g de azÃºcar', '1 rama de canela', 'CÃ¡scara de 1 limÃ³n', '1 pizca de sal', 'Canela en polvo para decorar', 'Pasas (opcional)'],
+        preparacion: ['Lava el arroz y escÃºrrelo', 'Hierve la leche con canela y cÃ¡scara de limÃ³n', 'AÃ±ade el arroz y la pizca de sal', 'Cocina a fuego bajo 35-40 minutos', 'Revuelve frecuentemente para evitar que se pegue', 'Agrega el azÃºcar y las pasas', 'Retira canela y cÃ¡scara de limÃ³n', 'Sirve tibio o frÃ­o con canela espolvoreada'],
+        tiempo: 50, calorias: 320, proteina: 8, porciones: 6
+      },
+      {
+        keywords: ['arroz blanco', 'arroz'],
+        ingredientes: ['2 tazas de arroz', '4 tazas de agua', '2 cucharadas de aceite', '1/4 de cebolla', '2 dientes de ajo', '1 cucharadita de sal'],
+        preparacion: ['Lava el arroz hasta que el agua salga clara', 'Calienta aceite y sofrÃ­e cebolla y ajo', 'AÃ±ade el arroz y frÃ­e 2 minutos', 'Agrega el agua caliente y sal', 'Cuando hierva, baja el fuego al mÃ­nimo', 'Tapa y cocina 18-20 minutos', 'Deja reposar 5 minutos tapado', 'Esponja con tenedor y sirve'],
+        tiempo: 25, calorias: 200, proteina: 4, porciones: 4
+      },
+      {
+        keywords: ['arroz con pollo', 'arroz pollo'],
+        ingredientes: ['2 tazas de arroz', '400g de pollo en piezas', '4 tazas de caldo de pollo', '1 cebolla', '3 dientes de ajo', '1 pimiento', '100g de chÃ­charos', 'Comino, sal y pimienta'],
+        preparacion: ['Dora las piezas de pollo, reserva', 'SofrÃ­e cebolla, ajo y pimiento', 'AÃ±ade el arroz y sofrÃ­e 2 min', 'Agrega el caldo caliente y especias', 'Coloca el pollo encima', 'Tapa y cocina a fuego bajo 20 min', 'AÃ±ade los chÃ­charos los Ãºltimos 5 min', 'Deja reposar y sirve'],
+        tiempo: 40, calorias: 480, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['paella', 'arroz con mariscos'],
+        ingredientes: ['300g de arroz para paella', '200g de camarones', '200g de mejillones', '150g de calamares', '1 pimiento rojo', '1 cebolla', '3 dientes de ajo', '1 litro de caldo de pescado', 'AzafrÃ¡n, pimentÃ³n, sal'],
+        preparacion: ['SofrÃ­e cebolla, ajo y pimiento en paellera', 'AÃ±ade calamares y cocina 3 min', 'Agrega pimentÃ³n y arroz, sofrÃ­e', 'Vierte el caldo caliente con azafrÃ¡n', 'Distribuye uniformemente sin revolver', 'Cocina 10 min a fuego alto', 'AÃ±ade camarones y mejillones', 'Baja el fuego y cocina 10 min mÃ¡s'],
+        tiempo: 45, calorias: 520, proteina: 38, porciones: 4
+      },
 
-    // Buscar cada ingrediente en el nombre
-    for (const [key, value] of Object.entries(ingredientesDB)) {
-      if (nombre.includes(key)) {
-        // Evitar duplicados
-        const palabraBase = value.nombre.toLowerCase().split(' ')[0]
-        const yaExiste = ingredientesDetectados.some(i => i.toLowerCase().includes(palabraBase))
-        if (!yaExiste) {
-          ingredientesDetectados.push(`${value.cantidad} de ${value.nombre.toLowerCase()}`)
-          tiposDetectados.push(value.tipo)
-          caloriasTotal += value.calorias
-          proteinaTotal += value.proteina
+      // ============ SOPAS Y CALDOS ============
+      {
+        keywords: ['sopa', 'caldo de pollo', 'consome'],
+        ingredientes: ['1 pollo entero o 6 piezas', '3 litros de agua', '2 zanahorias', '2 papas', '1 calabaza', '1/4 de col', '1 cebolla', 'Cilantro, sal y pimienta', 'Arroz o fideos (opcional)'],
+        preparacion: ['Hierve el pollo en agua con cebolla y sal', 'Retira la espuma que se forme', 'Cocina 40 min hasta que el pollo estÃ© suave', 'Retira el pollo y deshebra', 'AÃ±ade las verduras cortadas al caldo', 'Cocina hasta que estÃ©n suaves', 'Regresa el pollo deshebrado', 'Sirve con cilantro, limÃ³n y chile'],
+        tiempo: 60, calorias: 320, proteina: 35, porciones: 6
+      },
+      {
+        keywords: ['crema', 'sopa crema', 'cream soup'],
+        ingredientes: ['500g de verdura principal (brÃ³coli/champiÃ±ones/espinaca)', '1 cebolla', '2 dientes de ajo', '500ml de caldo de pollo', '200ml de crema', '30g de mantequilla', 'Sal, pimienta, nuez moscada'],
+        preparacion: ['SofrÃ­e cebolla y ajo en mantequilla', 'AÃ±ade la verdura principal y saltea', 'Agrega el caldo y cocina 15 min', 'LicÃºa hasta obtener textura suave', 'Regresa a la olla y aÃ±ade la crema', 'Calienta sin hervir', 'Sazona con sal, pimienta y nuez moscada', 'Sirve con crema y crutones'],
+        tiempo: 30, calorias: 280, proteina: 10, porciones: 4
+      },
+
+      // ============ ENSALADAS ============
+      {
+        keywords: ['ensalada', 'salad', 'cesar', 'caesar'],
+        ingredientes: ['1 lechuga romana', '100g de crutones', '50g de queso parmesano', '200g de pechuga de pollo', 'Aderezo cÃ©sar', 'Jugo de limÃ³n', 'Sal y pimienta'],
+        preparacion: ['Cocina y corta el pollo en tiras', 'Lava y corta la lechuga en trozos', 'Coloca la lechuga en un bowl grande', 'AÃ±ade los crutones', 'Agrega el pollo en tiras', 'Vierte el aderezo cÃ©sar', 'Espolvorea el parmesano rallado', 'Mezcla y sirve inmediatamente'],
+        tiempo: 20, calorias: 380, proteina: 32, porciones: 2
+      },
+      {
+        keywords: ['guacamole', 'guac'],
+        ingredientes: ['3 aguacates maduros', '1/2 cebolla picada finamente', '2 tomates picados', '1 chile serrano picado', 'Jugo de 2 limones', 'Cilantro fresco picado', 'Sal al gusto'],
+        preparacion: ['Corta los aguacates y extrae la pulpa', 'Machaca con tenedor dejando algunos trozos', 'AÃ±ade la cebolla y tomate', 'Agrega el chile picado', 'Exprime el jugo de limÃ³n', 'Mezcla con cilantro', 'Sazona con sal', 'Sirve con totopos'],
+        tiempo: 10, calorias: 240, proteina: 3, porciones: 4
+      },
+
+      // ============ POSTRES ============
+      {
+        keywords: ['flan', 'flan de huevo', 'flan casero'],
+        ingredientes: ['6 huevos', '1 lata de leche condensada', '1 lata de leche evaporada', '1 cucharadita de vainilla', '1 taza de azÃºcar para caramelo', '1/4 taza de agua'],
+        preparacion: ['Prepara el caramelo: derrite azÃºcar con agua', 'Vierte en el molde y distribuye', 'LicÃºa huevos, leches y vainilla', 'Cuela la mezcla', 'Vierte sobre el caramelo', 'Hornea a baÃ±o marÃ­a a 180Â°C por 1 hora', 'Deja enfriar completamente', 'Refrigera y desmolda para servir'],
+        tiempo: 90, calorias: 280, proteina: 8, porciones: 8
+      },
+      {
+        keywords: ['brownie', 'brownies'],
+        ingredientes: ['200g de chocolate oscuro', '150g de mantequilla', '3 huevos', '200g de azÃºcar', '100g de harina', '1 cucharadita de vainilla', '1 pizca de sal', 'Nueces picadas (opcional)'],
+        preparacion: ['Derrite chocolate con mantequilla a baÃ±o marÃ­a', 'Bate huevos con azÃºcar hasta esponjar', 'Incorpora el chocolate derretido', 'AÃ±ade harina cernida, vainilla y sal', 'Agrega las nueces si deseas', 'Vierte en molde engrasado', 'Hornea a 180Â°C por 25-30 minutos', 'Deja enfriar antes de cortar'],
+        tiempo: 45, calorias: 320, proteina: 5, porciones: 12
+      },
+      {
+        keywords: ['pastel', 'cake', 'bizcocho', 'torta'],
+        ingredientes: ['250g de harina', '200g de azÃºcar', '4 huevos', '125g de mantequilla', '200ml de leche', '1 sobre de polvo para hornear', '1 cucharadita de vainilla', 'BetÃºn o frosting al gusto'],
+        preparacion: ['Precalienta el horno a 180Â°C', 'Bate mantequilla con azÃºcar hasta cremosa', 'AÃ±ade los huevos uno a uno', 'Incorpora vainilla', 'Mezcla harina con polvo para hornear', 'Alterna harina y leche a la mezcla', 'Vierte en molde engrasado y enharinado', 'Hornea 35-40 min, decora al enfriar'],
+        tiempo: 60, calorias: 350, proteina: 6, porciones: 12
+      },
+      {
+        keywords: ['gelatina', 'jello'],
+        ingredientes: ['2 sobres de gelatina sin sabor', '1/2 taza de agua frÃ­a', '2 tazas de jugo o leche caliente', '1/2 taza de azÃºcar', 'Frutas picadas (opcional)', 'Crema batida para servir'],
+        preparacion: ['Hidrata la gelatina en agua frÃ­a 5 min', 'Calienta el jugo o leche con azÃºcar', 'AÃ±ade la gelatina hidratada y mezcla', 'Revuelve hasta disolver completamente', 'Si deseas, aÃ±ade frutas al molde', 'Vierte la mezcla en el molde', 'Refrigera 4 horas mÃ­nimo', 'Desmolda y sirve con crema'],
+        tiempo: 20, calorias: 120, proteina: 4, porciones: 6
+      }
+    ]
+
+    // BUSCAR LA RECETA EN LA BASE DE DATOS
+    let recetaEncontrada: RecetaDB | null = null
+    let mejorCoincidencia = 0
+
+    for (const receta of recetasDB) {
+      let coincidencias = 0
+      for (const keyword of receta.keywords) {
+        if (nombre.includes(keyword)) {
+          coincidencias++
         }
+      }
+      if (coincidencias > mejorCoincidencia) {
+        mejorCoincidencia = coincidencias
+        recetaEncontrada = receta
       }
     }
 
-    // Añadir ingredientes complementarios según el tipo de receta
-    if (ingredientesDetectados.length > 0) {
-      if (esRecetaDulce) {
-        // RECETAS DULCES: añadir toppings dulces
-        if (!ingredientesDetectados.some(i => i.includes('miel'))) {
-          ingredientesDetectados.push('1 cucharada de miel o sirope de maple')
-          caloriasTotal += 60
-        }
-        if (!ingredientesDetectados.some(i => i.includes('granola')) && nombre.includes('bowl')) {
-          ingredientesDetectados.push('30g de granola crujiente')
-          caloriasTotal += 130
-          proteinaTotal += 3
-        }
-      } else {
-        // RECETAS SALADAS: añadir aceite, ajo, sal
-        if ((tiposDetectados.includes('proteina') || tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) && 
-            !ingredientesDetectados.some(i => i.includes('ajo'))) {
-          ingredientesDetectados.push('2 dientes de ajo picados')
-          caloriasTotal += 10
-        }
-        if (!ingredientesDetectados.some(i => i.includes('aceite'))) {
-          ingredientesDetectados.push('2 cucharadas de aceite de oliva')
-          caloriasTotal += 240
-        }
-        ingredientesDetectados.push('Sal al gusto')
-        ingredientesDetectados.push('Pimienta negra al gusto')
-        
-        // Añadir limón si es pescado/marisco
-        if ((tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) &&
-            !ingredientesDetectados.some(i => i.includes('limón') || i.includes('limon'))) {
-          ingredientesDetectados.push('Jugo de 1 limón')
-          caloriasTotal += 10
-        }
-      }
+    // Si encontramos una receta, usarla directamente
+    if (recetaEncontrada && mejorCoincidencia > 0) {
+      setNuevaReceta({
+        ...nuevaReceta,
+        ingredientes: recetaEncontrada.ingredientes,
+        preparacion: recetaEncontrada.preparacion,
+        tiempo: recetaEncontrada.tiempo,
+        calorias: recetaEncontrada.calorias,
+        proteina: recetaEncontrada.proteina,
+        porciones: recetaEncontrada.porciones
+      })
+      setGenerandoRecetaIA(false)
+      return
     }
 
-    // Generar pasos de preparación inteligentes
-    const pasosPreparacion: string[] = []
-    
-    if (ingredientesDetectados.length > 0) {
-      
-      // ========== RECETAS DULCES (Bowls, batidos, postres) ==========
-      if (esRecetaDulce) {
-        if (nombre.includes('bowl')) {
-          pasosPreparacion.push('Lava bien todas las frutas frescas')
-          pasosPreparacion.push('Corta las frutas en trozos del tamaño deseado')
-          pasosPreparacion.push('Coloca el yogurt como base en un bowl')
-          pasosPreparacion.push('Agrega las frutas encima de forma decorativa')
-          if (ingredientesDetectados.some(i => i.includes('granola'))) {
-            pasosPreparacion.push('Añade la granola crujiente por encima')
-          }
-          if (ingredientesDetectados.some(i => i.includes('miel') || i.includes('sirope'))) {
-            pasosPreparacion.push('Rocía con miel o sirope de maple al gusto')
-          }
-          if (ingredientesDetectados.some(i => i.includes('chía') || i.includes('semilla'))) {
-            pasosPreparacion.push('Espolvorea las semillas como topping final')
-          }
-          pasosPreparacion.push('Sirve inmediatamente y disfruta')
-        } else if (nombre.includes('batido') || nombre.includes('smoothie')) {
-          pasosPreparacion.push('Lava y corta las frutas')
-          pasosPreparacion.push('Añade todos los ingredientes a la licuadora')
-          pasosPreparacion.push('Licúa hasta obtener una consistencia suave')
-          pasosPreparacion.push('Sirve en un vaso y decora al gusto')
-        } else if (nombre.includes('avena')) {
-          pasosPreparacion.push('Calienta la leche en una olla')
-          pasosPreparacion.push('Añade la avena y cocina 5 minutos revolviendo')
-          pasosPreparacion.push('Agrega las frutas y toppings')
-          pasosPreparacion.push('Sirve caliente o deja enfriar para overnight oats')
-        } else {
-          pasosPreparacion.push('Prepara todos los ingredientes')
-          pasosPreparacion.push('Mezcla los ingredientes principales')
-          pasosPreparacion.push('Añade los toppings al gusto')
-          pasosPreparacion.push('Sirve y disfruta')
-        }
-      } 
-      // ========== RECETAS SALADAS ==========
-      else {
-        pasosPreparacion.push('Lava y prepara todos los ingredientes')
-        
-        // Pasos específicos según el tipo de proteína
-        if (tiposDetectados.includes('pescado')) {
-          pasosPreparacion.push('Sazona el pescado con sal, pimienta y limón')
-          pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
-          pasosPreparacion.push('Cocina el pescado 3-4 minutos por cada lado hasta que esté dorado')
-        } else if (tiposDetectados.includes('marisco')) {
-          pasosPreparacion.push('Limpia bien los mariscos')
-          pasosPreparacion.push('Calienta el aceite con el ajo hasta que esté fragante')
-          pasosPreparacion.push('Añade los mariscos y cocina 3-5 minutos hasta que estén rosados')
-        } else if (tiposDetectados.includes('proteina') && nombre.includes('huevo')) {
-          pasosPreparacion.push('Bate los huevos con sal y pimienta')
-          pasosPreparacion.push('Calienta el aceite o mantequilla en sartén antiadherente')
-          if (ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo'))) {
-            pasosPreparacion.push('Cocina primero la carne (jamón/tocino/chorizo) hasta dorar')
-          }
-          pasosPreparacion.push('Vierte los huevos y cocina revolviendo suavemente')
-          if (ingredientesDetectados.some(i => i.includes('queso'))) {
-            pasosPreparacion.push('Añade el queso y deja que se derrita')
-          }
-        } else if (tiposDetectados.includes('proteina')) {
-          pasosPreparacion.push('Sazona la proteína con sal, pimienta y especias')
-          pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
-          pasosPreparacion.push('Cocina la proteína hasta que esté bien dorada y cocida por dentro')
-        }
-        
-        // Pasos para vegetales
-        if (tiposDetectados.includes('vegetal')) {
-          pasosPreparacion.push('Corta los vegetales en trozos uniformes')
-          pasosPreparacion.push('Saltea los vegetales 3-5 minutos hasta que estén tiernos pero crujientes')
-        }
-        
-        // Pasos para carbohidratos
-        if (tiposDetectados.includes('carbohidrato')) {
-          if (ingredientesDetectados.some(i => i.includes('arroz'))) {
-            if (nombre.includes('leche')) {
-              // Arroz con leche - reemplazar todo
-              ingredientesDetectados.length = 0
-              ingredientesDetectados.push('200g de arroz', '1 litro de leche', '150g de azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
-              pasosPreparacion.length = 0
-              pasosPreparacion.push('Lava el arroz y escúrrelo')
-              pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
-              pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos revolviendo')
-              pasosPreparacion.push('Agrega el azúcar y mezcla bien')
-              pasosPreparacion.push('Sirve tibio o frío con canela espolvoreada')
-              caloriasTotal = 280
-              proteinaTotal = 6
-            } else {
-              pasosPreparacion.push('Cocina el arroz aparte según las instrucciones del paquete')
-            }
-          }
-          if (ingredientesDetectados.some(i => i.includes('pasta') || i.includes('espagueti') || i.includes('fideo'))) {
-            pasosPreparacion.push('Cocina la pasta en agua con sal hasta que esté al dente')
-          }
-          if (ingredientesDetectados.some(i => i.includes('papa'))) {
-            pasosPreparacion.push('Corta las papas y cocínalas hasta que estén tiernas')
-          }
-        }
-        
-        // Paso final para recetas saladas
-        if (!nombre.includes('leche') || !nombre.includes('arroz')) {
-          pasosPreparacion.push('Combina todos los ingredientes y rectifica la sazón')
-          pasosPreparacion.push('Sirve caliente y disfruta')
-        }
-      }
-    }
-
-    // Si no se detectaron ingredientes
-    if (ingredientesDetectados.length === 0) {
-      ingredientesDetectados.push(
-        'Ingredientes principales según tu receta',
-        '2 cucharadas de aceite',
-        'Sal y pimienta al gusto',
-        'Condimentos de tu preferencia'
-      )
-      pasosPreparacion.push(
-        'Prepara todos los ingredientes',
-        'Cocina según el método que prefieras',
-        'Sazona al gusto',
-        'Sirve y disfruta'
-      )
-      caloriasTotal = 300
-      proteinaTotal = 15
-    }
-
-    // Calcular tiempo según tipo de receta
-    let tiempo = 15
-    if (esRecetaDulce) {
-      // Recetas dulces son más rápidas
-      if (nombre.includes('bowl')) tiempo = 10
-      else if (nombre.includes('batido') || nombre.includes('smoothie')) tiempo = 5
-      else if (nombre.includes('avena')) tiempo = 15
-      else tiempo = 10
-    } else {
-      // Recetas saladas
-      if (tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) tiempo = 20
-      if (tiposDetectados.includes('proteina')) tiempo = 25
-      if (ingredientesDetectados.some(i => i.includes('arroz')) && !nombre.includes('leche')) tiempo = 30
-      if (nombre.includes('arroz') && nombre.includes('leche')) tiempo = 45
-      if (nombre.includes('horno') || nombre.includes('horneado') || nombre.includes('asado')) tiempo = 40
-    }
-
+    // Si no se encontrÃ³ receta en la base de datos, mostrar mensaje de receta no encontrada
     setNuevaReceta({
       ...nuevaReceta,
-      ingredientes: ingredientesDetectados,
-      preparacion: pasosPreparacion,
-      tiempo: tiempo,
-      calorias: Math.round(caloriasTotal),
-      proteina: Math.round(proteinaTotal),
-      porciones: 2
+      ingredientes: ['Receta no encontrada en nuestra base de datos', 'Por favor intenta con otro nombre de receta', 'Ejemplos: bowl de frutos rojos, arroz con leche, pollo a la plancha, pasta carbonara'],
+      preparacion: ['Escribe el nombre de una receta conocida', 'Presiona el botÃ³n de IA nuevamente'],
+      tiempo: 0,
+      calorias: 0,
+      proteina: 0,
+      porciones: 1
     })
-
     setGenerandoRecetaIA(false)
   }
 
@@ -699,32 +544,32 @@ export default function RecetasPage() {
       'pollo': 'Carnes y Aves',
       'pechuga': 'Carnes y Aves',
       'carne': 'Carnes y Aves',
-      'salmón': 'Pescados y Mariscos',
-      'atún': 'Pescados y Mariscos',
-      'huevo': 'Lácteos y Huevos',
-      'claras': 'Lácteos y Huevos',
-      'leche': 'Lácteos y Huevos',
-      'queso': 'Lácteos y Huevos',
-      'yogur': 'Lácteos y Huevos',
+      'salmÃ³n': 'Pescados y Mariscos',
+      'atÃºn': 'Pescados y Mariscos',
+      'huevo': 'LÃ¡cteos y Huevos',
+      'claras': 'LÃ¡cteos y Huevos',
+      'leche': 'LÃ¡cteos y Huevos',
+      'queso': 'LÃ¡cteos y Huevos',
+      'yogur': 'LÃ¡cteos y Huevos',
       'quinoa': 'Granos y Cereales',
       'avena': 'Granos y Cereales',
       'arroz': 'Granos y Cereales',
-      'tortilla': 'Panadería',
-      'pan': 'Panadería',
+      'tortilla': 'PanaderÃ­a',
+      'pan': 'PanaderÃ­a',
       'espinaca': 'Frutas y Verduras',
       'aguacate': 'Frutas y Verduras',
       'tomate': 'Frutas y Verduras',
       'lechuga': 'Frutas y Verduras',
-      'brócoli': 'Frutas y Verduras',
+      'brÃ³coli': 'Frutas y Verduras',
       'pimientos': 'Frutas y Verduras',
       'cebolla': 'Frutas y Verduras',
-      'plátano': 'Frutas y Verduras',
+      'plÃ¡tano': 'Frutas y Verduras',
       'frutos': 'Frutas y Verduras',
-      'limón': 'Frutas y Verduras',
-      'proteína': 'Suplementos',
+      'limÃ³n': 'Frutas y Verduras',
+      'proteÃ­na': 'Suplementos',
       'scoop': 'Suplementos',
       'mantequilla': 'Despensa',
-      'maní': 'Despensa',
+      'manÃ­': 'Despensa',
       'miel': 'Despensa',
       'aceite': 'Despensa',
       'especias': 'Despensa',
@@ -754,7 +599,7 @@ export default function RecetasPage() {
       }
     })
 
-    // Ordenar por sección
+    // Ordenar por secciÃ³n
     lista.sort((a, b) => a.seccion.localeCompare(b.seccion))
     
     setListaSupermercado(lista)
@@ -853,7 +698,7 @@ export default function RecetasPage() {
                     <Users className="w-3 h-3" />
                   </div>
                   <p className="text-black text-sm font-semibold">{receta.porciones}</p>
-                  <p className="text-gray-600 text-xs">porción</p>
+                  <p className="text-gray-600 text-xs">porciÃ³n</p>
                 </div>
               </div>
 
@@ -869,7 +714,7 @@ export default function RecetasPage() {
                     ))}
                     {receta.ingredientes.length > 3 && (
                       <li className="text-gray-700 text-xs">
-                        +{receta.ingredientes.length - 3} más...
+                        +{receta.ingredientes.length - 3} mÃ¡s...
                       </li>
                     )}
                   </ul>
@@ -910,12 +755,12 @@ export default function RecetasPage() {
 
             {/* Contenido */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
-              {/* Título y dificultad */}
+              {/* TÃ­tulo y dificultad */}
               <div className="flex items-start justify-between mb-6">
                 <h2 className="text-2xl font-bold text-black">{recetaSeleccionada.nombre}</h2>
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                  recetaSeleccionada.dificultad === 'Muy Fácil' ? 'bg-green-100 text-green-700' :
-                  recetaSeleccionada.dificultad === 'Fácil' ? 'bg-blue-100 text-blue-700' :
+                  recetaSeleccionada.dificultad === 'Muy FÃ¡cil' ? 'bg-green-100 text-green-700' :
+                  recetaSeleccionada.dificultad === 'FÃ¡cil' ? 'bg-blue-100 text-blue-700' :
                   recetaSeleccionada.dificultad === 'Media' ? 'bg-yellow-100 text-yellow-700' :
                   'bg-red-100 text-red-700'
                 }`}>
@@ -944,7 +789,7 @@ export default function RecetasPage() {
                     <Dumbbell className="w-5 h-5 text-red-600" />
                   </div>
                   <p className="text-xl font-bold text-black">{recetaSeleccionada.proteina}g</p>
-                  <p className="text-gray-500 text-xs">proteína</p>
+                  <p className="text-gray-500 text-xs">proteÃ­na</p>
                 </div>
                 <div className="text-center">
                   <div className="w-10 h-10 mx-auto mb-2 bg-purple-100 rounded-full flex items-center justify-center">
@@ -974,13 +819,13 @@ export default function RecetasPage() {
                   </ul>
                 </div>
 
-                {/* Preparación */}
+                {/* PreparaciÃ³n */}
                 <div>
                   <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                       <ChefHat className="w-4 h-4 text-blue-600" />
                     </span>
-                    Preparación
+                    PreparaciÃ³n
                   </h3>
                   <ol className="space-y-4">
                     {recetaSeleccionada.preparacion.map((paso, idx) => (
@@ -995,7 +840,7 @@ export default function RecetasPage() {
                 </div>
               </div>
 
-              {/* Botón Lista de Supermercado con IA */}
+              {/* BotÃ³n Lista de Supermercado con IA */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 {esPremium ? (
                   <button
@@ -1072,24 +917,24 @@ export default function RecetasPage() {
                   <div className="flex gap-3 mt-5 pt-4 border-t border-gray-200">
                     <button 
                       onClick={() => {
-                        const texto = listaSupermercado.map(i => `☐ ${i.producto} - ${i.cantidad}`).join('\n')
+                        const texto = listaSupermercado.map(i => `â˜ ${i.producto} - ${i.cantidad}`).join('\n')
                         navigator.clipboard.writeText(texto)
                       }}
                       className="flex-1 py-2 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition text-sm"
                     >
-                      📋 Copiar Lista
+                      ðŸ“‹ Copiar Lista
                     </button>
                     <button 
                       onClick={() => setMostrarLista(false)}
                       className="flex-1 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition text-sm"
                     >
-                      ✓ Listo
+                      âœ“ Listo
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Botones de acción */}
+              {/* Botones de acciÃ³n */}
               <div className="flex gap-4 mt-6">
                 <button
                   onClick={cerrarModal}
@@ -1135,7 +980,7 @@ export default function RecetasPage() {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Ej: Bowl de Proteína con Quinoa"
+                    placeholder="Ej: Bowl de ProteÃ­na con Quinoa"
                     value={nuevaReceta.nombre}
                     onChange={(e) => setNuevaReceta({...nuevaReceta, nombre: e.target.value})}
                     className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
@@ -1158,13 +1003,13 @@ export default function RecetasPage() {
                   )}
                 </div>
                 {esPremium && (
-                  <p className="text-xs text-gray-500 mt-1">Escribe el nombre y presiona IA para generar la receta automáticamente</p>
+                  <p className="text-xs text-gray-500 mt-1">Escribe el nombre y presiona IA para generar la receta automÃ¡ticamente</p>
                 )}
               </div>
 
-              {/* Categoría */}
+              {/* CategorÃ­a */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">CategorÃ­a</label>
                 <select
                   value={nuevaReceta.categoria}
                   onChange={(e) => setNuevaReceta({...nuevaReceta, categoria: e.target.value})}
@@ -1191,7 +1036,7 @@ export default function RecetasPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Calorías</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">CalorÃ­as</label>
                   <input
                     type="number"
                     placeholder="450"
@@ -1201,7 +1046,7 @@ export default function RecetasPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Proteína (g)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">ProteÃ­na (g)</label>
                   <input
                     type="number"
                     placeholder="35"
@@ -1259,10 +1104,10 @@ export default function RecetasPage() {
                 </div>
               </div>
 
-              {/* Preparación */}
+              {/* PreparaciÃ³n */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-semibold text-gray-700">Pasos de Preparación</label>
+                  <label className="text-sm font-semibold text-gray-700">Pasos de PreparaciÃ³n</label>
                   <button
                     type="button"
                     onClick={agregarPaso}
@@ -1279,7 +1124,7 @@ export default function RecetasPage() {
                         {idx + 1}
                       </span>
                       <textarea
-                        placeholder={`Paso ${idx + 1} de la preparación`}
+                        placeholder={`Paso ${idx + 1} de la preparaciÃ³n`}
                         value={paso}
                         onChange={(e) => actualizarPaso(idx, e.target.value)}
                         rows={2}
