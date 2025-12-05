@@ -778,7 +778,7 @@ export default function DietasPage() {
 
                 {/* Cena */}
                 <div className="flex items-start gap-4">
-                  <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
+                  <div className="bg-gray-1000/10 p-2 rounded-lg mt-1">
                     <ChefHat className="w-5 h-5 text-purple-400" />
                   </div>
                   <div className="flex-1">
@@ -840,7 +840,7 @@ export default function DietasPage() {
                     onClick={() => setModoCreacion('ia')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
                       modoCreacion === 'ia'
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-sm'
+                        ? 'bg-black text-white shadow-sm'
                         : 'text-gray-600 hover:text-black'
                     }`}
                   >
@@ -894,7 +894,7 @@ export default function DietasPage() {
                       <button
                         type="button"
                         onClick={() => abrirCalculadoraIA('desayuno')}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
                         title="Calcular macros con IA"
                       >
                         <Sparkles className="w-4 h-4" />
@@ -962,7 +962,7 @@ export default function DietasPage() {
                       <button
                         type="button"
                         onClick={() => abrirCalculadoraIA('almuerzo')}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
                         title="Calcular macros con IA"
                       >
                         <Sparkles className="w-4 h-4" />
@@ -1014,8 +1014,8 @@ export default function DietasPage() {
               </div>
 
               {/* Cena */}
-              <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-purple-600 mb-4">Cena</h3>
+              <div className="bg-gray-100 border-2 border-purple-200 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Cena</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
@@ -1030,7 +1030,7 @@ export default function DietasPage() {
                       <button
                         type="button"
                         onClick={() => abrirCalculadoraIA('cena')}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
                         title="Calcular macros con IA"
                       >
                         <Sparkles className="w-4 h-4" />
@@ -1102,8 +1102,8 @@ export default function DietasPage() {
               <div className="p-6 space-y-6">
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Sparkles className="w-6 h-6 text-purple-600" />
-                    <h3 className="text-xl font-bold text-purple-900">Generación Inteligente de Dieta</h3>
+                    <Sparkles className="w-6 h-6 text-gray-700" />
+                    <h3 className="text-xl font-bold text-black">Generación Inteligente de Dieta</h3>
                   </div>
                   <p className="text-gray-700 text-sm">
                     La IA creará un plan completo del día (desayuno, almuerzo y cena) basado en tus objetivos y macros.
@@ -1118,7 +1118,7 @@ export default function DietasPage() {
                       <button
                         type="button"
                         onClick={() => setMostrarFormularioDatos(true)}
-                        className="text-xs text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                        className="text-xs text-gray-700 hover:text-black font-medium flex items-center gap-1"
                       >
                         <Edit className="w-3 h-3" />
                         Editar Información
@@ -1171,7 +1171,7 @@ export default function DietasPage() {
                       type="number"
                       value={datosUsuario.peso}
                       onChange={(e) => setDatosUsuario({...datosUsuario, peso: Number(e.target.value)})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                   <div>
@@ -1180,7 +1180,7 @@ export default function DietasPage() {
                       type="number"
                       value={datosUsuario.altura}
                       onChange={(e) => setDatosUsuario({...datosUsuario, altura: Number(e.target.value)})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                   <div>
@@ -1189,7 +1189,7 @@ export default function DietasPage() {
                       type="number"
                       value={datosUsuario.edad}
                       onChange={(e) => setDatosUsuario({...datosUsuario, edad: Number(e.target.value)})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                   <div>
@@ -1197,7 +1197,7 @@ export default function DietasPage() {
                     <select
                       value={datosUsuario.sexo}
                       onChange={(e) => setDatosUsuario({...datosUsuario, sexo: e.target.value as any})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
                     >
                       <option value="masculino">Masculino</option>
                       <option value="femenino">Femenino</option>
@@ -1211,7 +1211,7 @@ export default function DietasPage() {
                   <select
                     value={datosUsuario.nivelActividad}
                     onChange={(e) => setDatosUsuario({...datosUsuario, nivelActividad: e.target.value as any})}
-                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
                   >
                     <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
                     <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
@@ -1236,7 +1236,7 @@ export default function DietasPage() {
                         onClick={() => setDatosUsuario({...datosUsuario, objetivo: obj.valor as any})}
                         className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
                           datosUsuario.objetivo === obj.valor
-                            ? 'border-purple-600 bg-purple-50 text-purple-900'
+                            ? 'border-black bg-gray-100 text-black'
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                         }`}
                       >
@@ -1290,7 +1290,7 @@ export default function DietasPage() {
                   <button
                     type="button"
                     onClick={calcularMacrosAutomatico}
-                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
+                    className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
                   >
                     <Sparkles className="w-5 h-5" />
                     Calcular Macros Automáticamente
@@ -1344,7 +1344,7 @@ export default function DietasPage() {
                   <button
                     onClick={generarDietaCompletaConIA}
                     disabled={generandoIA}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     {generandoIA ? (
                       <>
@@ -1370,7 +1370,7 @@ export default function DietasPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
@@ -1415,7 +1415,7 @@ export default function DietasPage() {
                           placeholder="150"
                           value={ingrediente.cantidad}
                           onChange={(e) => actualizarIngrediente(idx, 'cantidad', e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                         />
                       </div>
                       <div>
@@ -1423,7 +1423,7 @@ export default function DietasPage() {
                         <select
                           value={ingrediente.unidad}
                           onChange={(e) => actualizarIngrediente(idx, 'unidad', e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
                         >
                           <option value="gramos">gramos</option>
                           <option value="piezas">piezas</option>
@@ -1437,7 +1437,7 @@ export default function DietasPage() {
                 <button
                   type="button"
                   onClick={agregarIngrediente}
-                  className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-600 hover:border-purple-600 hover:text-purple-600 rounded-lg transition text-sm font-medium"
+                  className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-600 hover:border-black hover:text-gray-700 rounded-lg transition text-sm font-medium"
                 >
                   + Agregar otro ingrediente
                 </button>
@@ -1452,7 +1452,7 @@ export default function DietasPage() {
                     placeholder="Ej: 150, 200..."
                     value={porcionInfo.cantidad}
                     onChange={(e) => setPorcionInfo({...porcionInfo, cantidad: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                     autoFocus
                   />
                 </div>
@@ -1467,7 +1467,7 @@ export default function DietasPage() {
                         onClick={() => setPorcionInfo({...porcionInfo, unidad})}
                         className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
                           porcionInfo.unidad === unidad
-                            ? 'border-purple-600 bg-purple-50 text-purple-900'
+                            ? 'border-black bg-gray-100 text-black'
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                         }`}
                       >
@@ -1494,7 +1494,7 @@ export default function DietasPage() {
               <button
                 onClick={calcularMacros}
                 disabled={calculandoMacros}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {calculandoMacros ? (
                   <>
