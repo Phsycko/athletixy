@@ -62,6 +62,7 @@ export default function DietasPage() {
     carbsObjetivo: 320,
     grasasObjetivo: 80,
   })
+  const [duracionGeneracion, setDuracionGeneracion] = useState<'dia' | 'semana' | 'mes' | 'bimestre'>('dia')
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
@@ -435,40 +436,108 @@ export default function DietasPage() {
     setIngredientesDetectados(ingredientesDetectados.filter((_, i) => i !== index))
   }
 
+  const calcularMacrosAutomatico = () => {
+    const { peso, altura, edad, sexo, nivelActividad, objetivo } = datosUsuario
+    
+    // Fórmula Harris-Benedict para TMB (Tasa Metabólica Basal)
+    let tmb = 0
+    if (sexo === 'masculino') {
+      tmb = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad)
+    } else {
+      tmb = 447.593 + (9.247 * peso) + (3.098 * altura) - (4.330 * edad)
+    }
+    
+    // Factor de actividad
+    const factoresActividad: { [key: string]: number } = {
+      'sedentario': 1.2,
+      'ligero': 1.375,
+      'moderado': 1.55,
+      'intenso': 1.725,
+      'atleta': 1.9
+    }
+    
+    let calorias = tmb * factoresActividad[nivelActividad]
+    
+    // Ajustar según objetivo
+    if (objetivo === 'perder') {
+      calorias = calorias * 0.85 // Déficit 15%
+    } else if (objetivo === 'ganar') {
+      calorias = calorias * 1.15 // Superávit 15%
+    }
+    
+    // Calcular macros según objetivo
+    let proteina, carbs, grasas
+    if (objetivo === 'perder') {
+      proteina = peso * 2.2 // Alta proteína para preservar músculo
+      grasas = peso * 0.8
+      carbs = (calorias - (proteina * 4) - (grasas * 9)) / 4
+    } else if (objetivo === 'ganar') {
+      proteina = peso * 2.0
+      grasas = peso * 1.0
+      carbs = (calorias - (proteina * 4) - (grasas * 9)) / 4
+    } else {
+      proteina = peso * 1.8
+      grasas = peso * 0.9
+      carbs = (calorias - (proteina * 4) - (grasas * 9)) / 4
+    }
+    
+    setDatosUsuario({
+      ...datosUsuario,
+      caloriasObjetivo: Math.round(calorias),
+      proteinaObjetivo: Math.round(proteina),
+      carbsObjetivo: Math.round(carbs),
+      grasasObjetivo: Math.round(grasas),
+    })
+  }
+
   const generarDietaCompletaConIA = async () => {
     setGenerandoIA(true)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    const platosDesayuno = ['Avena con Proteína y Frutas', 'Huevos Revueltos con Aguacate', 'Batido de Proteína con Banana', 'Yogurt Griego con Granola', 'Tortilla de Claras con Espinacas']
-    const platosAlmuerzo = ['Pollo con Arroz Integral y Vegetales', 'Carne Magra con Quinoa', 'Salmón con Batata', 'Atún con Pasta Integral', 'Pechuga con Ensalada']
-    const platosCena = ['Salmón con Vegetales al Vapor', 'Pechuga con Brócoli', 'Pescado con Ensalada', 'Pollo con Espárragos', 'Atún con Vegetales']
+    const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+    const platosDesayuno = ['Avena con Proteína y Frutas', 'Huevos Revueltos con Aguacate', 'Batido de Proteína con Banana', 'Yogurt Griego con Granola', 'Tortilla de Claras con Espinacas', 'Tostadas Integrales con Mantequilla de Maní', 'Pancakes de Proteína']
+    const platosAlmuerzo = ['Pollo con Arroz Integral y Vegetales', 'Carne Magra con Quinoa', 'Salmón con Batata', 'Atún con Pasta Integral', 'Pechuga con Ensalada Caesar', 'Pescado con Arroz Basmati', 'Lentejas con Vegetales']
+    const platosCena = ['Salmón con Vegetales al Vapor', 'Pechuga con Brócoli', 'Pescado con Ensalada', 'Pollo con Espárragos', 'Atún con Vegetales', 'Merluza al Horno', 'Carne con Ensalada Mixta']
 
-    const dietaGenerada: DiaPlan = {
-      dia: 'Generado por IA',
-      desayuno: {
-        nombre: platosDesayuno[Math.floor(Math.random() * platosDesayuno.length)],
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.3),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.35),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.25),
-      },
-      almuerzo: {
-        nombre: platosAlmuerzo[Math.floor(Math.random() * platosAlmuerzo.length)],
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.45),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.45),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.45),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.40),
-      },
-      cena: {
-        nombre: platosCena[Math.floor(Math.random() * platosCena.length)],
-        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.25),
-        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.25),
-        carbs: Math.round(datosUsuario.carbsObjetivo * 0.20),
-        grasas: Math.round(datosUsuario.grasasObjetivo * 0.35),
-      },
+    let numDias = 1
+    if (duracionGeneracion === 'semana') numDias = 7
+    else if (duracionGeneracion === 'mes') numDias = 30
+    else if (duracionGeneracion === 'bimestre') numDias = 60
+
+    const nuevasDietas: DiaPlan[] = []
+
+    for (let i = 0; i < numDias; i++) {
+      const nombreDia = numDias === 1 ? 'Generado por IA' : diasNombres[i % 7]
+      
+      const dietaGenerada: DiaPlan = {
+        dia: numDias > 7 ? `${nombreDia} - Día ${i + 1}` : nombreDia,
+        desayuno: {
+          nombre: platosDesayuno[i % platosDesayuno.length],
+          calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
+          proteina: Math.round(datosUsuario.proteinaObjetivo * 0.3),
+          carbs: Math.round(datosUsuario.carbsObjetivo * 0.35),
+          grasas: Math.round(datosUsuario.grasasObjetivo * 0.25),
+        },
+        almuerzo: {
+          nombre: platosAlmuerzo[i % platosAlmuerzo.length],
+          calorias: Math.round(datosUsuario.caloriasObjetivo * 0.45),
+          proteina: Math.round(datosUsuario.proteinaObjetivo * 0.45),
+          carbs: Math.round(datosUsuario.carbsObjetivo * 0.45),
+          grasas: Math.round(datosUsuario.grasasObjetivo * 0.40),
+        },
+        cena: {
+          nombre: platosCena[i % platosCena.length],
+          calorias: Math.round(datosUsuario.caloriasObjetivo * 0.25),
+          proteina: Math.round(datosUsuario.proteinaObjetivo * 0.25),
+          carbs: Math.round(datosUsuario.carbsObjetivo * 0.20),
+          grasas: Math.round(datosUsuario.grasasObjetivo * 0.35),
+        },
+      }
+      
+      nuevasDietas.push(dietaGenerada)
     }
 
-    setDietaPlan([...dietaPlan, dietaGenerada])
+    setDietaPlan([...dietaPlan, ...nuevasDietas])
     setGenerandoIA(false)
     setIsModalOpen(false)
     setModoCreacion('manual')
@@ -1032,6 +1101,15 @@ export default function DietasPage() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Altura (cm)</label>
+                    <input
+                      type="number"
+                      value={datosUsuario.altura}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, altura: Number(e.target.value)})}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
                     <input
                       type="number"
@@ -1040,6 +1118,33 @@ export default function DietasPage() {
                       className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                    <select
+                      value={datosUsuario.sexo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, sexo: e.target.value as any})}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                    >
+                      <option value="masculino">Masculino</option>
+                      <option value="femenino">Femenino</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Nivel de Actividad */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad</label>
+                  <select
+                    value={datosUsuario.nivelActividad}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, nivelActividad: e.target.value as any})}
+                    className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
+                  >
+                    <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
+                    <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
+                    <option value="moderado">Moderado (ejercicio 3-5 días/semana)</option>
+                    <option value="intenso">Intenso (ejercicio 6-7 días/semana)</option>
+                    <option value="atleta">Atleta (entrenamiento 2 veces al día)</option>
+                  </select>
                 </div>
 
                 {/* Objetivo */}
@@ -1069,7 +1174,17 @@ export default function DietasPage() {
 
                 {/* Macros objetivo */}
                 <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Objetivo Diarios</h4>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-semibold text-gray-700">Macros Objetivo Diarios</h4>
+                    <button
+                      type="button"
+                      onClick={calcularMacrosAutomatico}
+                      className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition flex items-center gap-1"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      Calcular Auto
+                    </button>
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <label className="block text-xs text-gray-600 mb-1">Calorías</label>
@@ -1108,6 +1223,40 @@ export default function DietasPage() {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Duración de la generación */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Generar Dietas Para:</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { valor: 'dia', label: '1 Día', dias: 1 },
+                      { valor: 'semana', label: '1 Semana', dias: 7 },
+                      { valor: 'mes', label: '1 Mes', dias: 30 },
+                      { valor: 'bimestre', label: '2 Meses', dias: 60 }
+                    ].map((opcion) => (
+                      <button
+                        key={opcion.valor}
+                        type="button"
+                        onClick={() => setDuracionGeneracion(opcion.valor as any)}
+                        className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
+                          duracionGeneracion === opcion.valor
+                            ? 'border-blue-600 bg-blue-50 text-blue-900'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="font-bold">{opcion.label}</div>
+                        <div className="text-xs text-gray-600">{opcion.dias} día{opcion.dias > 1 ? 's' : ''}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Info sobre la generación */}
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-700">
+                    <strong>💡 Nota:</strong> Se generarán {duracionGeneracion === 'dia' ? '3 comidas (1 día)' : duracionGeneracion === 'semana' ? '21 comidas (7 días)' : duracionGeneracion === 'mes' ? '90 comidas (30 días)' : '180 comidas (60 días)'} con variedad de alimentos adaptados a tus macros.
+                  </p>
                 </div>
 
                 {/* Botones */}
