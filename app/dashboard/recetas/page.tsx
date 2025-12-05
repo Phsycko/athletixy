@@ -219,6 +219,13 @@ export default function RecetasPage() {
 
     const nombre = nuevaReceta.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
     
+    // DETECTAR TIPO DE RECETA (DULCE vs SALADA)
+    const esRecetaDulce = nombre.includes('bowl') || nombre.includes('batido') || nombre.includes('smoothie') || 
+                          nombre.includes('postre') || nombre.includes('dulce') || nombre.includes('fruta') ||
+                          nombre.includes('yogur') || nombre.includes('avena') || nombre.includes('granola') ||
+                          nombre.includes('helado') || nombre.includes('pastel') || nombre.includes('panque') ||
+                          nombre.includes('hotcake') || nombre.includes('waffle') || nombre.includes('cereal')
+
     // BASE DE DATOS COMPLETA DE INGREDIENTES
     const ingredientesDB: { [key: string]: { nombre: string, cantidad: string, calorias: number, proteina: number, tipo: string } } = {
       // ============ PROTEÍNAS ANIMALES ============
@@ -350,27 +357,36 @@ export default function RecetasPage() {
       'cheddar': { nombre: 'Queso cheddar', cantidad: '100g', calorias: 400, proteina: 25, tipo: 'lacteo' },
       'crema': { nombre: 'Crema', cantidad: '100ml', calorias: 200, proteina: 2, tipo: 'lacteo' },
       'leche': { nombre: 'Leche', cantidad: '250ml', calorias: 150, proteina: 8, tipo: 'lacteo' },
-      'yogurt': { nombre: 'Yogurt', cantidad: '150g', calorias: 90, proteina: 15, tipo: 'lacteo' },
-      'yogur': { nombre: 'Yogur', cantidad: '150g', calorias: 90, proteina: 15, tipo: 'lacteo' },
+      'yogurt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
+      'yogur': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
+      'yogurth': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
+      'yoghurt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
+      'yogourt': { nombre: 'Yogurt natural', cantidad: '200g', calorias: 120, proteina: 10, tipo: 'lacteo_dulce' },
+      'griego': { nombre: 'Yogurt griego', cantidad: '200g', calorias: 130, proteina: 15, tipo: 'lacteo_dulce' },
       'mantequilla': { nombre: 'Mantequilla', cantidad: '30g', calorias: 215, proteina: 0, tipo: 'lacteo' },
       'requesón': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
       'requeson': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
       
       // ============ FRUTAS ============
-      'platano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2, tipo: 'fruta' },
-      'banana': { nombre: 'Banana', cantidad: '2 unidades', calorias: 180, proteina: 2, tipo: 'fruta' },
+      'platano': { nombre: 'Plátano', cantidad: '1 unidad', calorias: 90, proteina: 1, tipo: 'fruta' },
+      'banana': { nombre: 'Banana', cantidad: '1 unidad', calorias: 90, proteina: 1, tipo: 'fruta' },
       'manzana': { nombre: 'Manzana', cantidad: '1 unidad', calorias: 95, proteina: 0, tipo: 'fruta' },
       'pera': { nombre: 'Pera', cantidad: '1 unidad', calorias: 100, proteina: 0, tipo: 'fruta' },
       'naranja': { nombre: 'Naranja', cantidad: '1 unidad', calorias: 60, proteina: 1, tipo: 'fruta' },
       'limon': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
       'lima': { nombre: 'Lima', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
-      'fresa': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1, tipo: 'fruta' },
-      'fresas': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1, tipo: 'fruta' },
-      'mora': { nombre: 'Moras', cantidad: '100g', calorias: 40, proteina: 1, tipo: 'fruta' },
-      'moras': { nombre: 'Moras', cantidad: '100g', calorias: 40, proteina: 1, tipo: 'fruta' },
-      'arandano': { nombre: 'Arándanos', cantidad: '100g', calorias: 55, proteina: 1, tipo: 'fruta' },
-      'arandanos': { nombre: 'Arándanos', cantidad: '100g', calorias: 55, proteina: 1, tipo: 'fruta' },
-      'frambuesa': { nombre: 'Frambuesas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
+      'fresa': { nombre: 'Fresas frescas', cantidad: '100g', calorias: 35, proteina: 1, tipo: 'fruta' },
+      'fresas': { nombre: 'Fresas frescas', cantidad: '100g', calorias: 35, proteina: 1, tipo: 'fruta' },
+      'mora': { nombre: 'Moras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
+      'moras': { nombre: 'Moras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
+      'zarzamora': { nombre: 'Zarzamoras', cantidad: '80g', calorias: 35, proteina: 1, tipo: 'fruta' },
+      'arandano': { nombre: 'Arándanos', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
+      'arandanos': { nombre: 'Arándanos', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
+      'blueberry': { nombre: 'Blueberries', cantidad: '80g', calorias: 45, proteina: 1, tipo: 'fruta' },
+      'frambuesa': { nombre: 'Frambuesas', cantidad: '80g', calorias: 40, proteina: 1, tipo: 'fruta' },
+      'frambuesas': { nombre: 'Frambuesas', cantidad: '80g', calorias: 40, proteina: 1, tipo: 'fruta' },
+      'cereza': { nombre: 'Cerezas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
+      'cerezas': { nombre: 'Cerezas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
       'mango': { nombre: 'Mango', cantidad: '1 unidad', calorias: 100, proteina: 1, tipo: 'fruta' },
       'pina': { nombre: 'Piña', cantidad: '200g', calorias: 100, proteina: 1, tipo: 'fruta' },
       'papaya': { nombre: 'Papaya', cantidad: '200g', calorias: 80, proteina: 1, tipo: 'fruta' },
@@ -379,8 +395,15 @@ export default function RecetasPage() {
       'uva': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
       'uvas': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
       'durazno': { nombre: 'Durazno', cantidad: '2 unidades', calorias: 80, proteina: 2, tipo: 'fruta' },
-      'coco': { nombre: 'Coco', cantidad: '100g', calorias: 350, proteina: 3, tipo: 'fruta' },
+      'coco': { nombre: 'Coco rallado', cantidad: '30g', calorias: 100, proteina: 1, tipo: 'fruta' },
       'kiwi': { nombre: 'Kiwi', cantidad: '2 unidades', calorias: 85, proteina: 2, tipo: 'fruta' },
+      
+      // ============ CEREALES Y TOPPINGS DULCES ============
+      'granola': { nombre: 'Granola', cantidad: '50g', calorias: 220, proteina: 5, tipo: 'cereal' },
+      'cereal': { nombre: 'Cereal', cantidad: '40g', calorias: 150, proteina: 3, tipo: 'cereal' },
+      'chia': { nombre: 'Semillas de chía', cantidad: '15g', calorias: 70, proteina: 2, tipo: 'semilla' },
+      'linaza': { nombre: 'Linaza', cantidad: '15g', calorias: 75, proteina: 3, tipo: 'semilla' },
+      'semilla': { nombre: 'Mix de semillas', cantidad: '20g', calorias: 100, proteina: 4, tipo: 'semilla' },
       
       // ============ CONDIMENTOS Y ESPECIAS ============
       'sal': { nombre: 'Sal', cantidad: 'al gusto', calorias: 0, proteina: 0, tipo: 'condimento' },
@@ -444,6 +467,17 @@ export default function RecetasPage() {
     let caloriasTotal = 0
     let proteinaTotal = 0
 
+    // PRIMERO: Detectar frases compuestas especiales
+    if (nombre.includes('frutos rojos') || nombre.includes('fruto rojo') || nombre.includes('berries') || nombre.includes('frutas rojas')) {
+      ingredientesDetectados.push('80g de fresas frescas')
+      ingredientesDetectados.push('60g de arándanos')
+      ingredientesDetectados.push('60g de frambuesas')
+      ingredientesDetectados.push('50g de moras')
+      tiposDetectados.push('fruta')
+      caloriasTotal += 150
+      proteinaTotal += 3
+    }
+
     // Buscar cada ingrediente en el nombre
     for (const [key, value] of Object.entries(ingredientesDB)) {
       if (nombre.includes(key)) {
@@ -459,28 +493,39 @@ export default function RecetasPage() {
       }
     }
 
-    // Añadir ingredientes complementarios básicos
+    // Añadir ingredientes complementarios según el tipo de receta
     if (ingredientesDetectados.length > 0) {
-      // Añadir ajo si hay proteína o vegetal
-      if ((tiposDetectados.includes('proteina') || tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) && 
-          !ingredientesDetectados.some(i => i.includes('ajo'))) {
-        ingredientesDetectados.push('2 dientes de ajo picados')
-        caloriasTotal += 10
-      }
-      // Añadir aceite si no hay
-      if (!ingredientesDetectados.some(i => i.includes('aceite'))) {
-        ingredientesDetectados.push('2 cucharadas de aceite de oliva')
-        caloriasTotal += 240
-      }
-      // Añadir sal y pimienta
-      ingredientesDetectados.push('Sal al gusto')
-      ingredientesDetectados.push('Pimienta negra al gusto')
-      
-      // Añadir limón si es pescado/marisco
-      if ((tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) &&
-          !ingredientesDetectados.some(i => i.includes('limón') || i.includes('limon'))) {
-        ingredientesDetectados.push('Jugo de 1 limón')
-        caloriasTotal += 10
+      if (esRecetaDulce) {
+        // RECETAS DULCES: añadir toppings dulces
+        if (!ingredientesDetectados.some(i => i.includes('miel'))) {
+          ingredientesDetectados.push('1 cucharada de miel o sirope de maple')
+          caloriasTotal += 60
+        }
+        if (!ingredientesDetectados.some(i => i.includes('granola')) && nombre.includes('bowl')) {
+          ingredientesDetectados.push('30g de granola crujiente')
+          caloriasTotal += 130
+          proteinaTotal += 3
+        }
+      } else {
+        // RECETAS SALADAS: añadir aceite, ajo, sal
+        if ((tiposDetectados.includes('proteina') || tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) && 
+            !ingredientesDetectados.some(i => i.includes('ajo'))) {
+          ingredientesDetectados.push('2 dientes de ajo picados')
+          caloriasTotal += 10
+        }
+        if (!ingredientesDetectados.some(i => i.includes('aceite'))) {
+          ingredientesDetectados.push('2 cucharadas de aceite de oliva')
+          caloriasTotal += 240
+        }
+        ingredientesDetectados.push('Sal al gusto')
+        ingredientesDetectados.push('Pimienta negra al gusto')
+        
+        // Añadir limón si es pescado/marisco
+        if ((tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) &&
+            !ingredientesDetectados.some(i => i.includes('limón') || i.includes('limon'))) {
+          ingredientesDetectados.push('Jugo de 1 limón')
+          caloriasTotal += 10
+        }
       }
     }
 
@@ -488,79 +533,108 @@ export default function RecetasPage() {
     const pasosPreparacion: string[] = []
     
     if (ingredientesDetectados.length > 0) {
-      pasosPreparacion.push('Lava y prepara todos los ingredientes')
       
-      // Pasos específicos según el tipo de proteína
-      if (tiposDetectados.includes('pescado')) {
-        pasosPreparacion.push('Sazona el pescado con sal, pimienta y limón')
-        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
-        pasosPreparacion.push('Cocina el pescado 3-4 minutos por cada lado hasta que esté dorado')
-      } else if (tiposDetectados.includes('marisco')) {
-        pasosPreparacion.push('Limpia bien los mariscos')
-        pasosPreparacion.push('Calienta el aceite con el ajo hasta que esté fragante')
-        pasosPreparacion.push('Añade los mariscos y cocina 3-5 minutos hasta que estén rosados')
-      } else if (tiposDetectados.includes('proteina') && nombre.includes('huevo')) {
-        pasosPreparacion.push('Bate los huevos con sal y pimienta')
-        pasosPreparacion.push('Calienta el aceite o mantequilla en sartén antiadherente')
-        if (tiposDetectados.some(t => ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo')))) {
-          pasosPreparacion.push('Cocina primero la carne (jamón/tocino/chorizo) hasta dorar')
+      // ========== RECETAS DULCES (Bowls, batidos, postres) ==========
+      if (esRecetaDulce) {
+        if (nombre.includes('bowl')) {
+          pasosPreparacion.push('Lava bien todas las frutas frescas')
+          pasosPreparacion.push('Corta las frutas en trozos del tamaño deseado')
+          pasosPreparacion.push('Coloca el yogurt como base en un bowl')
+          pasosPreparacion.push('Agrega las frutas encima de forma decorativa')
+          if (ingredientesDetectados.some(i => i.includes('granola'))) {
+            pasosPreparacion.push('Añade la granola crujiente por encima')
+          }
+          if (ingredientesDetectados.some(i => i.includes('miel') || i.includes('sirope'))) {
+            pasosPreparacion.push('Rocía con miel o sirope de maple al gusto')
+          }
+          if (ingredientesDetectados.some(i => i.includes('chía') || i.includes('semilla'))) {
+            pasosPreparacion.push('Espolvorea las semillas como topping final')
+          }
+          pasosPreparacion.push('Sirve inmediatamente y disfruta')
+        } else if (nombre.includes('batido') || nombre.includes('smoothie')) {
+          pasosPreparacion.push('Lava y corta las frutas')
+          pasosPreparacion.push('Añade todos los ingredientes a la licuadora')
+          pasosPreparacion.push('Licúa hasta obtener una consistencia suave')
+          pasosPreparacion.push('Sirve en un vaso y decora al gusto')
+        } else if (nombre.includes('avena')) {
+          pasosPreparacion.push('Calienta la leche en una olla')
+          pasosPreparacion.push('Añade la avena y cocina 5 minutos revolviendo')
+          pasosPreparacion.push('Agrega las frutas y toppings')
+          pasosPreparacion.push('Sirve caliente o deja enfriar para overnight oats')
+        } else {
+          pasosPreparacion.push('Prepara todos los ingredientes')
+          pasosPreparacion.push('Mezcla los ingredientes principales')
+          pasosPreparacion.push('Añade los toppings al gusto')
+          pasosPreparacion.push('Sirve y disfruta')
         }
-        pasosPreparacion.push('Vierte los huevos y cocina revolviendo suavemente')
-        if (ingredientesDetectados.some(i => i.includes('queso'))) {
-          pasosPreparacion.push('Añade el queso y deja que se derrita')
+      } 
+      // ========== RECETAS SALADAS ==========
+      else {
+        pasosPreparacion.push('Lava y prepara todos los ingredientes')
+        
+        // Pasos específicos según el tipo de proteína
+        if (tiposDetectados.includes('pescado')) {
+          pasosPreparacion.push('Sazona el pescado con sal, pimienta y limón')
+          pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
+          pasosPreparacion.push('Cocina el pescado 3-4 minutos por cada lado hasta que esté dorado')
+        } else if (tiposDetectados.includes('marisco')) {
+          pasosPreparacion.push('Limpia bien los mariscos')
+          pasosPreparacion.push('Calienta el aceite con el ajo hasta que esté fragante')
+          pasosPreparacion.push('Añade los mariscos y cocina 3-5 minutos hasta que estén rosados')
+        } else if (tiposDetectados.includes('proteina') && nombre.includes('huevo')) {
+          pasosPreparacion.push('Bate los huevos con sal y pimienta')
+          pasosPreparacion.push('Calienta el aceite o mantequilla en sartén antiadherente')
+          if (ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo'))) {
+            pasosPreparacion.push('Cocina primero la carne (jamón/tocino/chorizo) hasta dorar')
+          }
+          pasosPreparacion.push('Vierte los huevos y cocina revolviendo suavemente')
+          if (ingredientesDetectados.some(i => i.includes('queso'))) {
+            pasosPreparacion.push('Añade el queso y deja que se derrita')
+          }
+        } else if (tiposDetectados.includes('proteina')) {
+          pasosPreparacion.push('Sazona la proteína con sal, pimienta y especias')
+          pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
+          pasosPreparacion.push('Cocina la proteína hasta que esté bien dorada y cocida por dentro')
         }
-      } else if (tiposDetectados.includes('proteina')) {
-        pasosPreparacion.push('Sazona la proteína con sal, pimienta y especias')
-        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
-        pasosPreparacion.push('Cocina la proteína hasta que esté bien dorada y cocida por dentro')
-      }
-      
-      // Pasos para vegetales
-      if (tiposDetectados.includes('vegetal')) {
-        const vegetales = ingredientesDetectados.filter(i => {
-          const nombreLower = i.toLowerCase()
-          return nombreLower.includes('espárrago') || nombreLower.includes('brócoli') || 
-                 nombreLower.includes('espinaca') || nombreLower.includes('pimiento') ||
-                 nombreLower.includes('calabacín') || nombreLower.includes('champiñon') ||
-                 nombreLower.includes('zanahoria') || nombreLower.includes('cebolla')
-        })
-        if (vegetales.length > 0) {
+        
+        // Pasos para vegetales
+        if (tiposDetectados.includes('vegetal')) {
           pasosPreparacion.push('Corta los vegetales en trozos uniformes')
-          pasosPreparacion.push('Saltea los vegetales en la misma sartén 3-5 minutos hasta que estén tiernos pero crujientes')
+          pasosPreparacion.push('Saltea los vegetales 3-5 minutos hasta que estén tiernos pero crujientes')
         }
-      }
-      
-      // Pasos para carbohidratos
-      if (tiposDetectados.includes('carbohidrato')) {
-        if (ingredientesDetectados.some(i => i.includes('arroz'))) {
-          if (nombre.includes('leche')) {
-            // Arroz con leche - reemplazar todo
-            ingredientesDetectados.length = 0
-            ingredientesDetectados.push('200g de arroz', '1 litro de leche', '150g de azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
-            pasosPreparacion.length = 0
-            pasosPreparacion.push('Lava el arroz y escúrrelo')
-            pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
-            pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos revolviendo frecuentemente')
-            pasosPreparacion.push('Agrega el azúcar y mezcla bien')
-            pasosPreparacion.push('Retira la canela y cáscara, sirve tibio o frío con canela espolvoreada')
-            caloriasTotal = 280
-            proteinaTotal = 6
-          } else {
-            pasosPreparacion.push('Cocina el arroz aparte según las instrucciones del paquete')
+        
+        // Pasos para carbohidratos
+        if (tiposDetectados.includes('carbohidrato')) {
+          if (ingredientesDetectados.some(i => i.includes('arroz'))) {
+            if (nombre.includes('leche')) {
+              // Arroz con leche - reemplazar todo
+              ingredientesDetectados.length = 0
+              ingredientesDetectados.push('200g de arroz', '1 litro de leche', '150g de azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
+              pasosPreparacion.length = 0
+              pasosPreparacion.push('Lava el arroz y escúrrelo')
+              pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
+              pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos revolviendo')
+              pasosPreparacion.push('Agrega el azúcar y mezcla bien')
+              pasosPreparacion.push('Sirve tibio o frío con canela espolvoreada')
+              caloriasTotal = 280
+              proteinaTotal = 6
+            } else {
+              pasosPreparacion.push('Cocina el arroz aparte según las instrucciones del paquete')
+            }
+          }
+          if (ingredientesDetectados.some(i => i.includes('pasta') || i.includes('espagueti') || i.includes('fideo'))) {
+            pasosPreparacion.push('Cocina la pasta en agua con sal hasta que esté al dente')
+          }
+          if (ingredientesDetectados.some(i => i.includes('papa'))) {
+            pasosPreparacion.push('Corta las papas y cocínalas hasta que estén tiernas')
           }
         }
-        if (ingredientesDetectados.some(i => i.includes('pasta') || i.includes('espagueti') || i.includes('fideo'))) {
-          pasosPreparacion.push('Cocina la pasta en agua con sal hasta que esté al dente')
+        
+        // Paso final para recetas saladas
+        if (!nombre.includes('leche') || !nombre.includes('arroz')) {
+          pasosPreparacion.push('Combina todos los ingredientes y rectifica la sazón')
+          pasosPreparacion.push('Sirve caliente y disfruta')
         }
-        if (ingredientesDetectados.some(i => i.includes('papa'))) {
-          pasosPreparacion.push('Corta las papas y cocínalas hasta que estén tiernas')
-        }
-      }
-      
-      // Paso final
-      if (!nombre.includes('leche') || !nombre.includes('arroz')) {
-        pasosPreparacion.push('Combina todos los ingredientes, rectifica la sazón')
-        pasosPreparacion.push('Sirve caliente y disfruta')
       }
     }
 
@@ -582,13 +656,22 @@ export default function RecetasPage() {
       proteinaTotal = 15
     }
 
-    // Calcular tiempo
+    // Calcular tiempo según tipo de receta
     let tiempo = 15
-    if (tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) tiempo = 20
-    if (tiposDetectados.includes('proteina')) tiempo = 25
-    if (ingredientesDetectados.some(i => i.includes('arroz')) && !nombre.includes('leche')) tiempo = 30
-    if (nombre.includes('arroz') && nombre.includes('leche')) tiempo = 45
-    if (nombre.includes('horno') || nombre.includes('horneado') || nombre.includes('asado')) tiempo = 40
+    if (esRecetaDulce) {
+      // Recetas dulces son más rápidas
+      if (nombre.includes('bowl')) tiempo = 10
+      else if (nombre.includes('batido') || nombre.includes('smoothie')) tiempo = 5
+      else if (nombre.includes('avena')) tiempo = 15
+      else tiempo = 10
+    } else {
+      // Recetas saladas
+      if (tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) tiempo = 20
+      if (tiposDetectados.includes('proteina')) tiempo = 25
+      if (ingredientesDetectados.some(i => i.includes('arroz')) && !nombre.includes('leche')) tiempo = 30
+      if (nombre.includes('arroz') && nombre.includes('leche')) tiempo = 45
+      if (nombre.includes('horno') || nombre.includes('horneado') || nombre.includes('asado')) tiempo = 40
+    }
 
     setNuevaReceta({
       ...nuevaReceta,
