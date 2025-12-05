@@ -1805,30 +1805,21 @@ export default function DietasPage() {
                     />
                   </div>
                 </div>
-                {esPremium ? (
-                  <button
-                    type="button"
-                    onClick={calcularMacrosAutomatico}
-                    className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
-                  >
-                    <Sparkles className="w-5 h-5" />
-                    Recalcular Macros Automáticamente
-                  </button>
-                ) : (
-                  <div className="w-full py-3 bg-gray-200 text-gray-500 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed relative group">
-                    <Sparkles className="w-5 h-5" />
-                    Recalcular Macros Automáticamente
-                    <span className="ml-2 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                      PREMIUM
-                    </span>
-                    <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded py-2 px-3 whitespace-nowrap">
-                      Los usuarios básicos pueden editar los valores manualmente
-                    </div>
-                  </div>
+                {esPremium && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={calcularMacrosAutomatico}
+                      className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      <Sparkles className="w-5 h-5" />
+                      Recalcular Macros Automáticamente
+                    </button>
+                    <p className="text-xs text-gray-600 mt-2 text-center">
+                      Los macros se calculan automáticamente con fórmula Harris-Benedict
+                    </p>
+                  </>
                 )}
-                <p className="text-xs text-gray-600 mt-2 text-center">
-                  {esPremium ? 'Los macros se calculan automáticamente con fórmula Harris-Benedict' : 'Edita los valores manualmente o actualiza a Premium para cálculo automático'}
-                </p>
               </div>
 
               {/* Botones de acción */}
