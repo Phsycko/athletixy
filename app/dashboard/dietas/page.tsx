@@ -102,8 +102,19 @@ export default function DietasPage() {
     if (primeraVez) {
       try {
         const dietas = JSON.parse(dietasGuardadas || '[]')
-        setDietaPlan(dietas)
+        // Agregar fechas a dietas antiguas que no las tienen
+        const dietasConFecha = dietas.map((dieta: any, index: number) => {
+          if (!dieta.fecha) {
+            const fecha = new Date()
+            fecha.setDate(fecha.getDate() + index)
+            return { ...dieta, fecha: fecha }
+          }
+          // Convertir string de fecha a Date object
+          return { ...dieta, fecha: new Date(dieta.fecha) }
+        })
+        setDietaPlan(dietasConFecha)
       } catch (error) {
+        console.error('Error cargando dietas:', error)
         setDietaPlan([])
       }
     } else {
@@ -830,7 +841,12 @@ export default function DietasPage() {
         </div>
 
         <div className="space-y-6">
-          {dietaPlan.map((dia, index) => (
+          {dietaPlan
+            .filter(dieta => {
+              const fecha = new Date(dieta.fecha)
+              return fecha >= fechaInicio && fecha <= fechaFin
+            })
+            .map((dia, index) => (
             <div key={index} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-gray-300 transition">
               <div className="bg-gray-50 px-6 py-3 border-b border-gray-300 flex items-center justify-between">
                 <h3 className="text-black font-semibold">{dia.dia}</h3>
