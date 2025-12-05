@@ -94,6 +94,7 @@ export default function DietasPage() {
   const [rangoEliminar, setRangoEliminar] = useState<{inicio: Date | null, fin: Date | null}>({inicio: null, fin: null})
   const [confirmDeleteRangoOpen, setConfirmDeleteRangoOpen] = useState(false)
   const [editarDatosModalOpen, setEditarDatosModalOpen] = useState(false)
+  const [esPremium] = useState(true) // true = Premium, false = Básico
 
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
@@ -1035,15 +1036,17 @@ export default function DietasPage() {
                         onChange={(e) => updateComida('desayuno', 'nombre', e.target.value)}
                         className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-500"
                       />
-                      <button
-                        type="button"
-                        onClick={() => abrirCalculadoraIA('desayuno')}
-                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
-                        title="Calcular macros con IA"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        IA
-                      </button>
+                      {esPremium && (
+                        <button
+                          type="button"
+                          onClick={() => abrirCalculadoraIA('desayuno')}
+                          className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
+                          title="Calcular macros con IA - Premium"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                          IA
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -1103,15 +1106,17 @@ export default function DietasPage() {
                         onChange={(e) => updateComida('almuerzo', 'nombre', e.target.value)}
                         className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500"
                       />
-                      <button
-                        type="button"
-                        onClick={() => abrirCalculadoraIA('almuerzo')}
-                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
-                        title="Calcular macros con IA"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        IA
-                      </button>
+                      {esPremium && (
+                        <button
+                          type="button"
+                          onClick={() => abrirCalculadoraIA('almuerzo')}
+                          className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
+                          title="Calcular macros con IA - Premium"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                          IA
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -1171,15 +1176,17 @@ export default function DietasPage() {
                         onChange={(e) => updateComida('cena', 'nombre', e.target.value)}
                         className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
-                      <button
-                        type="button"
-                        onClick={() => abrirCalculadoraIA('cena')}
-                        className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
-                        title="Calcular macros con IA"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        IA
-                      </button>
+                      {esPremium && (
+                        <button
+                          type="button"
+                          onClick={() => abrirCalculadoraIA('cena')}
+                          className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
+                          title="Calcular macros con IA - Premium"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                          IA
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -1757,7 +1764,14 @@ export default function DietasPage() {
 
               {/* Macros calculados */}
               <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Calculados</h4>
+                <div className="flex items-center gap-2 mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700">Macros Calculados</h4>
+                  {esPremium && (
+                    <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                      PREMIUM
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Calorías</label>
@@ -1784,14 +1798,24 @@ export default function DietasPage() {
                     </div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={calcularMacrosAutomatico}
-                  className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Recalcular Macros Automáticamente
-                </button>
+                {esPremium ? (
+                  <button
+                    type="button"
+                    onClick={calcularMacrosAutomatico}
+                    className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    Recalcular Macros Automáticamente
+                  </button>
+                ) : (
+                  <div className="w-full py-3 bg-gray-200 text-gray-500 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                    <Sparkles className="w-5 h-5" />
+                    Recalcular Macros Automáticamente
+                    <span className="ml-2 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                      PREMIUM
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Botones de acción */}
