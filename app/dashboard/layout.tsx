@@ -41,13 +41,13 @@ export default function DashboardLayout({
       // Verificar autenticación
       const session = localStorage.getItem('athletixy_session')
       if (!session) {
-        router.push('/')
+        window.location.href = '/'
         return
       }
       
       const sessionData = JSON.parse(session)
       if (!sessionData.loggedIn) {
-        router.push('/')
+        window.location.href = '/'
         return
       }
       
@@ -62,29 +62,31 @@ export default function DashboardLayout({
       if (!isAdmin) {
         if (role === 'nutriologo') {
           const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-            router.push('/dashboard/nutriologo')
-          }
-        } else if (role === 'coach') {
-          const allowedRoutes = ['/dashboard', '/dashboard/coach', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-            router.push('/dashboard/coach')
-          }
-        } else if (role === 'gym') {
-          const allowedRoutes = ['/dashboard', '/dashboard/membresias', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-            router.push('/dashboard')
-          }
-        } else if (role === 'vendedor') {
-          const allowedRoutes = ['/dashboard', '/dashboard/marketplace', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-            router.push('/dashboard/marketplace')
-          }
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          window.location.href = '/dashboard/nutriologo'
+        }
+      } else if (role === 'coach') {
+        const allowedRoutes = ['/dashboard', '/dashboard/coach', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          window.location.href = '/dashboard/coach'
+        }
+      } else if (role === 'gym') {
+        const allowedRoutes = ['/dashboard', '/dashboard/membresias', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          window.location.href = '/dashboard'
+        }
+      } else if (role === 'vendedor') {
+        const allowedRoutes = ['/dashboard', '/dashboard/marketplace', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          window.location.href = '/dashboard/marketplace'
+        }
         }
       }
     } catch (error) {
       console.error('Error parsing session:', error)
-      router.push('/')
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     }
   }, [router, pathname])
 

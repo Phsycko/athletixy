@@ -159,16 +159,15 @@ export default function LoginPage() {
     // Si no encuentra usuario, verificar credenciales hardcodeadas de admin
     if (!user && emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
       // Crear sesión de admin directamente
-      localStorage.setItem('athletixy_session', JSON.stringify({
-        email: 'admin@athletixy.com',
-        nombre: 'Administrador',
-        role: 'atleta',
-        loggedIn: true,
-        isAdmin: true
-      }))
-      
       if (typeof window !== 'undefined') {
-        router.push('/dashboard')
+        localStorage.setItem('athletixy_session', JSON.stringify({
+          email: 'admin@athletixy.com',
+          nombre: 'Administrador',
+          role: 'atleta',
+          loggedIn: true,
+          isAdmin: true
+        }))
+        window.location.href = '/dashboard'
       }
       return
     }
@@ -186,15 +185,15 @@ export default function LoginPage() {
       // Redirigir según rol
       if (typeof window !== 'undefined') {
         if (user.tipoUsuario === 'nutriologo') {
-          router.push('/dashboard/nutriologo')
+          window.location.href = '/dashboard/nutriologo'
         } else if (user.tipoUsuario === 'coach') {
-          router.push('/dashboard/coach')
+          window.location.href = '/dashboard/coach'
         } else if (user.tipoUsuario === 'gym') {
-          router.push('/dashboard')
+          window.location.href = '/dashboard'
         } else if (user.tipoUsuario === 'vendedor') {
-          router.push('/dashboard/marketplace')
+          window.location.href = '/dashboard/marketplace'
         } else {
-          router.push('/dashboard')
+          window.location.href = '/dashboard'
         }
       }
     } else {
