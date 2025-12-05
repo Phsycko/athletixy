@@ -150,11 +150,28 @@ export default function LoginPage() {
     const usersStr = localStorage.getItem('athletixy_users')
     const users = usersStr ? JSON.parse(usersStr) : []
 
-    // Buscar usuario (sin validar tipo de usuario)
+    // Buscar usuario
     const user = users.find((u: any) => 
       u.email.toLowerCase() === emailNormalized && 
       u.password === passwordNormalized
     )
+    
+    // Si no encuentra usuario, verificar credenciales hardcodeadas de admin
+    if (!user && emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
+      // Crear sesión de admin directamente
+      localStorage.setItem('athletixy_session', JSON.stringify({
+        email: 'admin@athletixy.com',
+        nombre: 'Administrador',
+        role: 'atleta',
+        loggedIn: true,
+        isAdmin: true
+      }))
+      
+      if (typeof window !== 'undefined') {
+        router.push('/dashboard')
+      }
+      return
+    }
 
     if (user) {
       // Guardar sesión
