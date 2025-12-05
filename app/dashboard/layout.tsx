@@ -35,14 +35,16 @@ export default function DashboardLayout({
   const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
 
   useEffect(() => {
-    // Verificar autenticación
-    const session = localStorage.getItem('athletixy_session')
-    if (!session) {
-      router.push('/')
-      return
-    }
-    
+    if (typeof window === 'undefined') return
+
     try {
+      // Verificar autenticación
+      const session = localStorage.getItem('athletixy_session')
+      if (!session) {
+        router.push('/')
+        return
+      }
+      
       const sessionData = JSON.parse(session)
       if (!sessionData.loggedIn) {
         router.push('/')
