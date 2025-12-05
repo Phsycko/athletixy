@@ -56,7 +56,8 @@ export default function DietasPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [porcionModalOpen, setPorcionModalOpen] = useState(false)
   const [calculandoMacros, setCalculandoMacros] = useState(false)
-  const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena'>('desayuno')
+  const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena' | 'extra'>('desayuno')
+  const [comidaExtraActualId, setComidaExtraActualId] = useState<string | null>(null)
   const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
   const [ingredientesDetectados, setIngredientesDetectados] = useState<Array<{nombre: string, cantidad: string, unidad: string}>>([])
   const [esComidaCompuesta, setEsComidaCompuesta] = useState(false)
@@ -379,6 +380,30 @@ export default function DietasPage() {
     }))
   }
 
+  const abrirCalculadoraIAExtra = (id: string) => {
+    const comidaExtra = comidasExtras.find(c => c.id === id)
+    if (!comidaExtra || !comidaExtra.comida.nombre.trim()) {
+      alert('Por favor escribe el nombre del alimento primero')
+      return
+    }
+    setComidaExtraActualId(id)
+    setTipoComidaActual('extra')
+    
+    // Detectar si es comida compuesta
+    const nombre = comidaExtra.comida.nombre.toLowerCase()
+    const esCompuesta = nombre.includes(' con ') || nombre.includes(' y ') || nombre.includes(',')
+    
+    if (esCompuesta) {
+      const ingredientes = detectarIngredientes(nombre)
+      setIngredientesDetectados(ingredientes)
+      setEsComidaCompuesta(true)
+    } else {
+      setEsComidaCompuesta(false)
+    }
+    
+    setPorcionModalOpen(true)
+  }
+
   const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
     if (!nuevaDieta[tipo].nombre.trim()) {
       alert('Por favor escribe el nombre del alimento primero')
@@ -501,7 +526,13 @@ export default function DietasPage() {
       })
     } else {
       // Cálculo simple para un solo alimento
-      const nombreAlimento = nuevaDieta[tipoComidaActual].nombre.toLowerCase()
+      let nombreAlimento = ''
+      if (tipoComidaActual === 'extra' && comidaExtraActualId) {
+        const comidaExtra = comidasExtras.find(c => c.id === comidaExtraActualId)
+        nombreAlimento = comidaExtra?.comida.nombre.toLowerCase() || ''
+      } else {
+        nombreAlimento = nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'].nombre.toLowerCase()
+      }
       const cantidad = parseFloat(porcionInfo.cantidad)
       const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
 
@@ -520,22 +551,44 @@ export default function DietasPage() {
       }
     }
 
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipoComidaActual]: {
-        ...nuevaDieta[tipoComidaActual],
-        calorias: Math.round(macrosTotales.calorias),
-        proteina: Math.round(macrosTotales.proteina),
-        carbs: Math.round(macrosTotales.carbs),
-        grasas: Math.round(macrosTotales.grasas),
-      }
-    })
+    // Aplicar los macros calculados
+    if (tipoComidaActual === 'extra' && comidaExtraActualId) {
+      // Actualizar comida extra
+      setComidasExtras(comidasExtras.map(c => {
+        if (c.id === comidaExtraActualId) {
+          return {
+            ...c,
+            comida: {
+              ...c.comida,
+              calorias: Math.round(macrosTotales.calorias),
+              proteina: Math.round(macrosTotales.proteina),
+              carbs: Math.round(macrosTotales.carbs),
+              grasas: Math.round(macrosTotales.grasas),
+            }
+          }
+        }
+        return c
+      }))
+    } else {
+      // Actualizar comida principal (desayuno, almuerzo, cena)
+      setNuevaDieta({
+        ...nuevaDieta,
+        [tipoComidaActual]: {
+          ...nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'],
+          calorias: Math.round(macrosTotales.calorias),
+          proteina: Math.round(macrosTotales.proteina),
+          carbs: Math.round(macrosTotales.carbs),
+          grasas: Math.round(macrosTotales.grasas),
+        }
+      })
+    }
 
     setCalculandoMacros(false)
     setPorcionModalOpen(false)
     setPorcionInfo({ cantidad: '', unidad: 'gramos' })
     setIngredientesDetectados([])
     setEsComidaCompuesta(false)
+    setComidaExtraActualId(null)
   }
 
   const actualizarIngrediente = (index: number, campo: 'cantidad' | 'unidad', valor: string) => {
@@ -1348,13 +1401,26 @@ export default function DietasPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
-                      <input
-                        type="text"
-                        placeholder="Ej: Yogurt con frutas"
-                        value={comidaExtra.comida.nombre}
-                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'nombre', e.target.value)}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Ej: Yogurt con frutas"
+                          value={comidaExtra.comida.nombre}
+                          onChange={(e) => updateComidaExtra(comidaExtra.id, 'nombre', e.target.value)}
+                          className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                        {esPremium && (
+                          <button
+                            type="button"
+                            onClick={() => abrirCalculadoraIAExtra(comidaExtra.id)}
+                            className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
+                            title="Calcular macros con IA - Premium"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            IA
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
@@ -1708,7 +1774,11 @@ export default function DietasPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-black">Calcular Macros con IA</h3>
-                <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaActual].nombre}</p>
+                <p className="text-gray-600 text-sm">
+                  {tipoComidaActual === 'extra' && comidaExtraActualId
+                    ? comidasExtras.find(c => c.id === comidaExtraActualId)?.comida.nombre
+                    : nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'].nombre}
+                </p>
               </div>
               <button onClick={() => {setPorcionModalOpen(false); setIngredientesDetectados([]); setEsComidaCompuesta(false)}} className="text-gray-500 hover:text-red-600 transition">
                 <X className="w-5 h-5" />
