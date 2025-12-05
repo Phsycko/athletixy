@@ -39,12 +39,31 @@ export default function DashboardLayout({
     const session = localStorage.getItem('athletixy_session')
     if (!session) {
       router.push('/')
-    } else {
-      const sessionData = JSON.parse(session)
-      setUserEmail(sessionData.email)
-      setUserRole(sessionData.role || 'atleta')
+      return
     }
-  }, [router])
+    
+    try {
+      const sessionData = JSON.parse(session)
+      if (!sessionData.loggedIn) {
+        router.push('/')
+        return
+      }
+      
+      setUserEmail(sessionData.email || '')
+      setUserRole(sessionData.role || 'atleta')
+      
+      // Si es nutriólogo y está en una ruta no permitida, redirigir
+      if (sessionData.role === 'nutriologo') {
+        const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (!allowedRoutes.includes(pathname)) {
+          router.push('/dashboard/nutriologo')
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing session:', error)
+      router.push('/')
+    }
+  }, [router, pathname])
 
   const handleLogout = () => {
     localStorage.removeItem('athletixy_session')

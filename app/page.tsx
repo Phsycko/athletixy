@@ -16,21 +16,44 @@ export default function LoginPage() {
     e.preventDefault()
     
     // Validación simple de credenciales
-    if (credentials.email && credentials.password) {
-      // Detectar rol según credenciales
-      let role = 'atleta' // Rol por defecto
-      
-      // Credenciales de nutriólogo
-      if (
-        (credentials.email === 'nutriologo@athletixy.com' && credentials.password === 'nutriologo123') ||
-        (credentials.email === 'patricia.mendoza@athletixy.com' && credentials.password === 'nutriologo123')
-      ) {
+    if (!credentials.email || !credentials.password) {
+      setError('Por favor ingresa email y contraseña')
+      return
+    }
+
+    // Normalizar email (trim y lowercase)
+    const emailNormalized = credentials.email.trim().toLowerCase()
+    const passwordNormalized = credentials.password.trim()
+    
+    // Detectar rol según credenciales
+    let role = 'atleta' // Rol por defecto
+    let isValid = false
+    
+    // Credenciales de nutriólogo
+    const nutriologoCredentials = [
+      { email: 'nutriologo@athletixy.com', password: 'nutriologo123' },
+      { email: 'patricia.mendoza@athletixy.com', password: 'nutriologo123' },
+      { email: 'nutriologo@test.com', password: 'nutriologo123' }
+    ]
+    
+    for (const cred of nutriologoCredentials) {
+      if (emailNormalized === cred.email.toLowerCase() && passwordNormalized === cred.password) {
         role = 'nutriologo'
+        isValid = true
+        break
       }
-      
+    }
+    
+    // Si no es nutriólogo, cualquier credencial válida es atleta
+    if (!isValid && emailNormalized && passwordNormalized) {
+      isValid = true
+      role = 'atleta'
+    }
+    
+    if (isValid) {
       // Guardar sesión en localStorage
       localStorage.setItem('athletixy_session', JSON.stringify({
-        email: credentials.email,
+        email: emailNormalized,
         role: role,
         loggedIn: true
       }))
@@ -42,7 +65,7 @@ export default function LoginPage() {
         router.push('/dashboard')
       }
     } else {
-      setError('Por favor ingresa email y contraseña')
+      setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
     }
   }
 
