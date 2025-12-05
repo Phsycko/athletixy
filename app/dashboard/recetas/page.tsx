@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell } from 'lucide-react'
+import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock } from 'lucide-react'
 
 type Receta = {
   nombre: string
@@ -15,9 +15,19 @@ type Receta = {
   preparacion: string[]
 }
 
+type ItemSupermercado = {
+  producto: string
+  cantidad: string
+  seccion: string
+}
+
 export default function RecetasPage() {
   const [recetaSeleccionada, setRecetaSeleccionada] = useState<Receta | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [esPremium] = useState(true) // Cambiar a false para simular usuario básico
+  const [listaSupermercado, setListaSupermercado] = useState<ItemSupermercado[]>([])
+  const [generandoLista, setGenerandoLista] = useState(false)
+  const [mostrarLista, setMostrarLista] = useState(false)
 
   const abrirReceta = (receta: Receta) => {
     setRecetaSeleccionada(receta)
@@ -27,6 +37,84 @@ export default function RecetasPage() {
   const cerrarModal = () => {
     setModalOpen(false)
     setRecetaSeleccionada(null)
+    setListaSupermercado([])
+    setMostrarLista(false)
+  }
+
+  const generarListaSupermercado = async () => {
+    if (!recetaSeleccionada) return
+    
+    setGenerandoLista(true)
+    
+    // Simular procesamiento de IA
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // Generar lista inteligente basada en ingredientes
+    const seccionesMap: { [key: string]: string } = {
+      'pollo': 'Carnes y Aves',
+      'pechuga': 'Carnes y Aves',
+      'carne': 'Carnes y Aves',
+      'salmón': 'Pescados y Mariscos',
+      'atún': 'Pescados y Mariscos',
+      'huevo': 'Lácteos y Huevos',
+      'claras': 'Lácteos y Huevos',
+      'leche': 'Lácteos y Huevos',
+      'queso': 'Lácteos y Huevos',
+      'yogur': 'Lácteos y Huevos',
+      'quinoa': 'Granos y Cereales',
+      'avena': 'Granos y Cereales',
+      'arroz': 'Granos y Cereales',
+      'tortilla': 'Panadería',
+      'pan': 'Panadería',
+      'espinaca': 'Frutas y Verduras',
+      'aguacate': 'Frutas y Verduras',
+      'tomate': 'Frutas y Verduras',
+      'lechuga': 'Frutas y Verduras',
+      'brócoli': 'Frutas y Verduras',
+      'pimientos': 'Frutas y Verduras',
+      'cebolla': 'Frutas y Verduras',
+      'plátano': 'Frutas y Verduras',
+      'frutos': 'Frutas y Verduras',
+      'limón': 'Frutas y Verduras',
+      'proteína': 'Suplementos',
+      'scoop': 'Suplementos',
+      'mantequilla': 'Despensa',
+      'maní': 'Despensa',
+      'miel': 'Despensa',
+      'aceite': 'Despensa',
+      'especias': 'Despensa',
+      'hielo': 'Congelados',
+    }
+
+    const lista: ItemSupermercado[] = recetaSeleccionada.ingredientes.map(ingrediente => {
+      let seccion = 'Otros'
+      const ingLower = ingrediente.toLowerCase()
+      
+      for (const [keyword, sec] of Object.entries(seccionesMap)) {
+        if (ingLower.includes(keyword)) {
+          seccion = sec
+          break
+        }
+      }
+      
+      // Extraer cantidad si existe
+      const match = ingrediente.match(/^(\d+\w*\s*)/)
+      const cantidad = match ? match[1].trim() : '1 unidad'
+      const producto = match ? ingrediente.replace(match[1], '').trim() : ingrediente
+      
+      return {
+        producto: producto.charAt(0).toUpperCase() + producto.slice(1),
+        cantidad,
+        seccion
+      }
+    })
+
+    // Ordenar por sección
+    lista.sort((a, b) => a.seccion.localeCompare(b.seccion))
+    
+    setListaSupermercado(lista)
+    setMostrarLista(true)
+    setGenerandoLista(false)
   }
 
   const categorias = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Snacks', 'Post-Entreno']
@@ -390,8 +478,102 @@ export default function RecetasPage() {
                 </div>
               </div>
 
+              {/* Botón Lista de Supermercado con IA */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                {esPremium ? (
+                  <button
+                    onClick={generarListaSupermercado}
+                    disabled={generandoLista}
+                    className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-semibold transition shadow-lg flex items-center justify-center gap-3 disabled:opacity-70"
+                  >
+                    {generandoLista ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generando lista inteligente...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        <ShoppingCart className="w-5 h-5" />
+                        Generar Lista de Supermercado con IA
+                        <span className="ml-1 px-2 py-0.5 bg-white/20 text-xs rounded-full">PREMIUM</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <button
+                      disabled
+                      className="w-full py-4 bg-gray-200 text-gray-400 rounded-xl font-semibold flex items-center justify-center gap-3 cursor-not-allowed"
+                    >
+                      <Lock className="w-5 h-5" />
+                      <ShoppingCart className="w-5 h-5" />
+                      Generar Lista de Supermercado con IA
+                    </button>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full flex items-center gap-1">
+                        <Crown className="w-3 h-3" />
+                        Solo Premium
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Lista de Supermercado Generada */}
+              {mostrarLista && listaSupermercado.length > 0 && (
+                <div className="mt-6 p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                      <ShoppingCart className="w-5 h-5 text-amber-600" />
+                      Lista de Supermercado
+                    </h3>
+                    <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
+                      {listaSupermercado.length} items
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {Array.from(new Set(listaSupermercado.map(i => i.seccion))).map(seccion => (
+                      <div key={seccion}>
+                        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">{seccion}</p>
+                        <ul className="space-y-2">
+                          {listaSupermercado.filter(i => i.seccion === seccion).map((item, idx) => (
+                            <li key={idx} className="flex items-center justify-between bg-white px-3 py-2 rounded-lg shadow-sm">
+                              <div className="flex items-center gap-2">
+                                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500" />
+                                <span className="text-gray-800">{item.producto}</span>
+                              </div>
+                              <span className="text-sm text-gray-500 font-medium">{item.cantidad}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-3 mt-5 pt-4 border-t border-amber-200">
+                    <button 
+                      onClick={() => {
+                        const texto = listaSupermercado.map(i => `☐ ${i.producto} - ${i.cantidad}`).join('\n')
+                        navigator.clipboard.writeText(texto)
+                      }}
+                      className="flex-1 py-2 bg-white border-2 border-amber-300 text-amber-700 rounded-lg font-medium hover:bg-amber-50 transition text-sm"
+                    >
+                      📋 Copiar Lista
+                    </button>
+                    <button 
+                      onClick={() => setMostrarLista(false)}
+                      className="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition text-sm"
+                    >
+                      ✓ Listo
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Botones de acción */}
-              <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+              <div className="flex gap-4 mt-6">
                 <button
                   onClick={cerrarModal}
                   className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
