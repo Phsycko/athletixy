@@ -7,9 +7,9 @@ import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users }
 type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -98,16 +98,18 @@ export default function LoginPage() {
     
     // Redirigir según tipo de usuario
     setTimeout(() => {
-      if (credentials.tipoUsuario === 'nutriologo') {
-        router.push('/dashboard/nutriologo')
-      } else if (credentials.tipoUsuario === 'coach') {
-        router.push('/dashboard/coach')
-      } else if (credentials.tipoUsuario === 'gym') {
-        router.push('/dashboard')
-      } else if (credentials.tipoUsuario === 'vendedor') {
-        router.push('/dashboard/marketplace')
-      } else {
-        router.push('/dashboard')
+      if (typeof window !== 'undefined') {
+        if (credentials.tipoUsuario === 'nutriologo') {
+          router.push('/dashboard/nutriologo')
+        } else if (credentials.tipoUsuario === 'coach') {
+          router.push('/dashboard/coach')
+        } else if (credentials.tipoUsuario === 'gym') {
+          router.push('/dashboard')
+        } else if (credentials.tipoUsuario === 'vendedor') {
+          router.push('/dashboard/marketplace')
+        } else {
+          router.push('/dashboard')
+        }
       }
     }, 1000)
   }
@@ -145,16 +147,18 @@ export default function LoginPage() {
       }))
 
       // Redirigir según rol
-      if (user.tipoUsuario === 'nutriologo') {
-        router.push('/dashboard/nutriologo')
-      } else if (user.tipoUsuario === 'coach') {
-        router.push('/dashboard/coach')
-      } else if (user.tipoUsuario === 'gym') {
-        router.push('/dashboard')
-      } else if (user.tipoUsuario === 'vendedor') {
-        router.push('/dashboard/marketplace')
-      } else {
-        router.push('/dashboard')
+      if (typeof window !== 'undefined') {
+        if (user.tipoUsuario === 'nutriologo') {
+          router.push('/dashboard/nutriologo')
+        } else if (user.tipoUsuario === 'coach') {
+          router.push('/dashboard/coach')
+        } else if (user.tipoUsuario === 'gym') {
+          router.push('/dashboard')
+        } else if (user.tipoUsuario === 'vendedor') {
+          router.push('/dashboard/marketplace')
+        } else {
+          router.push('/dashboard')
+        }
       }
     } else {
       setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
