@@ -208,15 +208,10 @@ export default function NutriologoPage() {
         const pacientesParsed = JSON.parse(pacientesGuardados)
         if (Array.isArray(pacientesParsed) && pacientesParsed.length > 0) {
           setPacientes(pacientesParsed)
-        } else {
-          setPacientes(pacientesIniciales)
         }
-      } else {
-        setPacientes(pacientesIniciales)
       }
     } catch (e) {
       console.error('Error al cargar pacientes:', e)
-      setPacientes(pacientesIniciales)
     }
 
     try {
