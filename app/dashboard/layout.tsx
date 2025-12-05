@@ -32,7 +32,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState('')
-  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach'>('atleta')
+  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
 
   useEffect(() => {
     // Verificar autenticación
@@ -52,14 +52,27 @@ export default function DashboardLayout({
       setUserEmail(sessionData.email || '')
       setUserRole(sessionData.role || 'atleta')
       
-      // Si es nutriólogo y está en una ruta no permitida, redirigir
-      if (sessionData.role === 'nutriologo') {
+      // Redirigir según rol si está en una ruta no permitida
+      const role = sessionData.role
+      if (role === 'nutriologo') {
         const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-        if (!allowedRoutes.includes(pathname)) {
-          // Solo redirigir si no está en una ruta permitida
-          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-            router.push('/dashboard/nutriologo')
-          }
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          router.push('/dashboard/nutriologo')
+        }
+      } else if (role === 'coach') {
+        const allowedRoutes = ['/dashboard', '/dashboard/coach', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          router.push('/dashboard/coach')
+        }
+      } else if (role === 'gym') {
+        const allowedRoutes = ['/dashboard', '/dashboard/membresias', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          router.push('/dashboard')
+        }
+      } else if (role === 'vendedor') {
+        const allowedRoutes = ['/dashboard', '/dashboard/marketplace', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+          router.push('/dashboard/marketplace')
         }
       }
     } catch (error) {
@@ -75,19 +88,19 @@ export default function DashboardLayout({
 
   // Menú completo
   const allMenuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach'] },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
     { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas', roles: ['atleta'] },
     { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas', roles: ['atleta'] },
-    { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta'] },
+    { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta', 'gym'] },
     { href: '/dashboard/progreso', icon: TrendingUp, label: 'Progreso', roles: ['atleta'] },
     { href: '/dashboard/recetas', icon: Book, label: 'Recetas', roles: ['atleta'] },
     { href: '/dashboard/nutriologo', icon: Apple, label: 'Panel Nutriólogo', roles: ['nutriologo'] },
-    { href: '/dashboard/coach', icon: User, label: 'Coach', roles: ['atleta', 'coach'] },
+    { href: '/dashboard/coach', icon: User, label: 'Panel Coach', roles: ['coach'] },
     { href: '/dashboard/comunidad', icon: MessageSquare, label: 'Comunidad', roles: ['atleta'] },
-    { href: '/dashboard/marketplace', icon: ShoppingBag, label: 'Marketplace', roles: ['atleta'] },
-    { href: '/dashboard/notificaciones', icon: Bell, label: 'Notificaciones', roles: ['atleta', 'nutriologo', 'coach'] },
-    { href: '/dashboard/soporte', icon: HeadphonesIcon, label: 'Soporte', roles: ['atleta', 'nutriologo', 'coach'] },
-    { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', roles: ['atleta', 'nutriologo', 'coach'] },
+    { href: '/dashboard/marketplace', icon: ShoppingBag, label: 'Marketplace', roles: ['atleta', 'vendedor'] },
+    { href: '/dashboard/notificaciones', icon: Bell, label: 'Notificaciones', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
+    { href: '/dashboard/soporte', icon: HeadphonesIcon, label: 'Soporte', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
+    { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
   ]
 
   // Filtrar menú según rol
@@ -136,7 +149,13 @@ export default function DashboardLayout({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-black truncate">{userEmail}</p>
-              <p className="text-xs text-gray-600 capitalize">{userRole === 'nutriologo' ? 'Nutriólogo' : userRole === 'coach' ? 'Coach' : 'Atleta'}</p>
+              <p className="text-xs text-gray-600 capitalize">
+                {userRole === 'nutriologo' ? 'Nutriólogo' : 
+                 userRole === 'coach' ? 'Coach' : 
+                 userRole === 'gym' ? 'Gym' : 
+                 userRole === 'vendedor' ? 'Vendedor' : 
+                 'Atleta'}
+              </p>
             </div>
           </div>
           <button

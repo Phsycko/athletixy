@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogIn, Dumbbell, UserPlus, Apple, User } from 'lucide-react'
+import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
 
-type UserType = 'atleta' | 'nutriologo'
+type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -95,6 +95,12 @@ export default function LoginPage() {
     setTimeout(() => {
       if (credentials.tipoUsuario === 'nutriologo') {
         router.push('/dashboard/nutriologo')
+      } else if (credentials.tipoUsuario === 'coach') {
+        router.push('/dashboard/coach')
+      } else if (credentials.tipoUsuario === 'gym') {
+        router.push('/dashboard')
+      } else if (credentials.tipoUsuario === 'vendedor') {
+        router.push('/dashboard/marketplace')
       } else {
         router.push('/dashboard')
       }
@@ -136,6 +142,12 @@ export default function LoginPage() {
       // Redirigir según rol
       if (user.tipoUsuario === 'nutriologo') {
         router.push('/dashboard/nutriologo')
+      } else if (user.tipoUsuario === 'coach') {
+        router.push('/dashboard/coach')
+      } else if (user.tipoUsuario === 'gym') {
+        router.push('/dashboard')
+      } else if (user.tipoUsuario === 'vendedor') {
+        router.push('/dashboard/marketplace')
       } else {
         router.push('/dashboard')
       }
@@ -246,7 +258,7 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Tipo de Usuario
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <button
                     type="button"
                     onClick={() => setCredentials({...credentials, tipoUsuario: 'atleta'})}
@@ -257,7 +269,7 @@ export default function LoginPage() {
                     }`}
                   >
                     <User className={`w-6 h-6 ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-600'}`}>
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-600'}`}>
                       Atleta
                     </span>
                   </button>
@@ -271,16 +283,62 @@ export default function LoginPage() {
                     }`}
                   >
                     <Apple className={`w-6 h-6 ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-600'}`}>
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-600'}`}>
                       Nutriólogo
                     </span>
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'coach'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'coach'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Users className={`w-6 h-6 ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-600'}`}>
+                      Coach
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'gym'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'gym'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Building2 className={`w-6 h-6 ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-600'}`}>
+                      Gym
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'vendedor'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'vendedor'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <ShoppingBag className={`w-6 h-6 ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-600'}`}>
+                      Vendedor
+                    </span>
+                  </button>
                 </div>
-                {credentials.tipoUsuario === 'nutriologo' && (
-                  <p className="text-xs text-gray-600 mt-2">
-                    Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-xs text-gray-600">
+                    {credentials.tipoUsuario === 'nutriologo' && 'Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.'}
+                    {credentials.tipoUsuario === 'coach' && 'Como coach podrás gestionar rutinas, entrenamientos y seguimiento de tus atletas.'}
+                    {credentials.tipoUsuario === 'gym' && 'Como gimnasio podrás administrar membresías, instalaciones y servicios para tus miembros.'}
+                    {credentials.tipoUsuario === 'vendedor' && 'Como vendedor podrás gestionar tu tienda en el marketplace, productos y ventas.'}
+                    {credentials.tipoUsuario === 'atleta' && 'Como atleta tendrás acceso a dietas, rutinas, progreso y todos los servicios de Athletixy.'}
                   </p>
-                )}
+                </div>
               </div>
             )}
 
