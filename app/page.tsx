@@ -26,14 +26,37 @@ export default function LoginPage() {
         // Usuarios por defecto
         const defaultUsers = [
           {
+            email: 'admin@athletixy.com',
+            password: 'admin123',
+            nombre: 'Administrador',
+            tipoUsuario: 'atleta' as UserType,
+            fechaRegistro: new Date().toISOString(),
+            isAdmin: true
+          },
+          {
             email: 'nutriologo@athletixy.com',
             password: 'nutriologo123',
             nombre: 'Dra. Patricia Mendoza',
-            tipoUsuario: 'nutriologo',
+            tipoUsuario: 'nutriologo' as UserType,
             fechaRegistro: new Date().toISOString()
           }
         ]
         localStorage.setItem('athletixy_users', JSON.stringify(defaultUsers))
+      } else {
+        // Verificar si existe admin, si no agregarlo
+        const existingUsers = JSON.parse(users)
+        const adminExists = existingUsers.some((u: any) => u.email === 'admin@athletixy.com')
+        if (!adminExists) {
+          existingUsers.push({
+            email: 'admin@athletixy.com',
+            password: 'admin123',
+            nombre: 'Administrador',
+            tipoUsuario: 'atleta',
+            fechaRegistro: new Date().toISOString(),
+            isAdmin: true
+          })
+          localStorage.setItem('athletixy_users', JSON.stringify(existingUsers))
+        }
       }
     }
   }, [])
@@ -139,7 +162,8 @@ export default function LoginPage() {
         email: user.email,
         nombre: user.nombre,
         role: user.tipoUsuario,
-        loggedIn: true
+        loggedIn: true,
+        isAdmin: user.isAdmin || false
       }))
 
       // Redirigir según rol

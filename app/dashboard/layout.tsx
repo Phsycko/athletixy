@@ -54,27 +54,32 @@ export default function DashboardLayout({
       setUserEmail(sessionData.email || '')
       setUserRole(sessionData.role || 'atleta')
       
-      // Redirigir según rol si está en una ruta no permitida
+      // Redirigir según rol si está en una ruta no permitida (admin tiene acceso a todo)
       const role = sessionData.role
-      if (role === 'nutriologo') {
-        const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-          router.push('/dashboard/nutriologo')
-        }
-      } else if (role === 'coach') {
-        const allowedRoutes = ['/dashboard', '/dashboard/coach', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-          router.push('/dashboard/coach')
-        }
-      } else if (role === 'gym') {
-        const allowedRoutes = ['/dashboard', '/dashboard/membresias', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-          router.push('/dashboard')
-        }
-      } else if (role === 'vendedor') {
-        const allowedRoutes = ['/dashboard', '/dashboard/marketplace', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
-        if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
-          router.push('/dashboard/marketplace')
+      const isAdmin = sessionData.isAdmin || false
+      
+      // Admin tiene acceso completo, no redirigir
+      if (!isAdmin) {
+        if (role === 'nutriologo') {
+          const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+            router.push('/dashboard/nutriologo')
+          }
+        } else if (role === 'coach') {
+          const allowedRoutes = ['/dashboard', '/dashboard/coach', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+            router.push('/dashboard/coach')
+          }
+        } else if (role === 'gym') {
+          const allowedRoutes = ['/dashboard', '/dashboard/membresias', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+            router.push('/dashboard')
+          }
+        } else if (role === 'vendedor') {
+          const allowedRoutes = ['/dashboard', '/dashboard/marketplace', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+            router.push('/dashboard/marketplace')
+          }
         }
       }
     } catch (error) {
@@ -105,8 +110,26 @@ export default function DashboardLayout({
     { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
   ]
 
-  // Filtrar menú según rol
-  const menuItems = allMenuItems.filter(item => item.roles.includes(userRole))
+  // Filtrar menú según rol (admin ve todo)
+  const [isAdmin, setIsAdmin] = useState(false)
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const session = localStorage.getItem('athletixy_session')
+        if (session) {
+          const sessionData = JSON.parse(session)
+          setIsAdmin(sessionData.isAdmin || false)
+        }
+      } catch (e) {
+        console.error('Error checking admin status:', e)
+      }
+    }
+  }, [])
+  
+  const menuItems = isAdmin 
+    ? allMenuItems 
+    : allMenuItems.filter(item => item.roles.includes(userRole))
 
   return (
     <div className="min-h-screen bg-white flex">
