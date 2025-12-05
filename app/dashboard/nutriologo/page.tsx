@@ -1,8 +1,87 @@
 'use client'
 
-import { Calendar, Video, MessageCircle, FileText, Clock, Star, Phone } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import {
+  Calendar,
+  Video,
+  MessageCircle,
+  FileText,
+  Clock,
+  Star,
+  Phone,
+  Users,
+  TrendingUp,
+  Plus,
+  Search,
+  Filter,
+  UserPlus,
+  UserCheck,
+  Edit,
+  Trash2,
+  Send,
+  CheckCircle,
+  X,
+  ChevronRight,
+  BarChart3,
+  Target,
+  Activity,
+  Award
+} from 'lucide-react'
+
+type Paciente = {
+  id: string
+  nombre: string
+  email: string
+  telefono?: string
+  fechaRegistro: string
+  tipo: 'existente' | 'app'
+  planActivo: string
+  ultimaConsulta: string
+  proximaConsulta?: string
+  estado: 'activo' | 'inactivo'
+  objetivos: string[]
+  progreso: {
+    peso: number
+    pesoObjetivo: number
+    grasaCorporal: number
+    musculo: number
+  }
+}
+
+type PlanNutricional = {
+  id: string
+  pacienteId: string
+  nombre: string
+  fechaInicio: string
+  fechaFin: string
+  calorias: number
+  macros: {
+    proteinas: number
+    carbohidratos: number
+    grasas: number
+  }
+  objetivos: string[]
+  estado: 'activo' | 'completado' | 'pausado'
+}
 
 export default function NutriologoPage() {
+  const [vistaActiva, setVistaActiva] = useState<'dashboard' | 'pacientes' | 'asignaciones' | 'calendario'>('dashboard')
+  const [filtroPacientes, setFiltroPacientes] = useState<'todos' | 'existentes' | 'app'>('todos')
+  const [busquedaPaciente, setBusquedaPaciente] = useState('')
+  const [modalAsignarPlan, setModalAsignarPlan] = useState(false)
+  const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
+  const [nuevoPlan, setNuevoPlan] = useState({
+    nombre: '',
+    fechaInicio: '',
+    fechaFin: '',
+    calorias: '',
+    proteinas: '',
+    carbohidratos: '',
+    grasas: '',
+    objetivos: [] as string[]
+  })
+
+  // Datos del nutriólogo
   const nutriologo = {
     nombre: 'Dra. Patricia Mendoza',
     especialidad: 'Nutrición Deportiva',
@@ -11,225 +90,704 @@ export default function NutriologoPage() {
     certificaciones: ['Nutrición Clínica', 'Nutrición Deportiva', 'Dietética'],
   }
 
-  const proximaConsulta = {
-    fecha: '2025-12-08',
-    hora: '15:00',
-    tipo: 'Video llamada',
-    duracion: '45 min',
+  // Pacientes de ejemplo
+  const [pacientes, setPacientes] = useState<Paciente[]>([
+    {
+      id: '1',
+      nombre: 'Carlos Ramírez',
+      email: 'carlos.ramirez@email.com',
+      telefono: '+52 555 123 4567',
+      fechaRegistro: '2024-01-15',
+      tipo: 'existente',
+      planActivo: 'Premium',
+      ultimaConsulta: '2025-12-01',
+      proximaConsulta: '2025-12-15',
+      estado: 'activo',
+      objetivos: ['Pérdida de grasa', 'Ganancia muscular'],
+      progreso: { peso: 75, pesoObjetivo: 70, grasaCorporal: 18, musculo: 45 }
+    },
+    {
+      id: '2',
+      nombre: 'Ana Martínez',
+      email: 'ana.martinez@email.com',
+      telefono: '+52 555 234 5678',
+      fechaRegistro: '2025-11-20',
+      tipo: 'app',
+      planActivo: 'Premium',
+      ultimaConsulta: '2025-11-25',
+      proximaConsulta: '2025-12-10',
+      estado: 'activo',
+      objetivos: ['Aumento de masa muscular'],
+      progreso: { peso: 58, pesoObjetivo: 65, grasaCorporal: 22, musculo: 38 }
+    },
+    {
+      id: '3',
+      nombre: 'Roberto Sánchez',
+      email: 'roberto.sanchez@email.com',
+      fechaRegistro: '2024-06-10',
+      tipo: 'existente',
+      planActivo: 'Pro',
+      ultimaConsulta: '2025-11-20',
+      estado: 'activo',
+      objetivos: ['Mantenimiento', 'Rendimiento deportivo'],
+      progreso: { peso: 82, pesoObjetivo: 82, grasaCorporal: 15, musculo: 52 }
+    },
+    {
+      id: '4',
+      nombre: 'María González',
+      email: 'maria.gonzalez@email.com',
+      telefono: '+52 555 345 6789',
+      fechaRegistro: '2025-10-05',
+      tipo: 'app',
+      planActivo: 'Premium',
+      ultimaConsulta: '2025-11-30',
+      estado: 'activo',
+      objetivos: ['Pérdida de peso'],
+      progreso: { peso: 68, pesoObjetivo: 60, grasaCorporal: 28, musculo: 35 }
+    }
+  ])
+
+  const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
+
+  // Estadísticas
+  const estadisticas = {
+    totalPacientes: pacientes.length,
+    pacientesActivos: pacientes.filter(p => p.estado === 'activo').length,
+    pacientesApp: pacientes.filter(p => p.tipo === 'app').length,
+    pacientesExistentes: pacientes.filter(p => p.tipo === 'existente').length,
+    consultasEsteMes: 24,
+    planesActivos: planesNutricionales.filter(p => p.estado === 'activo').length
   }
 
-  const consultasAnteriores = [
-    {
-      fecha: '2025-11-24',
-      tipo: 'Seguimiento mensual',
-      notas: 'Ajuste de macronutrientes. Incremento de proteína a 2.2g/kg',
-      archivos: 2,
-    },
-    {
-      fecha: '2025-10-24',
-      tipo: 'Revisión de progreso',
-      notas: 'Excelente adherencia al plan. Pérdida de grasa progresiva',
-      archivos: 1,
-    },
-    {
-      fecha: '2025-09-24',
-      tipo: 'Consulta inicial',
-      notas: 'Evaluación completa. Plan nutricional personalizado establecido',
-      archivos: 3,
-    },
-  ]
+  // Consultas próximas
+  const consultasProximas = pacientes
+    .filter(p => p.proximaConsulta)
+    .map(p => ({
+      paciente: p.nombre,
+      fecha: p.proximaConsulta!,
+      hora: '15:00',
+      tipo: 'Seguimiento'
+    }))
+    .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+    .slice(0, 5)
 
-  const recomendaciones = [
-    'Mantener ingesta de agua en 3L diarios',
-    'Incluir más vegetales de hoja verde',
-    'Suplementar con Omega-3',
-    'Pre-entreno: carbohidratos 90 min antes',
-    'Post-entreno: proteína + carbohidratos en 30 min',
-  ]
+  // Filtrar pacientes
+  const pacientesFiltrados = pacientes.filter(p => {
+    const coincideBusqueda = p.nombre.toLowerCase().includes(busquedaPaciente.toLowerCase()) ||
+                             p.email.toLowerCase().includes(busquedaPaciente.toLowerCase())
+    const coincideFiltro = filtroPacientes === 'todos' ||
+                          (filtroPacientes === 'existentes' && p.tipo === 'existente') ||
+                          (filtroPacientes === 'app' && p.tipo === 'app')
+    return coincideBusqueda && coincideFiltro
+  })
 
-  const documentos = [
-    { nombre: 'Plan Nutricional Diciembre', tipo: 'PDF', fecha: '2025-12-01' },
-    { nombre: 'Análisis de Composición Corporal', tipo: 'PDF', fecha: '2025-11-24' },
-    { nombre: 'Guía de Suplementación', tipo: 'PDF', fecha: '2025-10-15' },
-  ]
+  const abrirModalAsignar = (paciente: Paciente) => {
+    setPacienteSeleccionado(paciente)
+    setNuevoPlan({
+      nombre: `Plan Nutricional - ${paciente.nombre}`,
+      fechaInicio: new Date().toISOString().split('T')[0],
+      fechaFin: '',
+      calorias: '',
+      proteinas: '',
+      carbohidratos: '',
+      grasas: '',
+      objetivos: []
+    })
+    setModalAsignarPlan(true)
+  }
+
+  const guardarPlan = () => {
+    if (!pacienteSeleccionado) return
+
+    const plan: PlanNutricional = {
+      id: Date.now().toString(),
+      pacienteId: pacienteSeleccionado.id,
+      nombre: nuevoPlan.nombre,
+      fechaInicio: nuevoPlan.fechaInicio,
+      fechaFin: nuevoPlan.fechaFin,
+      calorias: parseInt(nuevoPlan.calorias),
+      macros: {
+        proteinas: parseInt(nuevoPlan.proteinas),
+        carbohidratos: parseInt(nuevoPlan.carbohidratos),
+        grasas: parseInt(nuevoPlan.grasas)
+      },
+      objetivos: nuevoPlan.objetivos,
+      estado: 'activo'
+    }
+
+    setPlanesNutricionales([...planesNutricionales, plan])
+    setModalAsignarPlan(false)
+    setPacienteSeleccionado(null)
+  }
+
+  const toggleObjetivo = (objetivo: string) => {
+    if (nuevoPlan.objetivos.includes(objetivo)) {
+      setNuevoPlan({
+        ...nuevoPlan,
+        objetivos: nuevoPlan.objetivos.filter(o => o !== objetivo)
+      })
+    } else {
+      setNuevoPlan({
+        ...nuevoPlan,
+        objetivos: [...nuevoPlan.objetivos, objetivo]
+      })
+    }
+  }
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-black mb-2">Nutriólogo</h1>
-        <p className="text-gray-600">Consultas y seguimiento nutricional</p>
-      </div>
-
-      {/* Perfil del Nutriólogo */}
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-xl">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-3xl text-black font-bold">PM</span>
-          </div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold text-black mb-1">{nutriologo.nombre}</h2>
-            <p className="text-black/80 mb-3">{nutriologo.especialidad}</p>
-            <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-2 text-black/90">
-                <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
-                <span>{nutriologo.calificacion} / 5.0</span>
-              </div>
-              <div className="text-black/90">{nutriologo.experiencia} de experiencia</div>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-5 py-3 bg-white text-black rounded-lg hover:bg-gray-100 transition font-semibold shadow-lg">
-              <MessageCircle className="w-4 h-4" />
-              Mensaje
-            </button>
-            <button className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm text-black rounded-lg hover:bg-white/20 transition border border-white/20">
-              <Phone className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-black mb-2">Panel del Nutriólogo</h1>
+          <p className="text-gray-600">Gestión de pacientes y planes nutricionales</p>
         </div>
-        <div className="mt-6 pt-6 border-t border-white/20">
-          <p className="text-black/80 text-sm mb-3">Certificaciones:</p>
-          <div className="flex flex-wrap gap-2">
-            {nutriologo.certificaciones.map((cert, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-white/10 backdrop-blur-sm text-black text-xs rounded-full border border-white/20"
-              >
-                {cert}
-              </span>
-            ))}
+        <div className="flex items-center gap-3">
+          <div className="bg-white border-2 border-gray-200 rounded-lg px-4 py-2">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">PM</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-black">{nutriologo.nombre}</p>
+                <p className="text-xs text-gray-600">{nutriologo.especialidad}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Próxima Consulta */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-black mb-6">Próxima Consulta</h2>
-          <div className="bg-white/10 border border-gray-600/30 rounded-lg p-5 mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white p-2 rounded-lg">
-                <Video className="w-5 h-5 text-black" />
-              </div>
-              <span className="text-gray-700 font-medium">{proximaConsulta.tipo}</span>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Fecha</span>
-                <span className="text-black font-semibold">{proximaConsulta.fecha}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Hora</span>
-                <span className="text-black font-semibold">{proximaConsulta.hora}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Duración</span>
-                <span className="text-black font-semibold">{proximaConsulta.duracion}</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button className="flex-1 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium">
-              Unirse a la Consulta
-            </button>
-            <button className="px-4 py-3 bg-white hover:bg-gray-200 text-gray-600 hover:text-black rounded-lg transition border-2 border-gray-200">
-              Reagendar
-            </button>
-          </div>
-        </div>
-
-        {/* Recomendaciones Actuales */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-black mb-6">Recomendaciones Actuales</h2>
-          <div className="space-y-3">
-            {recomendaciones.map((recomendacion, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-3 p-4 bg-white rounded-lg border-2 border-gray-200"
-              >
-                <div className="w-6 h-6 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-green-400 text-xs font-bold">{index + 1}</span>
-                </div>
-                <p className="text-gray-700 text-sm">{recomendacion}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Consultas Anteriores */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-black mb-6">Historial de Consultas</h2>
-        <div className="space-y-4">
-          {consultasAnteriores.map((consulta, index) => (
-            <div
-              key={index}
-              className="p-5 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
+      {/* Navegación de Vistas */}
+      <div className="flex gap-2 border-b-2 border-gray-200">
+        {[
+          { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+          { id: 'pacientes', label: 'Pacientes', icon: Users },
+          { id: 'asignaciones', label: 'Asignaciones', icon: Target },
+          { id: 'calendario', label: 'Calendario', icon: Calendar }
+        ].map((vista) => {
+          const Icon = vista.icon
+          return (
+            <button
+              key={vista.id}
+              onClick={() => setVistaActiva(vista.id as any)}
+              className={`flex items-center gap-2 px-6 py-3 font-medium transition border-b-2 -mb-[2px] ${
+                vistaActiva === vista.id
+                  ? 'border-black text-black'
+                  : 'border-transparent text-gray-600 hover:text-black'
+              }`}
             >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="text-black font-semibold mb-1">{consulta.tipo}</h3>
-                  <div className="flex items-center gap-2 text-gray-600 text-sm">
-                    <Calendar className="w-4 h-4" />
-                    <span>{consulta.fecha}</span>
-                  </div>
+              <Icon className="w-4 h-4" />
+              {vista.label}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Vista Dashboard */}
+      {vistaActiva === 'dashboard' && (
+        <div className="space-y-8">
+          {/* Estadísticas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-black" />
                 </div>
-                {consulta.archivos > 0 && (
-                  <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full">
-                    <FileText className="w-4 h-4 text-gray-700" />
-                    <span className="text-gray-700 text-sm font-medium">
-                      {consulta.archivos} archivo{consulta.archivos > 1 ? 's' : ''}
-                    </span>
-                  </div>
+              </div>
+              <p className="text-gray-600 text-sm mb-1">Total Pacientes</p>
+              <p className="text-3xl font-bold text-black">{estadisticas.totalPacientes}</p>
+            </div>
+
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-3 rounded-lg">
+                  <UserCheck className="w-6 h-6 text-black" />
+                </div>
+              </div>
+              <p className="text-gray-600 text-sm mb-1">Pacientes Activos</p>
+              <p className="text-3xl font-bold text-black">{estadisticas.pacientesActivos}</p>
+            </div>
+
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-3 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-black" />
+                </div>
+              </div>
+              <p className="text-gray-600 text-sm mb-1">De la App</p>
+              <p className="text-3xl font-bold text-black">{estadisticas.pacientesApp}</p>
+            </div>
+
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-3 rounded-lg">
+                  <Target className="w-6 h-6 text-black" />
+                </div>
+              </div>
+              <p className="text-gray-600 text-sm mb-1">Planes Activos</p>
+              <p className="text-3xl font-bold text-black">{estadisticas.planesActivos}</p>
+            </div>
+          </div>
+
+          {/* Consultas Próximas y Resumen */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Consultas Próximas */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-black mb-6">Próximas Consultas</h2>
+              <div className="space-y-4">
+                {consultasProximas.length > 0 ? (
+                  consultasProximas.map((consulta, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <div>
+                        <p className="font-semibold text-black">{consulta.paciente}</p>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>{consulta.fecha}</span>
+                          <span>•</span>
+                          <Clock className="w-4 h-4" />
+                          <span>{consulta.hora}</span>
+                        </div>
+                      </div>
+                      <button className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium">
+                        Ver Detalles
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-600 text-center py-8">No hay consultas programadas</p>
                 )}
               </div>
-              <p className="text-gray-600 text-sm">{consulta.notas}</p>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Documentos */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-black">Documentos Compartidos</h2>
-          <button className="text-gray-700 text-sm hover:text-primary-300 transition">
-            Ver todos
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {documentos.map((doc, index) => (
-            <div
-              key={index}
-              className="p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-600 transition cursor-pointer"
-            >
-              <div className="flex items-start gap-3">
-                <div className="bg-red-500/10 p-2 rounded">
-                  <FileText className="w-5 h-5 text-red-400" />
+            {/* Resumen de Pacientes */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-black mb-6">Distribución de Pacientes</h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <UserCheck className="w-5 h-5 text-black" />
+                    <div>
+                      <p className="font-semibold text-black">Pacientes Existentes</p>
+                      <p className="text-sm text-gray-600">Pacientes previos a la app</p>
+                    </div>
+                  </div>
+                  <span className="text-2xl font-bold text-black">{estadisticas.pacientesExistentes}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-black font-medium text-sm mb-1 truncate">{doc.nombre}</p>
-                  <p className="text-gray-600 text-xs">{doc.tipo} • {doc.fecha}</p>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <UserPlus className="w-5 h-5 text-black" />
+                    <div>
+                      <p className="font-semibold text-black">Pacientes de la App</p>
+                      <p className="text-sm text-gray-600">Contratados mediante Athletixy</p>
+                    </div>
+                  </div>
+                  <span className="text-2xl font-bold text-black">{estadisticas.pacientesApp}</span>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <Activity className="w-5 h-5 text-black" />
+                    <div>
+                      <p className="font-semibold text-black">Consultas Este Mes</p>
+                      <p className="text-sm text-gray-600">Total de consultas realizadas</p>
+                    </div>
+                  </div>
+                  <span className="text-2xl font-bold text-black">{estadisticas.consultasEsteMes}</span>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Agendar Nueva Consulta */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-black mb-4">Agendar Nueva Consulta</h2>
-        <p className="text-gray-600 text-sm mb-6">
-          Selecciona un horario disponible para tu próxima consulta nutricional
-        </p>
-        <button className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium">
-          <Calendar className="w-5 h-5" />
-          Ver Calendario de Disponibilidad
-        </button>
-      </div>
+      {/* Vista Pacientes */}
+      {vistaActiva === 'pacientes' && (
+        <div className="space-y-6">
+          {/* Filtros y Búsqueda */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar paciente por nombre o email..."
+                  value={busquedaPaciente}
+                  onChange={(e) => setBusquedaPaciente(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFiltroPacientes('todos')}
+                  className={`px-4 py-3 rounded-lg font-medium transition ${
+                    filtroPacientes === 'todos'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFiltroPacientes('existentes')}
+                  className={`px-4 py-3 rounded-lg font-medium transition ${
+                    filtroPacientes === 'existentes'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Existentes
+                </button>
+                <button
+                  onClick={() => setFiltroPacientes('app')}
+                  className={`px-4 py-3 rounded-lg font-medium transition ${
+                    filtroPacientes === 'app'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  De la App
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Lista de Pacientes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pacientesFiltrados.map((paciente) => (
+              <div
+                key={paciente.id}
+                className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">
+                        {paciente.nombre.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-black">{paciente.nombre}</p>
+                      <p className="text-xs text-gray-600">{paciente.email}</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${
+                    paciente.tipo === 'app'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {paciente.tipo === 'app' ? 'App' : 'Existente'}
+                  </span>
+                </div>
+
+                <div className="space-y-2 mb-4 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Plan:</span>
+                    <span className="font-semibold text-black">{paciente.planActivo}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Última consulta:</span>
+                    <span className="text-black">{paciente.ultimaConsulta}</span>
+                  </div>
+                  {paciente.proximaConsulta && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Próxima:</span>
+                      <span className="text-black font-semibold">{paciente.proximaConsulta}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {paciente.objetivos.map((obj, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                    >
+                      {obj}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => abrirModalAsignar(paciente)}
+                    className="flex-1 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    Asignar Plan
+                  </button>
+                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                    <MessageCircle className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {pacientesFiltrados.length === 0 && (
+            <div className="text-center py-12 bg-white border-2 border-gray-200 rounded-xl">
+              <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No se encontraron pacientes</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Vista Asignaciones */}
+      {vistaActiva === 'asignaciones' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-black">Planes Nutricionales Asignados</h2>
+            <button
+              onClick={() => setVistaActiva('pacientes')}
+              className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+            >
+              <Plus className="w-4 h-4" />
+              Asignar Nuevo Plan
+            </button>
+          </div>
+
+          {planesNutricionales.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {planesNutricionales.map((plan) => {
+                const paciente = pacientes.find(p => p.id === plan.pacienteId)
+                return (
+                  <div
+                    key={plan.id}
+                    className="bg-white border-2 border-gray-200 rounded-xl p-6"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-black mb-1">{plan.nombre}</h3>
+                        <p className="text-sm text-gray-600">{paciente?.nombre}</p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        plan.estado === 'activo'
+                          ? 'bg-green-100 text-green-700'
+                          : plan.estado === 'completado'
+                          ? 'bg-gray-100 text-gray-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {plan.estado}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-600 mb-1">Calorías</p>
+                        <p className="text-lg font-bold text-black">{plan.calorias} kcal</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600 mb-1">Período</p>
+                        <p className="text-sm text-black">{plan.fechaInicio} - {plan.fechaFin}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                      <p className="text-xs text-gray-600 mb-2">Macronutrientes</p>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Proteínas:</span>
+                          <span className="font-semibold text-black">{plan.macros.proteinas}g</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Carbohidratos:</span>
+                          <span className="font-semibold text-black">{plan.macros.carbohidratos}g</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-700">Grasas:</span>
+                          <span className="font-semibold text-black">{plan.macros.grasas}g</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {plan.objetivos.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {plan.objetivos.map((obj, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                          >
+                            {obj}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <button className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium">
+                        Editar
+                      </button>
+                      <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white border-2 border-gray-200 rounded-xl">
+              <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">No hay planes asignados</p>
+              <button
+                onClick={() => setVistaActiva('pacientes')}
+                className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Asignar Primer Plan
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Vista Calendario */}
+      {vistaActiva === 'calendario' && (
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-black mb-6">Calendario de Consultas</h2>
+          <div className="text-center py-12">
+            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">Vista de calendario próximamente</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Asignar Plan */}
+      {modalAsignarPlan && pacienteSeleccionado && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-black">Asignar Plan Nutricional</h3>
+                <p className="text-gray-600 text-sm mt-1">Paciente: {pacienteSeleccionado.nombre}</p>
+              </div>
+              <button
+                onClick={() => setModalAsignarPlan(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Plan</label>
+                <input
+                  type="text"
+                  value={nuevoPlan.nombre}
+                  onChange={(e) => setNuevoPlan({ ...nuevoPlan, nombre: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
+                  <input
+                    type="date"
+                    value={nuevoPlan.fechaInicio}
+                    onChange={(e) => setNuevoPlan({ ...nuevoPlan, fechaInicio: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Fin</label>
+                  <input
+                    type="date"
+                    value={nuevoPlan.fechaFin}
+                    onChange={(e) => setNuevoPlan({ ...nuevoPlan, fechaFin: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Calorías Diarias</label>
+                <input
+                  type="number"
+                  value={nuevoPlan.calorias}
+                  onChange={(e) => setNuevoPlan({ ...nuevoPlan, calorias: e.target.value })}
+                  placeholder="Ej: 2500"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Macronutrientes (gramos)</label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Proteínas</label>
+                    <input
+                      type="number"
+                      value={nuevoPlan.proteinas}
+                      onChange={(e) => setNuevoPlan({ ...nuevoPlan, proteinas: e.target.value })}
+                      placeholder="g"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Carbohidratos</label>
+                    <input
+                      type="number"
+                      value={nuevoPlan.carbohidratos}
+                      onChange={(e) => setNuevoPlan({ ...nuevoPlan, carbohidratos: e.target.value })}
+                      placeholder="g"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Grasas</label>
+                    <input
+                      type="number"
+                      value={nuevoPlan.grasas}
+                      onChange={(e) => setNuevoPlan({ ...nuevoPlan, grasas: e.target.value })}
+                      placeholder="g"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Objetivos del Plan</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Pérdida de grasa', 'Ganancia muscular', 'Mantenimiento', 'Rendimiento deportivo', 'Aumento de peso', 'Definición'].map((obj) => (
+                    <button
+                      key={obj}
+                      type="button"
+                      onClick={() => toggleObjetivo(obj)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm text-left ${
+                        nuevoPlan.objetivos.includes(obj)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {obj}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+                <button
+                  onClick={() => setModalAsignarPlan(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={guardarPlan}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                >
+                  Asignar Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
