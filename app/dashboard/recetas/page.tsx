@@ -1,6 +1,6 @@
 'use client'
 
-import { ChefHat, Clock, Flame, Users, Search, Plus } from 'lucide-react'
+import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight } from 'lucide-react'
 
 export default function RecetasPage() {
   const categorias = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Snacks', 'Post-Entreno']
@@ -244,8 +244,9 @@ export default function RecetasPage() {
                   </ul>
                 </div>
 
-                <button className="w-full py-2 bg-white hover:bg-white text-gray-600 hover:text-black rounded-lg transition text-sm font-medium">
+                <button className="w-full py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
                   Ver Receta Completa
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                 </button>
               </div>
             </div>
