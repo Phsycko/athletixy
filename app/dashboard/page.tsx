@@ -1,13 +1,16 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Activity, TrendingUp, Calendar, Target, Flame, Droplet } from 'lucide-react'
 
 export default function DashboardPage() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+    
     // Verificar rol del usuario y redirigir si es necesario
     if (typeof window !== 'undefined') {
       const session = localStorage.getItem('athletixy_session')
@@ -18,13 +21,13 @@ export default function DashboardPage() {
 
           // Redirigir según el rol
           if (role === 'nutriologo') {
-            router.push('/dashboard/nutriologo')
+            window.location.href = '/dashboard/nutriologo'
             return
           } else if (role === 'coach') {
-            router.push('/dashboard/coach')
+            window.location.href = '/dashboard/coach'
             return
           } else if (role === 'vendedor') {
-            router.push('/dashboard/marketplace')
+            window.location.href = '/dashboard/marketplace'
             return
           }
           // Si es atleta o gym, mostrar el dashboard normal
@@ -33,7 +36,11 @@ export default function DashboardPage() {
         }
       }
     }
-  }, [router])
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
   const stats = [
     {
       label: 'Calorías Hoy',
