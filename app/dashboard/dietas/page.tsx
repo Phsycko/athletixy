@@ -13,6 +13,7 @@ type Comida = {
 
 type DiaPlan = {
   dia: string
+  fecha: Date
   desayuno: Comida
   almuerzo: Comida
   cena: Comida
@@ -22,18 +23,21 @@ export default function DietasPage() {
   const dietasIniciales = [
     {
       dia: 'Lunes',
+      fecha: new Date(2025, 11, 2),
       desayuno: { nombre: 'Avena con Proteína', calorias: 450, proteina: 30, carbs: 52, grasas: 12 },
       almuerzo: { nombre: 'Pollo con Arroz Integral', calorias: 680, proteina: 55, carbs: 68, grasas: 15 },
       cena: { nombre: 'Salmón con Vegetales', calorias: 520, proteina: 42, carbs: 28, grasas: 25 },
     },
     {
       dia: 'Martes',
+      fecha: new Date(2025, 11, 3),
       desayuno: { nombre: 'Huevos con Aguacate', calorias: 420, proteina: 28, carbs: 18, grasas: 28 },
       almuerzo: { nombre: 'Carne Magra con Quinoa', calorias: 720, proteina: 58, carbs: 65, grasas: 18 },
       cena: { nombre: 'Pechuga con Ensalada', calorias: 480, proteina: 48, carbs: 22, grasas: 18 },
     },
     {
       dia: 'Miércoles',
+      fecha: new Date(2025, 11, 4),
       desayuno: { nombre: 'Batido de Proteína', calorias: 380, proteina: 35, carbs: 42, grasas: 8 },
       almuerzo: { nombre: 'Atún con Pasta Integral', calorias: 650, proteina: 52, carbs: 72, grasas: 12 },
       cena: { nombre: 'Pescado al Horno', calorias: 440, proteina: 45, carbs: 18, grasas: 20 },
@@ -86,6 +90,8 @@ export default function DietasPage() {
   const [calendarioOpen, setCalendarioOpen] = useState(false)
   const [mesCalendario, setMesCalendario] = useState(new Date())
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
+  const [modoSeleccion, setModoSeleccion] = useState<'ver' | 'eliminar'>('ver')
+  const [rangoEliminar, setRangoEliminar] = useState<{inicio: Date | null, fin: Date | null}>({inicio: null, fin: null})
 
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
@@ -128,6 +134,7 @@ export default function DietasPage() {
   
   const [nuevaDieta, setNuevaDieta] = useState<DiaPlan>({
     dia: '',
+    fecha: new Date(),
     desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
     cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
@@ -142,17 +149,29 @@ export default function DietasPage() {
 
   const handleAgregarDieta = () => {
     if (nuevaDieta.dia && nuevaDieta.desayuno.nombre && nuevaDieta.almuerzo.nombre && nuevaDieta.cena.nombre) {
+      // Asignar fecha automáticamente basada en el día seleccionado
+      const fechaBase = new Date()
+      const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+      const diaActual = fechaBase.getDay()
+      const diaObjetivo = diasSemana.indexOf(nuevaDieta.dia)
+      let diff = diaObjetivo - diaActual
+      if (diff < 0) diff += 7
+      
+      const nuevaFecha = new Date(fechaBase)
+      nuevaFecha.setDate(fechaBase.getDate() + diff)
+      
       if (editandoIndex !== null) {
         const nuevoPlan = [...dietaPlan]
-        nuevoPlan[editandoIndex] = nuevaDieta
+        nuevoPlan[editandoIndex] = {...nuevaDieta, fecha: nuevaFecha}
         setDietaPlan(nuevoPlan)
         setEditandoIndex(null)
       } else {
-        setDietaPlan([...dietaPlan, nuevaDieta])
+        setDietaPlan([...dietaPlan, {...nuevaDieta, fecha: nuevaFecha}])
       }
       setIsModalOpen(false)
       setNuevaDieta({
         dia: '',
+        fecha: new Date(),
         desayuno: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
         almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
         cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
@@ -245,16 +264,32 @@ export default function DietasPage() {
   }
 
   const seleccionarDia = (dia: Date) => {
-    if (seleccionandoRango === 'inicio') {
-      setFechaInicio(dia)
-      setSeleccionandoRango('fin')
-    } else {
-      if (dia >= fechaInicio) {
-        setFechaFin(dia)
-        setCalendarioOpen(false)
-        setSeleccionandoRango('inicio')
+    if (modoSeleccion === 'eliminar') {
+      // Modo eliminar - seleccionar rango
+      if (!rangoEliminar.inicio) {
+        setRangoEliminar({inicio: dia, fin: null})
+      } else if (!rangoEliminar.fin) {
+        if (dia >= rangoEliminar.inicio) {
+          setRangoEliminar({...rangoEliminar, fin: dia})
+        } else {
+          setRangoEliminar({inicio: dia, fin: null})
+        }
       } else {
+        setRangoEliminar({inicio: dia, fin: null})
+      }
+    } else {
+      // Modo ver - cambiar rango de visualización
+      if (seleccionandoRango === 'inicio') {
         setFechaInicio(dia)
+        setSeleccionandoRango('fin')
+      } else {
+        if (dia >= fechaInicio) {
+          setFechaFin(dia)
+          setCalendarioOpen(false)
+          setSeleccionandoRango('inicio')
+        } else {
+          setFechaInicio(dia)
+        }
       }
     }
   }
@@ -515,7 +550,7 @@ export default function DietasPage() {
     setGenerandoIA(true)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+    const diasNombres = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
     const platosDesayuno = ['Avena con Proteína y Frutas', 'Huevos Revueltos con Aguacate', 'Batido de Proteína con Banana', 'Yogurt Griego con Granola', 'Tortilla de Claras con Espinacas', 'Tostadas Integrales con Mantequilla de Maní', 'Pancakes de Proteína']
     const platosAlmuerzo = ['Pollo con Arroz Integral y Vegetales', 'Carne Magra con Quinoa', 'Salmón con Batata', 'Atún con Pasta Integral', 'Pechuga con Ensalada Caesar', 'Pescado con Arroz Basmati', 'Lentejas con Vegetales']
     const platosCena = ['Salmón con Vegetales al Vapor', 'Pechuga con Brócoli', 'Pescado con Ensalada', 'Pollo con Espárragos', 'Atún con Vegetales', 'Merluza al Horno', 'Carne con Ensalada Mixta']
@@ -526,12 +561,16 @@ export default function DietasPage() {
     else if (duracionGeneracion === 'bimestre') numDias = 60
 
     const nuevasDietas: DiaPlan[] = []
+    const fechaInicial = new Date()
 
     for (let i = 0; i < numDias; i++) {
-      const nombreDia = numDias === 1 ? 'Generado por IA' : diasNombres[i % 7]
+      const fechaDieta = new Date(fechaInicial)
+      fechaDieta.setDate(fechaInicial.getDate() + i)
+      const nombreDia = diasNombres[fechaDieta.getDay()]
       
       const dietaGenerada: DiaPlan = {
-        dia: numDias > 7 ? `${nombreDia} - Día ${i + 1}` : nombreDia,
+        dia: `${nombreDia} ${fechaDieta.getDate()} ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][fechaDieta.getMonth()]}`,
+        fecha: fechaDieta,
         desayuno: {
           nombre: platosDesayuno[i % platosDesayuno.length],
           calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
@@ -562,6 +601,28 @@ export default function DietasPage() {
     setGenerandoIA(false)
     setIsModalOpen(false)
     setModoCreacion('manual')
+  }
+
+  const tieneDietaEnFecha = (fecha: Date): boolean => {
+    return dietaPlan.some(dieta => esMismoDia(dieta.fecha, fecha))
+  }
+
+  const eliminarDietasEnRango = () => {
+    if (!rangoEliminar.inicio || !rangoEliminar.fin) {
+      alert('Selecciona un rango de fechas')
+      return
+    }
+
+    const confirmar = confirm(`¿Eliminar todas las dietas desde ${formatoFecha(rangoEliminar.inicio)} hasta ${formatoFecha(rangoEliminar.fin)}?`)
+    if (confirmar) {
+      const nuevoPlan = dietaPlan.filter(dieta => {
+        return dieta.fecha < rangoEliminar.inicio! || dieta.fecha > rangoEliminar.fin!
+      })
+      setDietaPlan(nuevoPlan)
+      setRangoEliminar({inicio: null, fin: null})
+      setModoSeleccion('ver')
+      setCalendarioOpen(false)
+    }
   }
 
   return (
@@ -638,17 +699,37 @@ export default function DietasPage() {
               </button>
 
               {calendarioOpen && (
-                <div className="absolute top-full mt-2 right-0 z-50 p-3 bg-white border-2 border-blue-200 rounded-lg shadow-xl w-80">
+                <div className="absolute top-full mt-2 right-0 z-50 p-3 bg-white border-2 border-gray-200 rounded-lg shadow-xl w-80">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xs font-semibold text-gray-800">Selecciona rango</h3>
-                    <button onClick={() => setCalendarioOpen(false)} className="text-gray-500 hover:text-red-600 transition">
+                    <h3 className="text-xs font-semibold text-gray-800">Calendario de Dietas</h3>
+                    <button onClick={() => {setCalendarioOpen(false); setModoSeleccion('ver'); setRangoEliminar({inicio: null, fin: null})}} className="text-gray-500 hover:text-red-600 transition">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <div className="bg-blue-50 px-2 py-1 rounded mb-2">
+                  {/* Toggle Ver / Eliminar */}
+                  <div className="flex gap-1 bg-gray-100 p-1 rounded mb-2">
+                    <button
+                      onClick={() => {setModoSeleccion('ver'); setRangoEliminar({inicio: null, fin: null})}}
+                      className={`flex-1 py-1 px-2 rounded text-xs font-medium transition ${modoSeleccion === 'ver' ? 'bg-white text-black shadow-sm' : 'text-gray-600'}`}
+                    >
+                      Ver
+                    </button>
+                    <button
+                      onClick={() => {setModoSeleccion('eliminar'); setSeleccionandoRango('inicio')}}
+                      className={`flex-1 py-1 px-2 rounded text-xs font-medium transition ${modoSeleccion === 'eliminar' ? 'bg-red-600 text-white shadow-sm' : 'text-gray-600'}`}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
+                  <div className="bg-gray-50 px-2 py-1 rounded mb-2">
                     <p className="text-xs text-gray-700">
-                      {seleccionandoRango === 'inicio' ? '📅 Paso 1: Inicio' : '📅 Paso 2: Final'}
+                      {modoSeleccion === 'eliminar' ? (
+                        <>🗑️ Selecciona rango a eliminar</>
+                      ) : (
+                        <>{seleccionandoRango === 'inicio' ? '📅 Paso 1: Inicio' : '📅 Paso 2: Final'}</>
+                      )}
                     </p>
                   </div>
 
@@ -673,9 +754,10 @@ export default function DietasPage() {
                   <div className="grid grid-cols-7 gap-0.5">
                     {getDiasDelMes(mesCalendario).map((dia, idx) => {
                       const esOtroMes = dia.getMonth() !== mesCalendario.getMonth()
-                      const enRango = estaEnRango(dia)
-                      const esInicio = esMismoDia(dia, fechaInicio)
-                      const esFin = esMismoDia(dia, fechaFin)
+                      const tieneDieta = tieneDietaEnFecha(dia)
+                      const enRango = modoSeleccion === 'ver' ? estaEnRango(dia) : (rangoEliminar.inicio && rangoEliminar.fin && dia >= rangoEliminar.inicio && dia <= rangoEliminar.fin)
+                      const esInicio = modoSeleccion === 'ver' ? esMismoDia(dia, fechaInicio) : (rangoEliminar.inicio && esMismoDia(dia, rangoEliminar.inicio))
+                      const esFin = modoSeleccion === 'ver' ? esMismoDia(dia, fechaFin) : (rangoEliminar.fin && esMismoDia(dia, rangoEliminar.fin))
                       const esHoy = esMismoDia(dia, new Date())
                       
                       return (
@@ -683,7 +765,14 @@ export default function DietasPage() {
                           key={idx}
                           onClick={() => !esOtroMes && seleccionarDia(dia)}
                           disabled={esOtroMes}
-                          className={`p-1.5 text-xs rounded transition ${esOtroMes ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'} ${enRango && !esOtroMes ? 'bg-blue-100' : ''} ${(esInicio || esFin) && !esOtroMes ? 'bg-blue-600 text-white font-bold' : ''} ${esHoy && !esOtroMes && !enRango ? 'border border-blue-400' : ''}`}
+                          className={`
+                            relative p-1.5 text-xs rounded transition
+                            ${esOtroMes ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100'}
+                            ${enRango && !esOtroMes ? (modoSeleccion === 'eliminar' ? 'bg-red-100' : 'bg-blue-100') : ''}
+                            ${(esInicio || esFin) && !esOtroMes ? (modoSeleccion === 'eliminar' ? 'bg-red-600 text-white font-bold' : 'bg-black text-white font-bold') : ''}
+                            ${esHoy && !esOtroMes && !enRango ? 'border border-gray-400' : ''}
+                            ${tieneDieta && !esOtroMes && !enRango && modoSeleccion === 'ver' ? 'after:content-[""] after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-green-500 after:rounded-full' : ''}
+                          `}
                         >
                           {dia.getDate()}
                         </button>
@@ -691,14 +780,41 @@ export default function DietasPage() {
                     })}
                   </div>
 
-                  <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-                    <p className="text-xs font-semibold text-gray-800">
-                      {formatoFecha(fechaInicio)} - {formatoFecha(fechaFin)}
-                      <span className="ml-1 text-gray-500 font-normal">
-                        ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1}d)
-                      </span>
-                    </p>
-                  </div>
+                  {modoSeleccion === 'ver' ? (
+                    <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-800">
+                            {formatoFecha(fechaInicio)} - {formatoFecha(fechaFin)}
+                            <span className="ml-1 text-gray-500 font-normal">
+                              ({Math.ceil((fechaFin.getTime() - fechaInicio.getTime()) / (1000 * 60 * 60 * 24)) + 1}d)
+                            </span>
+                          </p>
+                          <p className="text-xs text-gray-600 mt-1 flex items-center gap-1">
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            = Días con dietas
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2 space-y-2">
+                      {rangoEliminar.inicio && rangoEliminar.fin && (
+                        <div className="p-2 bg-red-50 rounded border border-red-200">
+                          <p className="text-xs font-semibold text-red-800">
+                            Rango a eliminar: {formatoFecha(rangoEliminar.inicio)} - {formatoFecha(rangoEliminar.fin)}
+                          </p>
+                        </div>
+                      )}
+                      <button
+                        onClick={eliminarDietasEnRango}
+                        disabled={!rangoEliminar.inicio || !rangoEliminar.fin}
+                        className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Eliminar Dietas del Rango
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
