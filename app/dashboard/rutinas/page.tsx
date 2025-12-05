@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Dumbbell, Clock, Target, Plus, TrendingUp, Edit, Trash2, Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Dumbbell, Clock, Target, Plus, TrendingUp, Edit, Trash2, Calendar, ChevronLeft, ChevronRight, X, Sparkles, AlertCircle } from 'lucide-react'
 
 type Ejercicio = {
   nombre: string
@@ -80,6 +80,25 @@ export default function RutinasPage() {
     grupo: '',
     ejercicios: [{ nombre: '', series: 0, reps: '', peso: '' }],
     duracion: '',
+  })
+  const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
+  const [generandoIA, setGenerandoIA] = useState(false)
+  const [esPremium] = useState(true)
+  const [datosEntrenamiento, setDatosEntrenamiento] = useState({
+    nivelExperiencia: 'intermedio' as 'principiante' | 'intermedio' | 'avanzado',
+    objetivoEntrenamiento: 'hipertrofia' as 'fuerza' | 'hipertrofia' | 'resistencia' | 'perdida-peso',
+    diasDisponibles: 4,
+    duracionSesion: '60',
+    lesiones: '',
+    ejerciciosFavoritos: '',
+    equipamientoDisponible: [] as string[],
+    musculosDeficientes: [] as string[],
+    intensidadPreferida: 'moderada' as 'ligera' | 'moderada' | 'intensa',
+    pesosActuales: {
+      sentadilla: '',
+      press_banca: '',
+      peso_muerto: '',
+    }
   })
 
   // Cargar rutinas desde localStorage
@@ -333,6 +352,132 @@ export default function RutinasPage() {
       ...nuevaRutina,
       ejercicios: nuevosEjercicios
     })
+  }
+
+  const generarRutinaConIA = async () => {
+    setGenerandoIA(true)
+    await new Promise(resolve => setTimeout(resolve, 2500))
+
+    const gruposMusculares = {
+      fuerza: ['Fuerza Máxima - Compuestos', 'Power - Explosivos'],
+      hipertrofia: ['Pecho y Tríceps', 'Espalda y Bíceps', 'Pierna', 'Hombro y Core'],
+      resistencia: ['Full Body Circuit', 'HIIT Metabólico'],
+      'perdida-peso': ['Circuito Quema Grasa', 'Cardio y Fuerza']
+    }
+
+    const ejerciciosPorNivel = {
+      principiante: {
+        pecho: ['Press de Banca Máquina', 'Aperturas con Mancuernas', 'Fondos Asistidos'],
+        espalda: ['Remo en Máquina', 'Jalón al Pecho', 'Hiperextensiones'],
+        pierna: ['Sentadilla Goblet', 'Prensa', 'Extensiones'],
+        hombro: ['Press con Mancuernas', 'Elevaciones Laterales', 'Facepulls']
+      },
+      intermedio: {
+        pecho: ['Press de Banca', 'Press Inclinado', 'Fondos', 'Cruces'],
+        espalda: ['Peso Muerto', 'Dominadas', 'Remo con Barra', 'Pullover'],
+        pierna: ['Sentadilla', 'Peso Muerto Rumano', 'Zancadas', 'Curl Femoral'],
+        hombro: ['Press Militar', 'Elevaciones Laterales', 'Pájaros', 'Encogimientos']
+      },
+      avanzado: {
+        pecho: ['Press de Banca Competencia', 'Press Inclinado con Barra', 'Dips Lastrados', 'Fondos Pliométricos'],
+        espalda: ['Peso Muerto Sumo', 'Dominadas Lastradas', 'Remo Pendlay', 'Front Lever'],
+        pierna: ['Sentadilla Profunda', 'Bulgarian Split Squat', 'Hip Thrust Pesado', 'Pistol Squat'],
+        hombro: ['Press Behind Neck', 'Handstand Push-up', 'Face Pull Pesado', 'Arnold Press']
+      }
+    }
+
+    const diasNombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+    const grupos = gruposMusculares[datosEntrenamiento.objetivoEntrenamiento]
+    const ejerciciosNivel = ejerciciosPorNivel[datosEntrenamiento.nivelExperiencia]
+    
+    const rutinasGeneradas: RutinaDia[] = []
+    const fechaBase = new Date()
+
+    for (let i = 0; i < datosEntrenamiento.diasDisponibles; i++) {
+      const fecha = new Date(fechaBase)
+      fecha.setDate(fechaBase.getDate() + i)
+      
+      const grupoDelDia = grupos[i % grupos.length]
+      const categoriasEjercicios = Object.values(ejerciciosNivel).flat()
+      
+      const ejerciciosGenerados: Ejercicio[] = []
+      const numEjercicios = datosEntrenamiento.objetivoEntrenamiento === 'resistencia' ? 6 : 4
+
+      for (let j = 0; j < numEjercicios; j++) {
+        const ejercicio = categoriasEjercicios[j % categoriasEjercicios.length]
+        let series = 3, reps = '10-12', peso = '20-30 kg'
+        
+        if (datosEntrenamiento.objetivoEntrenamiento === 'fuerza') {
+          series = 5
+          reps = '3-5'
+          peso = '70-90% 1RM'
+        } else if (datosEntrenamiento.objetivoEntrenamiento === 'hipertrofia') {
+          series = 4
+          reps = '8-12'
+          peso = 'Moderado-Pesado'
+        } else if (datosEntrenamiento.objetivoEntrenamiento === 'resistencia') {
+          series = 3
+          reps = '15-20'
+          peso = 'Ligero-Moderado'
+        }
+
+        if (datosEntrenamiento.intensidadPreferida === 'ligera') {
+          series = Math.max(2, series - 1)
+        } else if (datosEntrenamiento.intensidadPreferida === 'intensa') {
+          series += 1
+        }
+
+        ejerciciosGenerados.push({
+          nombre: ejercicio,
+          series,
+          reps,
+          peso
+        })
+      }
+
+      rutinasGeneradas.push({
+        dia: diasNombres[fecha.getDay()],
+        fecha,
+        grupo: grupoDelDia,
+        ejercicios: ejerciciosGenerados,
+        duracion: datosEntrenamiento.duracionSesion + ' min'
+      })
+    }
+
+    setRutinaSemanal([...rutinaSemanal, ...rutinasGeneradas])
+    setGenerandoIA(false)
+    setIsModalOpen(false)
+    setModoCreacion('manual')
+  }
+
+  const toggleEquipamiento = (equipo: string) => {
+    const equipamiento = datosEntrenamiento.equipamientoDisponible
+    if (equipamiento.includes(equipo)) {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        equipamientoDisponible: equipamiento.filter(e => e !== equipo)
+      })
+    } else {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        equipamientoDisponible: [...equipamiento, equipo]
+      })
+    }
+  }
+
+  const toggleMusculoDeficiente = (musculo: string) => {
+    const musculos = datosEntrenamiento.musculosDeficientes
+    if (musculos.includes(musculo)) {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        musculosDeficientes: musculos.filter(m => m !== musculo)
+      })
+    } else {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        musculosDeficientes: [...musculos, musculo]
+      })
+    }
   }
 
   return (
@@ -681,12 +826,41 @@ export default function RutinasPage() {
           <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-black">{editandoIndex !== null ? 'Editar Rutina' : 'Nueva Rutina'}</h2>
-              <button onClick={() => {setIsModalOpen(false); resetForm()}} className="p-2 hover:bg-gray-100 rounded-lg transition">
+              <button onClick={() => {setIsModalOpen(false); resetForm(); setModoCreacion('manual')}} className="p-2 hover:bg-gray-100 rounded-lg transition">
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            {/* Toggle Manual / IA */}
+            {editandoIndex === null && esPremium && (
+              <div className="px-6 pt-6">
+                <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
+                  <button
+                    onClick={() => setModoCreacion('manual')}
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+                      modoCreacion === 'manual' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    Crear Manual
+                  </button>
+                  <button
+                    onClick={() => setModoCreacion('ia')}
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                      modoCreacion === 'ia' ? 'bg-black text-white shadow-sm' : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    Generar con IA
+                    <span className="ml-1 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                      PREMIUM
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modoCreacion === 'manual' ? (
+              <div className="p-6 space-y-6">
               {/* Información básica */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -819,6 +993,239 @@ export default function RutinasPage() {
                 </button>
               </div>
             </div>
+            ) : (
+              // MODO IA - GENERACIÓN INTELIGENTE DE RUTINA
+              <div className="p-6 space-y-6">
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-300 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles className="w-6 h-6 text-black" />
+                    <h3 className="text-xl font-bold text-black">Generador Inteligente de Rutinas</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    La IA creará un plan de entrenamiento personalizado basado en tu nivel, objetivos, lesiones y preferencias.
+                  </p>
+                </div>
+
+                {/* Nivel y Objetivo */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Experiencia</label>
+                    <select
+                      value={datosEntrenamiento.nivelExperiencia}
+                      onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, nivelExperiencia: e.target.value as any})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                    >
+                      <option value="principiante">Principiante (0-1 año)</option>
+                      <option value="intermedio">Intermedio (1-3 años)</option>
+                      <option value="avanzado">Avanzado (3+ años)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Objetivo de Entrenamiento</label>
+                    <select
+                      value={datosEntrenamiento.objetivoEntrenamiento}
+                      onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, objetivoEntrenamiento: e.target.value as any})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                    >
+                      <option value="fuerza">Fuerza Máxima</option>
+                      <option value="hipertrofia">Hipertrofia (Ganar Músculo)</option>
+                      <option value="resistencia">Resistencia Muscular</option>
+                      <option value="perdida-peso">Pérdida de Peso</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Disponibilidad */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Días Disponibles por Semana</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="7"
+                      value={datosEntrenamiento.diasDisponibles}
+                      onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, diasDisponibles: Number(e.target.value)})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Duración por Sesión (min)</label>
+                    <input
+                      type="number"
+                      value={datosEntrenamiento.duracionSesion}
+                      onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, duracionSesion: e.target.value})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+                  </div>
+                </div>
+
+                {/* Intensidad */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Intensidad Preferida</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { valor: 'ligera', label: 'Ligera', desc: 'Recuperación' },
+                      { valor: 'moderada', label: 'Moderada', desc: 'Equilibrada' },
+                      { valor: 'intensa', label: 'Intensa', desc: 'Máximo esfuerzo' }
+                    ].map((intensidad) => (
+                      <button
+                        key={intensidad.valor}
+                        type="button"
+                        onClick={() => setDatosEntrenamiento({...datosEntrenamiento, intensidadPreferida: intensidad.valor as any})}
+                        className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
+                          datosEntrenamiento.intensidadPreferida === intensidad.valor
+                            ? 'border-black bg-gray-100 text-black'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="font-bold">{intensidad.label}</div>
+                        <div className="text-xs text-gray-600">{intensidad.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pesos actuales (referencia) */}
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-gray-800 mb-3">Pesos Actuales (Opcional - para personalizar cargas)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Sentadilla</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 100 kg"
+                        value={datosEntrenamiento.pesosActuales.sentadilla}
+                        onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, pesosActuales: {...datosEntrenamiento.pesosActuales, sentadilla: e.target.value}})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Press de Banca</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 80 kg"
+                        value={datosEntrenamiento.pesosActuales.press_banca}
+                        onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, pesosActuales: {...datosEntrenamiento.pesosActuales, press_banca: e.target.value}})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Peso Muerto</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 120 kg"
+                        value={datosEntrenamiento.pesosActuales.peso_muerto}
+                        onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, pesosActuales: {...datosEntrenamiento.pesosActuales, peso_muerto: e.target.value}})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Músculos Deficientes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Músculos a Priorizar (Opcional)</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {['Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Glúteos', 'Pantorrillas'].map((musculo) => (
+                      <button
+                        key={musculo}
+                        type="button"
+                        onClick={() => toggleMusculoDeficiente(musculo)}
+                        className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                          datosEntrenamiento.musculosDeficientes.includes(musculo)
+                            ? 'border-black bg-gray-100 text-black'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {musculo}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Equipamiento */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Equipamiento Disponible</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {['Barra', 'Mancuernas', 'Máquinas', 'Peso Corporal', 'Bandas', 'Kettlebells'].map((equipo) => (
+                      <button
+                        key={equipo}
+                        type="button"
+                        onClick={() => toggleEquipamiento(equipo)}
+                        className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                          datosEntrenamiento.equipamientoDisponible.includes(equipo)
+                            ? 'border-black bg-gray-100 text-black'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {equipo}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Lesiones y Restricciones */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-gray-600" />
+                    Lesiones o Restricciones (Opcional)
+                  </label>
+                  <textarea
+                    placeholder="Ej: Dolor en hombro derecho, evitar ejercicios de impacto..."
+                    value={datosEntrenamiento.lesiones}
+                    onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, lesiones: e.target.value})}
+                    rows={3}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                  />
+                </div>
+
+                {/* Ejercicios Favoritos */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ejercicios Favoritos (Opcional)</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Dominadas, Sentadilla, Press Militar..."
+                    value={datosEntrenamiento.ejerciciosFavoritos}
+                    onChange={(e) => setDatosEntrenamiento({...datosEntrenamiento, ejerciciosFavoritos: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+
+                {/* Info sobre generación */}
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-700">
+                    <strong>💡 La IA generará:</strong> {datosEntrenamiento.diasDisponibles} rutina(s) completa(s) con ejercicios adaptados a tu nivel, objetivo y restricciones.
+                  </p>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={generarRutinaConIA}
+                    disabled={generandoIA}
+                    className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {generandoIA ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generando rutinas...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Generar Rutinas
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
