@@ -92,6 +92,7 @@ export default function RutinasPage() {
     lesiones: '',
     ejerciciosFavoritos: '',
     equipamientoDisponible: [] as string[],
+    maquinasDisponibles: [] as string[],
     musculosDeficientes: [] as string[],
     intensidadPreferida: 'moderada' as 'ligera' | 'moderada' | 'intensa',
     pesosActuales: {
@@ -100,6 +101,7 @@ export default function RutinasPage() {
       peso_muerto: '',
     }
   })
+  const [maquinasModalOpen, setMaquinasModalOpen] = useState(false)
 
   // Cargar rutinas desde localStorage
   useEffect(() => {
@@ -451,6 +453,11 @@ export default function RutinasPage() {
   }
 
   const toggleEquipamiento = (equipo: string) => {
+    if (equipo === 'Máquinas') {
+      setMaquinasModalOpen(true)
+      return
+    }
+    
     const equipamiento = datosEntrenamiento.equipamientoDisponible
     if (equipamiento.includes(equipo)) {
       setDatosEntrenamiento({
@@ -463,6 +470,39 @@ export default function RutinasPage() {
         equipamientoDisponible: [...equipamiento, equipo]
       })
     }
+  }
+
+  const toggleMaquina = (maquina: string) => {
+    const maquinas = datosEntrenamiento.maquinasDisponibles
+    if (maquinas.includes(maquina)) {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        maquinasDisponibles: maquinas.filter(m => m !== maquina)
+      })
+    } else {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        maquinasDisponibles: [...maquinas, maquina]
+      })
+    }
+  }
+
+  const confirmarMaquinas = () => {
+    const equipamiento = datosEntrenamiento.equipamientoDisponible
+    if (datosEntrenamiento.maquinasDisponibles.length > 0) {
+      if (!equipamiento.includes('Máquinas')) {
+        setDatosEntrenamiento({
+          ...datosEntrenamiento,
+          equipamientoDisponible: [...equipamiento, 'Máquinas']
+        })
+      }
+    } else {
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        equipamientoDisponible: equipamiento.filter(e => e !== 'Máquinas')
+      })
+    }
+    setMaquinasModalOpen(false)
   }
 
   const toggleMusculoDeficiente = (musculo: string) => {
@@ -1152,13 +1192,18 @@ export default function RutinasPage() {
                         key={equipo}
                         type="button"
                         onClick={() => toggleEquipamiento(equipo)}
-                        className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm ${
+                        className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm relative ${
                           datosEntrenamiento.equipamientoDisponible.includes(equipo)
                             ? 'border-black bg-gray-100 text-black'
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                         }`}
                       >
                         {equipo}
+                        {equipo === 'Máquinas' && datosEntrenamiento.maquinasDisponibles.length > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                            {datosEntrenamiento.maquinasDisponibles.length}
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -1226,6 +1271,185 @@ export default function RutinasPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Selección de Máquinas */}
+      {maquinasModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-black">Máquinas Disponibles</h3>
+                <p className="text-gray-600 text-sm mt-1">Selecciona las máquinas que tiene tu gimnasio</p>
+              </div>
+              <button onClick={() => setMaquinasModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg transition">
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Categorías de Máquinas */}
+            <div className="space-y-6">
+              {/* Pecho */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Pecho</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Press Pecho Sentado', 'Press Inclinado Máquina', 'Pec Deck', 'Cruces en Polea'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Espalda */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Espalda</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Jalón al Pecho', 'Remo Sentado', 'Pull Down', 'Remo en Máquina', 'Hiperextensiones'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Piernas */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Piernas</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Prensa', 'Extensión de Cuádriceps', 'Curl Femoral', 'Hack Squat', 'Abductores', 'Aductores', 'Gemelos Sentado'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hombros */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Hombros</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Press de Hombro', 'Elevaciones Laterales Máquina', 'Remo al Mentón Polea', 'Face Pull'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Brazos */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Brazos</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Curl en Máquina', 'Tríceps en Polea', 'Predicador', 'Extensión Tríceps'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Core */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Core</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Crunch en Máquina', 'Rotaciones en Polea', 'Ab Wheel'].map((maq) => (
+                    <button
+                      key={maq}
+                      type="button"
+                      onClick={() => toggleMaquina(maq)}
+                      className={`py-2 px-3 rounded-lg border-2 font-medium transition text-xs text-left ${
+                        datosEntrenamiento.maquinasDisponibles.includes(maq)
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {maq}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Resumen */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-700">
+                <strong>Seleccionadas:</strong> {datosEntrenamiento.maquinasDisponibles.length} máquina(s)
+              </p>
+              {datosEntrenamiento.maquinasDisponibles.length > 0 && (
+                <p className="text-xs text-gray-600 mt-2">
+                  {datosEntrenamiento.maquinasDisponibles.join(', ')}
+                </p>
+              )}
+            </div>
+
+            {/* Botones de acción */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setDatosEntrenamiento({
+                    ...datosEntrenamiento,
+                    maquinasDisponibles: []
+                  })
+                }}
+                className="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition text-sm font-medium"
+              >
+                Limpiar Todo
+              </button>
+              <button
+                onClick={confirmarMaquinas}
+                className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+              >
+                Confirmar Selección
+              </button>
+            </div>
           </div>
         </div>
       )}
