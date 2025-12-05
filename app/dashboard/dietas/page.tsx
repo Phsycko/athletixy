@@ -11,12 +11,20 @@ type Comida = {
   grasas: number
 }
 
+type ComidaExtra = {
+  id: string
+  tipo: string
+  hora: string
+  comida: Comida
+}
+
 type DiaPlan = {
   dia: string
   fecha: Date
   desayuno: Comida
   almuerzo: Comida
   cena: Comida
+  comidasExtras?: ComidaExtra[]
 }
 
 export default function DietasPage() {
@@ -95,6 +103,16 @@ export default function DietasPage() {
   const [confirmDeleteRangoOpen, setConfirmDeleteRangoOpen] = useState(false)
   const [editarDatosModalOpen, setEditarDatosModalOpen] = useState(false)
   const [esPremium] = useState(true) // true = Premium, false = Básico
+  const [comidasExtras, setComidasExtras] = useState<ComidaExtra[]>([])
+  
+  const tiposComidaDisponibles = [
+    { tipo: 'Snack Mañana', hora: '10:00 AM' },
+    { tipo: 'Snack Tarde', hora: '5:00 PM' },
+    { tipo: 'Pre-Entreno', hora: '6:00 PM' },
+    { tipo: 'Post-Entreno', hora: '8:00 PM' },
+    { tipo: 'Colación', hora: '11:00 AM' },
+    { tipo: 'Merienda', hora: '4:00 PM' },
+  ]
 
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
@@ -175,13 +193,19 @@ export default function DietasPage() {
       const nuevaFecha = new Date(fechaBase)
       nuevaFecha.setDate(fechaBase.getDate() + diff)
       
+      const dietaConExtras = {
+        ...nuevaDieta,
+        fecha: nuevaFecha,
+        comidasExtras: comidasExtras.length > 0 ? comidasExtras : undefined
+      }
+      
       if (editandoIndex !== null) {
         const nuevoPlan = [...dietaPlan]
-        nuevoPlan[editandoIndex] = {...nuevaDieta, fecha: nuevaFecha}
+        nuevoPlan[editandoIndex] = dietaConExtras
         setDietaPlan(nuevoPlan)
         setEditandoIndex(null)
       } else {
-        setDietaPlan([...dietaPlan, {...nuevaDieta, fecha: nuevaFecha}])
+        setDietaPlan([...dietaPlan, dietaConExtras])
       }
       setIsModalOpen(false)
       setNuevaDieta({
@@ -191,6 +215,7 @@ export default function DietasPage() {
         almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
         cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
       })
+      setComidasExtras([])
     } else {
       alert('Por favor completa todos los campos')
     }
@@ -199,6 +224,7 @@ export default function DietasPage() {
   const handleEditarDieta = (index: number) => {
     setEditandoIndex(index)
     setNuevaDieta(dietaPlan[index])
+    setComidasExtras(dietaPlan[index].comidasExtras || [])
     setIsModalOpen(true)
   }
 
@@ -325,6 +351,32 @@ export default function DietasPage() {
         [campo]: valor
       }
     })
+  }
+
+  const agregarComidaExtra = () => {
+    const nuevaComidaExtra: ComidaExtra = {
+      id: `extra-${Date.now()}`,
+      tipo: 'Snack',
+      hora: '10:00 AM',
+      comida: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 }
+    }
+    setComidasExtras([...comidasExtras, nuevaComidaExtra])
+  }
+
+  const eliminarComidaExtra = (id: string) => {
+    setComidasExtras(comidasExtras.filter(c => c.id !== id))
+  }
+
+  const updateComidaExtra = (id: string, campo: string, valor: string | number) => {
+    setComidasExtras(comidasExtras.map(c => {
+      if (c.id === id) {
+        if (campo === 'tipo' || campo === 'hora') {
+          return { ...c, [campo]: valor }
+        }
+        return { ...c, comida: { ...c.comida, [campo]: valor } }
+      }
+      return c
+    }))
   }
 
   const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
@@ -945,6 +997,32 @@ export default function DietasPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Comidas Extras */}
+                {dia.comidasExtras && dia.comidasExtras.map((comidaExtra) => (
+                  <div key={comidaExtra.id} className="flex items-start gap-4">
+                    <div className="bg-green-500/10 p-2 rounded-lg mt-1">
+                      <ChefHat className="w-5 h-5 text-green-500" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-green-500 text-sm font-medium">{comidaExtra.tipo}</span>
+                        <span className="text-gray-600">•</span>
+                        <span className="text-gray-600 text-sm flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {comidaExtra.hora}
+                        </span>
+                      </div>
+                      <p className="text-black font-medium mb-2">{comidaExtra.comida.nombre}</p>
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        <span className="text-gray-600">{comidaExtra.comida.calorias} kcal</span>
+                        <span className="text-red-400">P: {comidaExtra.comida.proteina}g</span>
+                        <span className="text-blue-400">C: {comidaExtra.comida.carbs}g</span>
+                        <span className="text-yellow-400">G: {comidaExtra.comida.grasas}g</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
@@ -961,6 +1039,8 @@ export default function DietasPage() {
                 onClick={() => {
                   setIsModalOpen(false)
                   setModoCreacion('manual')
+                  setComidasExtras([])
+                  setEditandoIndex(null)
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
@@ -1233,10 +1313,111 @@ export default function DietasPage() {
                 </div>
               </div>
 
+              {/* Comidas Extras */}
+              {comidasExtras.map((comidaExtra, idx) => (
+                <div key={comidaExtra.id} className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <select
+                        value={comidaExtra.tipo}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'tipo', e.target.value)}
+                        className="px-3 py-2 border-2 border-green-300 rounded-lg text-black font-semibold bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        {tiposComidaDisponibles.map((t) => (
+                          <option key={t.tipo} value={t.tipo}>{t.tipo}</option>
+                        ))}
+                        <option value="Personalizado">Personalizado</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Hora"
+                        value={comidaExtra.hora}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'hora', e.target.value)}
+                        className="w-24 px-3 py-2 border-2 border-green-300 rounded-lg text-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => eliminarComidaExtra(comidaExtra.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                      title="Eliminar comida"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Yogurt con frutas"
+                        value={comidaExtra.comida.nombre}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'nombre', e.target.value)}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                      <input
+                        type="number"
+                        placeholder="200"
+                        value={comidaExtra.comida.calorias || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'calorias', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                      <input
+                        type="number"
+                        placeholder="15"
+                        value={comidaExtra.comida.proteina || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'proteina', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        placeholder="20"
+                        value={comidaExtra.comida.carbs || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'carbs', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                      <input
+                        type="number"
+                        placeholder="8"
+                        value={comidaExtra.comida.grasas || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'grasas', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Botón para agregar más comidas */}
+              <button
+                type="button"
+                onClick={agregarComidaExtra}
+                className="w-full py-4 border-2 border-dashed border-gray-300 hover:border-green-500 text-gray-600 hover:text-green-600 rounded-lg transition flex items-center justify-center gap-2 font-medium hover:bg-green-50"
+              >
+                <Plus className="w-5 h-5" />
+                Agregar Comida Extra (Snack, Pre-Entreno, etc.)
+              </button>
+
               {/* Botones */}
               <div className="flex gap-4 pt-4">
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false)
+                    setComidasExtras([])
+                    setEditandoIndex(null)
+                  }}
                   className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
                 >
                   Cancelar
