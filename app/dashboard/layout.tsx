@@ -56,7 +56,10 @@ export default function DashboardLayout({
       if (sessionData.role === 'nutriologo') {
         const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
         if (!allowedRoutes.includes(pathname)) {
-          router.push('/dashboard/nutriologo')
+          // Solo redirigir si no está en una ruta permitida
+          if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
+            router.push('/dashboard/nutriologo')
+          }
         }
       }
     } catch (error) {

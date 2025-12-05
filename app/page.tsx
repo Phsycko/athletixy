@@ -1,65 +1,140 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogIn, Dumbbell } from 'lucide-react'
+import { LogIn, Dumbbell, UserPlus, Apple, User } from 'lucide-react'
+
+type UserType = 'atleta' | 'nutriologo'
 
 export default function LoginPage() {
   const router = useRouter()
+  const [isLogin, setIsLogin] = useState(true)
   const [credentials, setCredentials] = useState({
     email: '',
-    password: ''
+    password: '',
+    nombre: '',
+    tipoUsuario: 'atleta' as UserType
   })
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Inicializar usuarios en localStorage si no existen
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const users = localStorage.getItem('athletixy_users')
+      if (!users) {
+        // Usuarios por defecto
+        const defaultUsers = [
+          {
+            email: 'nutriologo@athletixy.com',
+            password: 'nutriologo123',
+            nombre: 'Dra. Patricia Mendoza',
+            tipoUsuario: 'nutriologo',
+            fechaRegistro: new Date().toISOString()
+          }
+        ]
+        localStorage.setItem('athletixy_users', JSON.stringify(defaultUsers))
+      }
+    }
+  }, [])
+
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    if (!credentials.email || !credentials.password || !credentials.nombre) {
+      setError('Por favor completa todos los campos')
+      return
+    }
+
+    if (credentials.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres')
+      return
+    }
+
+    // Normalizar email
+    const emailNormalized = credentials.email.trim().toLowerCase()
+    const nombreNormalized = credentials.nombre.trim()
+
+    // Obtener usuarios existentes
+    const usersStr = localStorage.getItem('athletixy_users')
+    const users = usersStr ? JSON.parse(usersStr) : []
+
+    // Verificar si el email ya existe
+    const emailExists = users.some((u: any) => u.email.toLowerCase() === emailNormalized)
+    if (emailExists) {
+      setError('Este email ya está registrado. Por favor inicia sesión.')
+      return
+    }
+
+    // Crear nuevo usuario
+    const newUser = {
+      email: emailNormalized,
+      password: credentials.password,
+      nombre: nombreNormalized,
+      tipoUsuario: credentials.tipoUsuario,
+      fechaRegistro: new Date().toISOString()
+    }
+
+    // Guardar usuario
+    users.push(newUser)
+    localStorage.setItem('athletixy_users', JSON.stringify(users))
+
+    // Iniciar sesión automáticamente
+    localStorage.setItem('athletixy_session', JSON.stringify({
+      email: emailNormalized,
+      nombre: nombreNormalized,
+      role: credentials.tipoUsuario,
+      loggedIn: true
+    }))
+
+    setSuccess('¡Registro exitoso! Redirigiendo...')
     
-    // Validación simple de credenciales
+    // Redirigir según tipo de usuario
+    setTimeout(() => {
+      if (credentials.tipoUsuario === 'nutriologo') {
+        router.push('/dashboard/nutriologo')
+      } else {
+        router.push('/dashboard')
+      }
+    }, 1000)
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
     if (!credentials.email || !credentials.password) {
       setError('Por favor ingresa email y contraseña')
       return
     }
 
-    // Normalizar email (trim y lowercase)
+    // Normalizar email
     const emailNormalized = credentials.email.trim().toLowerCase()
     const passwordNormalized = credentials.password.trim()
-    
-    // Detectar rol según credenciales
-    let role = 'atleta' // Rol por defecto
-    let isValid = false
-    
-    // Credenciales de nutriólogo
-    const nutriologoCredentials = [
-      { email: 'nutriologo@athletixy.com', password: 'nutriologo123' },
-      { email: 'patricia.mendoza@athletixy.com', password: 'nutriologo123' },
-      { email: 'nutriologo@test.com', password: 'nutriologo123' }
-    ]
-    
-    for (const cred of nutriologoCredentials) {
-      if (emailNormalized === cred.email.toLowerCase() && passwordNormalized === cred.password) {
-        role = 'nutriologo'
-        isValid = true
-        break
-      }
-    }
-    
-    // Si no es nutriólogo, cualquier credencial válida es atleta
-    if (!isValid && emailNormalized && passwordNormalized) {
-      isValid = true
-      role = 'atleta'
-    }
-    
-    if (isValid) {
-      // Guardar sesión en localStorage
+
+    // Obtener usuarios registrados
+    const usersStr = localStorage.getItem('athletixy_users')
+    const users = usersStr ? JSON.parse(usersStr) : []
+
+    // Buscar usuario
+    const user = users.find((u: any) => 
+      u.email.toLowerCase() === emailNormalized && u.password === passwordNormalized
+    )
+
+    if (user) {
+      // Guardar sesión
       localStorage.setItem('athletixy_session', JSON.stringify({
-        email: emailNormalized,
-        role: role,
+        email: user.email,
+        nombre: user.nombre,
+        role: user.tipoUsuario,
         loggedIn: true
       }))
-      
+
       // Redirigir según rol
-      if (role === 'nutriologo') {
+      if (user.tipoUsuario === 'nutriologo') {
         router.push('/dashboard/nutriologo')
       } else {
         router.push('/dashboard')
@@ -70,7 +145,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo y título */}
         <div className="text-center mb-10">
@@ -83,11 +158,61 @@ export default function LoginPage() {
           <p className="text-gray-600">Gestión profesional de atletas</p>
         </div>
 
-        {/* Formulario de login */}
+        {/* Toggle Login/Register */}
+        <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => {
+              setIsLogin(true)
+              setError('')
+              setSuccess('')
+            }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+              isLogin
+                ? 'bg-black text-white'
+                : 'text-gray-600 hover:text-black'
+            }`}
+          >
+            Iniciar Sesión
+          </button>
+          <button
+            onClick={() => {
+              setIsLogin(false)
+              setError('')
+              setSuccess('')
+            }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+              !isLogin
+                ? 'bg-black text-white'
+                : 'text-gray-600 hover:text-black'
+            }`}
+          >
+            Registrarse
+          </button>
+        </div>
+
+        {/* Formulario */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-200">
-          <h2 className="text-xl font-semibold mb-6 text-black">Iniciar Sesión</h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-xl font-semibold mb-6 text-black">
+            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+          </h2>
+
+          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
+            {!isLogin && (
+              <div>
+                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre Completo
+                </label>
+                <input
+                  id="nombre"
+                  type="text"
+                  value={credentials.nombre}
+                  onChange={(e) => setCredentials({...credentials, nombre: e.target.value})}
+                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+                  placeholder="Tu nombre completo"
+                />
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -112,9 +237,52 @@ export default function LoginPage() {
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
-                placeholder="••••••••"
+                placeholder={isLogin ? "••••••••" : "Mínimo 6 caracteres"}
               />
             </div>
+
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Tipo de Usuario
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'atleta'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'atleta'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <User className={`w-6 h-6 ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-600'}`}>
+                      Atleta
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'nutriologo'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'nutriologo'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Apple className={`w-6 h-6 ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-600'}`}>
+                      Nutriólogo
+                    </span>
+                  </button>
+                </div>
+                {credentials.tipoUsuario === 'nutriologo' && (
+                  <p className="text-xs text-gray-600 mt-2">
+                    Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.
+                  </p>
+                )}
+              </div>
+            )}
 
             {error && (
               <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
@@ -122,20 +290,37 @@ export default function LoginPage() {
               </div>
             )}
 
+            {success && (
+              <div className="bg-green-500/10 border border-green-500 text-green-600 px-4 py-3 rounded-lg text-sm">
+                {success}
+              </div>
+            )}
+
             <button
               type="submit"
               className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
             >
-              <LogIn className="w-5 h-5" />
-              Ingresar
+              {isLogin ? (
+                <>
+                  <LogIn className="w-5 h-5" />
+                  Ingresar
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-5 h-5" />
+                  Registrarse
+                </>
+              )}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <a href="#" className="text-sm text-gray-600 hover:text-black transition">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
+          {isLogin && (
+            <div className="mt-6 text-center">
+              <a href="#" className="text-sm text-gray-600 hover:text-black transition">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+          )}
         </div>
 
         <p className="text-center mt-6 text-gray-500 text-sm">
@@ -145,4 +330,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
