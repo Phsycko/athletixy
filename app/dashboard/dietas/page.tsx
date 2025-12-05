@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Edit, Trash2, ChevronLeft, ChevronRight, AlertCircle, CheckCircle, Info } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -104,6 +104,12 @@ export default function DietasPage() {
   const [confirmDeleteRangoOpen, setConfirmDeleteRangoOpen] = useState(false)
   const [editarDatosModalOpen, setEditarDatosModalOpen] = useState(false)
   const [esPremium] = useState(true) // true = Premium, false = Básico
+  const [toast, setToast] = useState<{show: boolean, message: string, type: 'error' | 'success' | 'info'}>({show: false, message: '', type: 'info'})
+
+  const showToast = (message: string, type: 'error' | 'success' | 'info' = 'info') => {
+    setToast({show: true, message, type})
+    setTimeout(() => setToast({show: false, message: '', type: 'info'}), 4000)
+  }
   const [comidasExtras, setComidasExtras] = useState<ComidaExtra[]>([])
   
   const tiposComidaDisponibles = [
@@ -218,7 +224,7 @@ export default function DietasPage() {
       })
       setComidasExtras([])
     } else {
-      alert('Por favor completa todos los campos')
+      showToast('Por favor completa todos los campos', 'error')
     }
   }
 
@@ -383,7 +389,7 @@ export default function DietasPage() {
   const abrirCalculadoraIAExtra = (id: string) => {
     const comidaExtra = comidasExtras.find(c => c.id === id)
     if (!comidaExtra || !comidaExtra.comida.nombre.trim()) {
-      alert('Por favor escribe el nombre del alimento primero')
+      showToast('Por favor escribe el nombre del alimento primero', 'error')
       return
     }
     setComidaExtraActualId(id)
@@ -406,7 +412,7 @@ export default function DietasPage() {
 
   const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
     if (!nuevaDieta[tipo].nombre.trim()) {
-      alert('Por favor escribe el nombre del alimento primero')
+      showToast('Por favor escribe el nombre del alimento primero', 'error')
       return
     }
     setTipoComidaActual(tipo)
@@ -459,12 +465,12 @@ export default function DietasPage() {
       // Validar que todos los ingredientes tengan cantidad
       const faltaCantidad = ingredientesDetectados.some(ing => !ing.cantidad)
       if (faltaCantidad) {
-        alert('Por favor indica la cantidad de cada ingrediente')
+        showToast('Por favor indica la cantidad de cada ingrediente', 'error')
         return
       }
     } else {
       if (!porcionInfo.cantidad) {
-        alert('Por favor indica la cantidad')
+        showToast('Por favor indica la cantidad', 'error')
         return
       }
     }
@@ -729,7 +735,7 @@ export default function DietasPage() {
 
   const abrirConfirmacionEliminarRango = () => {
     if (!rangoEliminar.inicio || !rangoEliminar.fin) {
-      alert('Selecciona un rango de fechas')
+      showToast('Selecciona un rango de fechas', 'info')
       return
     }
     setConfirmDeleteRangoOpen(true)
@@ -2194,6 +2200,44 @@ export default function DietasPage() {
                 Eliminar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-[100] animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`
+            flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border-2 backdrop-blur-sm
+            ${toast.type === 'error' 
+              ? 'bg-red-50 border-red-200 text-red-800' 
+              : toast.type === 'success' 
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-blue-50 border-blue-200 text-blue-800'
+            }
+          `}>
+            <div className={`
+              w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+              ${toast.type === 'error' 
+                ? 'bg-red-100' 
+                : toast.type === 'success' 
+                  ? 'bg-green-100'
+                  : 'bg-blue-100'
+              }
+            `}>
+              {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+              {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+              {toast.type === 'info' && <Info className="w-5 h-5 text-blue-600" />}
+            </div>
+            <p className="font-medium text-sm pr-2">{toast.message}</p>
+            <button 
+              onClick={() => setToast({show: false, message: '', type: 'info'})}
+              className={`
+                p-1 rounded-full transition hover:bg-black/10
+              `}
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
