@@ -48,6 +48,20 @@ export default function DietasPage() {
   const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
   const [ingredientesDetectados, setIngredientesDetectados] = useState<Array<{nombre: string, cantidad: string, unidad: string}>>([])
   const [esComidaCompuesta, setEsComidaCompuesta] = useState(false)
+  const [modoCreacion, setModoCreacion] = useState<'manual' | 'ia'>('manual')
+  const [generandoIA, setGenerandoIA] = useState(false)
+  const [datosUsuario, setDatosUsuario] = useState({
+    peso: 75,
+    altura: 175,
+    edad: 28,
+    sexo: 'masculino' as 'masculino' | 'femenino',
+    objetivo: 'mantener' as 'perder' | 'mantener' | 'ganar',
+    nivelActividad: 'moderado' as 'sedentario' | 'ligero' | 'moderado' | 'intenso' | 'atleta',
+    caloriasObjetivo: 2800,
+    proteinaObjetivo: 180,
+    carbsObjetivo: 320,
+    grasasObjetivo: 80,
+  })
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
@@ -421,6 +435,45 @@ export default function DietasPage() {
     setIngredientesDetectados(ingredientesDetectados.filter((_, i) => i !== index))
   }
 
+  const generarDietaCompletaConIA = async () => {
+    setGenerandoIA(true)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    const platosDesayuno = ['Avena con Proteína y Frutas', 'Huevos Revueltos con Aguacate', 'Batido de Proteína con Banana', 'Yogurt Griego con Granola', 'Tortilla de Claras con Espinacas']
+    const platosAlmuerzo = ['Pollo con Arroz Integral y Vegetales', 'Carne Magra con Quinoa', 'Salmón con Batata', 'Atún con Pasta Integral', 'Pechuga con Ensalada']
+    const platosCena = ['Salmón con Vegetales al Vapor', 'Pechuga con Brócoli', 'Pescado con Ensalada', 'Pollo con Espárragos', 'Atún con Vegetales']
+
+    const dietaGenerada: DiaPlan = {
+      dia: 'Generado por IA',
+      desayuno: {
+        nombre: platosDesayuno[Math.floor(Math.random() * platosDesayuno.length)],
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.3),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.3),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.35),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.25),
+      },
+      almuerzo: {
+        nombre: platosAlmuerzo[Math.floor(Math.random() * platosAlmuerzo.length)],
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.45),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.45),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.45),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.40),
+      },
+      cena: {
+        nombre: platosCena[Math.floor(Math.random() * platosCena.length)],
+        calorias: Math.round(datosUsuario.caloriasObjetivo * 0.25),
+        proteina: Math.round(datosUsuario.proteinaObjetivo * 0.25),
+        carbs: Math.round(datosUsuario.carbsObjetivo * 0.20),
+        grasas: Math.round(datosUsuario.grasasObjetivo * 0.35),
+      },
+    }
+
+    setDietaPlan([...dietaPlan, dietaGenerada])
+    setGenerandoIA(false)
+    setIsModalOpen(false)
+    setModoCreacion('manual')
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -669,14 +722,50 @@ export default function DietasPage() {
             <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-black">{editandoIndex !== null ? 'Editar Dieta' : 'Nueva Dieta'}</h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false)
+                  setModoCreacion('manual')
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            {/* Toggle Manual / IA */}
+            {editandoIndex === null && (
+              <div className="px-6 pt-6">
+                <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
+                  <button
+                    onClick={() => setModoCreacion('manual')}
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+                      modoCreacion === 'manual'
+                        ? 'bg-white text-black shadow-sm'
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    Crear Manual
+                  </button>
+                  <button
+                    onClick={() => setModoCreacion('ia')}
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                      modoCreacion === 'ia'
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    Generar con IA
+                    <span className="ml-1 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
+                      PREMIUM
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modoCreacion === 'manual' ? (
+              <div className="p-6 space-y-6">
               {/* Día de la semana */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -918,6 +1007,137 @@ export default function DietasPage() {
                 </button>
               </div>
             </div>
+            ) : (
+              // MODO IA - GENERACIÓN AUTOMÁTICA
+              <div className="p-6 space-y-6">
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles className="w-6 h-6 text-purple-600" />
+                    <h3 className="text-xl font-bold text-purple-900">Generación Inteligente de Dieta</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm">
+                    La IA creará un plan completo del día (desayuno, almuerzo y cena) basado en tus objetivos y macros.
+                  </p>
+                </div>
+
+                {/* Configuración del usuario */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
+                    <input
+                      type="number"
+                      value={datosUsuario.peso}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, peso: Number(e.target.value)})}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
+                    <input
+                      type="number"
+                      value={datosUsuario.edad}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, edad: Number(e.target.value)})}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                </div>
+
+                {/* Objetivo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Objetivo Principal</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { valor: 'perder', label: 'Perder Peso' },
+                      { valor: 'mantener', label: 'Mantener' },
+                      { valor: 'ganar', label: 'Ganar Músculo' }
+                    ].map((obj) => (
+                      <button
+                        key={obj.valor}
+                        type="button"
+                        onClick={() => setDatosUsuario({...datosUsuario, objetivo: obj.valor as any})}
+                        className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
+                          datosUsuario.objetivo === obj.valor
+                            ? 'border-purple-600 bg-purple-50 text-purple-900'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                        }`}
+                      >
+                        {obj.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Macros objetivo */}
+                <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Objetivo Diarios</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Calorías</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.caloriasObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, caloriasObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Proteína (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.proteinaObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, proteinaObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.carbsObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, carbsObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Grasas (g)</label>
+                      <input
+                        type="number"
+                        value={datosUsuario.grasasObjetivo}
+                        onChange={(e) => setDatosUsuario({...datosUsuario, grasasObjetivo: Number(e.target.value)})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-black text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={generarDietaCompletaConIA}
+                    disabled={generandoIA}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {generandoIA ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generando dieta completa...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Generar Dieta Completa
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
