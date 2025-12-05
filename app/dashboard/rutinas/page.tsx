@@ -103,6 +103,10 @@ export default function RutinasPage() {
   })
   const [maquinasModalOpen, setMaquinasModalOpen] = useState(false)
   const [filtroMaquinas, setFiltroMaquinas] = useState<string>('Todos')
+  const [musculoPersonalizado, setMusculoPersonalizado] = useState('')
+  const [equipamientoPersonalizado, setEquipamientoPersonalizado] = useState('')
+  const [musculosPersonalizados, setMusculosPersonalizados] = useState<string[]>([])
+  const [equipamientoPersonalizado2, setEquipamientoPersonalizado2] = useState<string[]>([])
 
   const maquinasCompletas = {
     'Pecho': [
@@ -565,6 +569,28 @@ export default function RutinasPage() {
         ...datosEntrenamiento,
         musculosDeficientes: [...musculos, musculo]
       })
+    }
+  }
+
+  const agregarMusculoPersonalizado = () => {
+    if (musculoPersonalizado.trim()) {
+      setMusculosPersonalizados([...musculosPersonalizados, musculoPersonalizado.trim()])
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        musculosDeficientes: [...datosEntrenamiento.musculosDeficientes, musculoPersonalizado.trim()]
+      })
+      setMusculoPersonalizado('')
+    }
+  }
+
+  const agregarEquipamientoPersonalizado = () => {
+    if (equipamientoPersonalizado.trim()) {
+      setEquipamientoPersonalizado2([...equipamientoPersonalizado2, equipamientoPersonalizado.trim()])
+      setDatosEntrenamiento({
+        ...datosEntrenamiento,
+        equipamientoDisponible: [...datosEntrenamiento.equipamientoDisponible, equipamientoPersonalizado.trim()]
+      })
+      setEquipamientoPersonalizado('')
     }
   }
 
@@ -1213,8 +1239,8 @@ export default function RutinasPage() {
                 {/* Músculos Deficientes */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">Músculos a Priorizar (Opcional)</label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {['Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Glúteos', 'Pantorrillas'].map((musculo) => (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                    {['Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Glúteos', 'Pantorrillas', ...musculosPersonalizados].map((musculo) => (
                       <button
                         key={musculo}
                         type="button"
@@ -1229,13 +1255,31 @@ export default function RutinasPage() {
                       </button>
                     ))}
                   </div>
+                  {/* Input personalizado */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Agregar músculo personalizado..."
+                      value={musculoPersonalizado}
+                      onChange={(e) => setMusculoPersonalizado(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && agregarMusculoPersonalizado()}
+                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black text-sm focus:outline-none focus:ring-2 focus:ring-black placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={agregarMusculoPersonalizado}
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium"
+                    >
+                      + Agregar
+                    </button>
+                  </div>
                 </div>
 
                 {/* Equipamiento */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">Equipamiento Disponible</label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {['Barra', 'Mancuernas', 'Máquinas', 'Peso Corporal', 'Bandas', 'Kettlebells'].map((equipo) => (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
+                    {['Barra', 'Mancuernas', 'Máquinas', 'Peso Corporal', 'Bandas', 'Kettlebells', ...equipamientoPersonalizado2].map((equipo) => (
                       <button
                         key={equipo}
                         type="button"
@@ -1246,7 +1290,12 @@ export default function RutinasPage() {
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                         }`}
                       >
-                        {equipo}
+                        <span className="flex items-center justify-center gap-1">
+                          {equipo}
+                          {equipo === 'Máquinas' && (
+                            <ChevronRight className="w-3 h-3 text-gray-500" />
+                          )}
+                        </span>
                         {equipo === 'Máquinas' && datosEntrenamiento.maquinasDisponibles.length > 0 && (
                           <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
                             {datosEntrenamiento.maquinasDisponibles.length}
@@ -1254,6 +1303,24 @@ export default function RutinasPage() {
                         )}
                       </button>
                     ))}
+                  </div>
+                  {/* Input personalizado */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Agregar equipamiento personalizado..."
+                      value={equipamientoPersonalizado}
+                      onChange={(e) => setEquipamientoPersonalizado(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && agregarEquipamientoPersonalizado()}
+                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black text-sm focus:outline-none focus:ring-2 focus:ring-black placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={agregarEquipamientoPersonalizado}
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium"
+                    >
+                      + Agregar
+                    </button>
                   </div>
                 </div>
 
