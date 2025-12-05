@@ -97,6 +97,15 @@ export default function NutriologoPage() {
     notas: string
     estado: 'programada' | 'completada' | 'cancelada'
   }>>([])
+  
+  // Estados para nuevo paciente
+  const [modalNuevoPaciente, setModalNuevoPaciente] = useState(false)
+  const [nuevoPaciente, setNuevoPaciente] = useState({
+    nombre: '',
+    email: '',
+    telefono: '',
+    tipo: 'app' as 'existente' | 'app'
+  })
   const [nuevoPlan, setNuevoPlan] = useState({
     nombre: '',
     fechaInicio: '',
@@ -117,8 +126,8 @@ export default function NutriologoPage() {
     certificaciones: ['Nutrición Clínica', 'Nutrición Deportiva', 'Dietética'],
   }
 
-  // Pacientes de ejemplo
-  const [pacientes, setPacientes] = useState<Paciente[]>([
+  // Pacientes iniciales
+  const pacientesIniciales: Paciente[] = [
     {
       id: '1',
       nombre: 'Carlos Ramírez',
@@ -172,7 +181,9 @@ export default function NutriologoPage() {
       objetivos: ['Pérdida de peso'],
       progreso: { peso: 68, pesoObjetivo: 60, grasaCorporal: 28, musculo: 35 }
     }
-  ])
+  ]
+
+  const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales)
 
   const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
 
@@ -189,29 +200,80 @@ export default function NutriologoPage() {
   // Cargar datos del localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Cargar pacientes
+      const pacientesGuardados = localStorage.getItem('athletixy_pacientes_nutriologo')
+      if (pacientesGuardados) {
+        try {
+          const pacientesParsed = JSON.parse(pacientesGuardados)
+          if (Array.isArray(pacientesParsed) && pacientesParsed.length > 0) {
+            setPacientes(pacientesParsed)
+          }
+        } catch (e) {
+          console.error('Error al cargar pacientes:', e)
+        }
+      } else {
+        // Guardar pacientes iniciales
+        localStorage.setItem('athletixy_pacientes_nutriologo', JSON.stringify(pacientesIniciales))
+      }
+
+      // Cargar consultas
       const consultasGuardadas = localStorage.getItem('athletixy_consultas_nutriologo')
       if (consultasGuardadas) {
-        setConsultas(JSON.parse(consultasGuardadas))
+        try {
+          const consultasParsed = JSON.parse(consultasGuardadas)
+          if (Array.isArray(consultasParsed)) {
+            setConsultas(consultasParsed)
+          }
+        } catch (e) {
+          console.error('Error al cargar consultas:', e)
+        }
       }
       
+      // Cargar fechas bloqueadas
       const fechasBloqueadasGuardadas = localStorage.getItem('athletixy_fechas_bloqueadas_nutriologo')
       if (fechasBloqueadasGuardadas) {
-        setFechasBloqueadas(JSON.parse(fechasBloqueadasGuardadas))
+        try {
+          const fechasParsed = JSON.parse(fechasBloqueadasGuardadas)
+          if (Array.isArray(fechasParsed)) {
+            setFechasBloqueadas(fechasParsed)
+          }
+        } catch (e) {
+          console.error('Error al cargar fechas bloqueadas:', e)
+        }
       }
     }
   }, [])
 
+  // Guardar pacientes en localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && pacientes.length > 0) {
+      try {
+        localStorage.setItem('athletixy_pacientes_nutriologo', JSON.stringify(pacientes))
+      } catch (e) {
+        console.error('Error al guardar pacientes:', e)
+      }
+    }
+  }, [pacientes])
+
   // Guardar consultas en localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined' && consultas.length > 0) {
-      localStorage.setItem('athletixy_consultas_nutriologo', JSON.stringify(consultas))
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('athletixy_consultas_nutriologo', JSON.stringify(consultas))
+      } catch (e) {
+        console.error('Error al guardar consultas:', e)
+      }
     }
   }, [consultas])
 
   // Guardar fechas bloqueadas en localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined' && fechasBloqueadas.length > 0) {
-      localStorage.setItem('athletixy_fechas_bloqueadas_nutriologo', JSON.stringify(fechasBloqueadas))
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('athletixy_fechas_bloqueadas_nutriologo', JSON.stringify(fechasBloqueadas))
+      } catch (e) {
+        console.error('Error al guardar fechas bloqueadas:', e)
+      }
     }
   }, [fechasBloqueadas])
 
@@ -386,6 +448,51 @@ export default function NutriologoPage() {
 
   const eliminarConsulta = (id: string) => {
     setConsultas(consultas.filter(c => c.id !== id))
+  }
+
+  // Funciones para nuevo paciente
+  const crearNuevoPaciente = () => {
+    if (!nuevoPaciente.nombre || !nuevoPaciente.email) {
+      alert('Por favor completa el nombre y email del paciente')
+      return
+    }
+
+    // Verificar si el email ya existe
+    if (pacientes.some(p => p.email.toLowerCase() === nuevoPaciente.email.toLowerCase())) {
+      alert('Ya existe un paciente con este email')
+      return
+    }
+
+    const paciente: Paciente = {
+      id: Date.now().toString(),
+      nombre: nuevoPaciente.nombre,
+      email: nuevoPaciente.email,
+      telefono: nuevoPaciente.telefono || undefined,
+      fechaRegistro: new Date().toISOString().split('T')[0],
+      tipo: nuevoPaciente.tipo,
+      planActivo: 'Básico',
+      ultimaConsulta: '',
+      estado: 'activo',
+      objetivos: [],
+      progreso: { peso: 0, pesoObjetivo: 0, grasaCorporal: 0, musculo: 0 }
+    }
+
+    setPacientes([...pacientes, paciente])
+    
+    // Seleccionar el nuevo paciente en el modal de consulta
+    setNuevaConsulta({
+      ...nuevaConsulta,
+      pacienteId: paciente.id
+    })
+    
+    // Cerrar modal de nuevo paciente
+    setModalNuevoPaciente(false)
+    setNuevoPaciente({
+      nombre: '',
+      email: '',
+      telefono: '',
+      tipo: 'app'
+    })
   }
 
   // Consultas próximas
@@ -1113,7 +1220,16 @@ export default function NutriologoPage() {
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Paciente *</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">Paciente *</label>
+                  <button
+                    onClick={() => setModalNuevoPaciente(true)}
+                    className="flex items-center gap-1 text-sm text-black hover:text-gray-700 font-medium"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Agregar Paciente
+                  </button>
+                </div>
                 <select
                   value={nuevaConsulta.pacienteId}
                   onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, pacienteId: e.target.value })}
@@ -1203,6 +1319,101 @@ export default function NutriologoPage() {
                   className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
                 >
                   Programar Consulta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Nuevo Paciente */}
+      {modalNuevoPaciente && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-black">Agregar Nuevo Paciente</h3>
+              <button
+                onClick={() => {
+                  setModalNuevoPaciente(false)
+                  setNuevoPaciente({
+                    nombre: '',
+                    email: '',
+                    telefono: '',
+                    tipo: 'app'
+                  })
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                <input
+                  type="text"
+                  value={nuevoPaciente.nombre}
+                  onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, nombre: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Ej: Juan Pérez"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <input
+                  type="email"
+                  value={nuevoPaciente.email}
+                  onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, email: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="ejemplo@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono (Opcional)</label>
+                <input
+                  type="tel"
+                  value={nuevoPaciente.telefono}
+                  onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, telefono: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="+52 555 123 4567"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Paciente</label>
+                <select
+                  value={nuevoPaciente.tipo}
+                  onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, tipo: e.target.value as 'existente' | 'app' })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                  <option value="app">Nuevo de la App</option>
+                  <option value="existente">Paciente Existente</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+                <button
+                  onClick={() => {
+                    setModalNuevoPaciente(false)
+                    setNuevoPaciente({
+                      nombre: '',
+                      email: '',
+                      telefono: '',
+                      tipo: 'app'
+                    })
+                  }}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={crearNuevoPaciente}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                >
+                  Crear Paciente
                 </button>
               </div>
             </div>
