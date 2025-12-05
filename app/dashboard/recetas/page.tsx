@@ -1,8 +1,34 @@
 'use client'
 
-import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight } from 'lucide-react'
+import { useState } from 'react'
+import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell } from 'lucide-react'
+
+type Receta = {
+  nombre: string
+  categoria: string
+  tiempo: number
+  calorias: number
+  proteina: number
+  dificultad: string
+  porciones: number
+  ingredientes: string[]
+  preparacion: string[]
+}
 
 export default function RecetasPage() {
+  const [recetaSeleccionada, setRecetaSeleccionada] = useState<Receta | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const abrirReceta = (receta: Receta) => {
+    setRecetaSeleccionada(receta)
+    setModalOpen(true)
+  }
+
+  const cerrarModal = () => {
+    setModalOpen(false)
+    setRecetaSeleccionada(null)
+  }
+
   const categorias = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Snacks', 'Post-Entreno']
 
   const recetas = [
@@ -244,7 +270,10 @@ export default function RecetasPage() {
                   </ul>
                 </div>
 
-                <button className="w-full py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+                <button 
+                  onClick={() => abrirReceta(receta)}
+                  className="w-full py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white rounded-lg transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group/btn shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                >
                   Ver Receta Completa
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                 </button>
@@ -253,6 +282,131 @@ export default function RecetasPage() {
           </div>
         ))}
       </div>
+
+      {/* Modal Receta Completa */}
+      {modalOpen && recetaSeleccionada && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+            {/* Header con imagen */}
+            <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <ChefHat className="w-20 h-20 text-white/20" />
+              <button
+                onClick={cerrarModal}
+                className="absolute top-4 right-4 p-2 bg-black/30 hover:bg-black/50 rounded-full transition"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+              <div className="absolute bottom-4 left-6">
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
+                  {recetaSeleccionada.categoria}
+                </span>
+              </div>
+            </div>
+
+            {/* Contenido */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
+              {/* Título y dificultad */}
+              <div className="flex items-start justify-between mb-6">
+                <h2 className="text-2xl font-bold text-black">{recetaSeleccionada.nombre}</h2>
+                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                  recetaSeleccionada.dificultad === 'Muy Fácil' ? 'bg-green-100 text-green-700' :
+                  recetaSeleccionada.dificultad === 'Fácil' ? 'bg-blue-100 text-blue-700' :
+                  recetaSeleccionada.dificultad === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-red-100 text-red-700'
+                }`}>
+                  {recetaSeleccionada.dificultad}
+                </span>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-4 gap-4 mb-8 p-4 bg-gray-50 rounded-xl">
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <p className="text-xl font-bold text-black">{recetaSeleccionada.tiempo}</p>
+                  <p className="text-gray-500 text-xs">minutos</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 bg-orange-100 rounded-full flex items-center justify-center">
+                    <Flame className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <p className="text-xl font-bold text-black">{recetaSeleccionada.calorias}</p>
+                  <p className="text-gray-500 text-xs">kcal</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 bg-red-100 rounded-full flex items-center justify-center">
+                    <Dumbbell className="w-5 h-5 text-red-600" />
+                  </div>
+                  <p className="text-xl font-bold text-black">{recetaSeleccionada.proteina}g</p>
+                  <p className="text-gray-500 text-xs">proteína</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <p className="text-xl font-bold text-black">{recetaSeleccionada.porciones}</p>
+                  <p className="text-gray-500 text-xs">porciones</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Ingredientes */}
+                <div>
+                  <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Check className="w-4 h-4 text-green-600" />
+                    </span>
+                    Ingredientes
+                  </h3>
+                  <ul className="space-y-3">
+                    {recetaSeleccionada.ingredientes.map((ingrediente, idx) => (
+                      <li key={idx} className="flex items-center gap-3 text-gray-700">
+                        <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></span>
+                        {ingrediente}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Preparación */}
+                <div>
+                  <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <ChefHat className="w-4 h-4 text-blue-600" />
+                    </span>
+                    Preparación
+                  </h3>
+                  <ol className="space-y-4">
+                    {recetaSeleccionada.preparacion.map((paso, idx) => (
+                      <li key={idx} className="flex gap-3">
+                        <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        <p className="text-gray-700 pt-0.5">{paso}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+                <button
+                  onClick={cerrarModal}
+                  className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
+                >
+                  Cerrar
+                </button>
+                <button className="flex-1 py-3 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition shadow-lg flex items-center justify-center gap-2">
+                  <Plus className="w-5 h-5" />
+                  Agregar a Mi Dieta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
