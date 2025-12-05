@@ -183,7 +183,7 @@ export default function NutriologoPage() {
     }
   ]
 
-  const [pacientes, setPacientes] = useState<Paciente[]>([])
+  const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales)
 
   const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
 
