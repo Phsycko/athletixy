@@ -1826,7 +1826,14 @@ export default function DietasPage() {
               {/* Botones de acción */}
               <div className="flex gap-4 pt-4">
                 <button
-                  onClick={() => setEditarDatosModalOpen(false)}
+                  onClick={() => {
+                    // Recargar datos originales
+                    const datosGuardadosLS = localStorage.getItem('athletixy_datos_usuario')
+                    if (datosGuardadosLS) {
+                      setDatosUsuario(JSON.parse(datosGuardadosLS))
+                    }
+                    setEditarDatosModalOpen(false)
+                  }}
                   className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
                 >
                   Cancelar

@@ -74,6 +74,13 @@ export default function RutinasPage() {
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
   const [modoSeleccion, setModoSeleccion] = useState<'ver' | 'eliminar'>('ver')
   const [rangoEliminar, setRangoEliminar] = useState<{inicio: Date | null, fin: Date | null}>({inicio: null, fin: null})
+  const [nuevaRutina, setNuevaRutina] = useState<RutinaDia>({
+    dia: '',
+    fecha: new Date(),
+    grupo: '',
+    ejercicios: [{ nombre: '', series: 0, reps: '', peso: '' }],
+    duracion: '',
+  })
 
   // Cargar rutinas desde localStorage
   useEffect(() => {
@@ -254,6 +261,78 @@ export default function RutinasPage() {
     setModoSeleccion('ver')
     setCalendarioOpen(false)
     setConfirmDeleteRangoOpen(false)
+  }
+
+  const handleAgregarRutina = () => {
+    if (nuevaRutina.dia && nuevaRutina.grupo && nuevaRutina.duracion && nuevaRutina.ejercicios.length > 0) {
+      const ejerciciosValidos = nuevaRutina.ejercicios.filter(e => e.nombre.trim() !== '')
+      if (ejerciciosValidos.length === 0) {
+        alert('Agrega al menos un ejercicio')
+        return
+      }
+
+      const fechaBase = new Date()
+      const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+      const diaActual = fechaBase.getDay()
+      const diaObjetivo = diasSemana.indexOf(nuevaRutina.dia)
+      let diff = diaObjetivo - diaActual
+      if (diff < 0) diff += 7
+      
+      const nuevaFecha = new Date(fechaBase)
+      nuevaFecha.setDate(fechaBase.getDate() + diff)
+
+      if (editandoIndex !== null) {
+        const nuevoPlan = [...rutinaSemanal]
+        nuevoPlan[editandoIndex] = {...nuevaRutina, fecha: nuevaFecha, ejercicios: ejerciciosValidos}
+        setRutinaSemanal(nuevoPlan)
+        setEditandoIndex(null)
+      } else {
+        setRutinaSemanal([...rutinaSemanal, {...nuevaRutina, fecha: nuevaFecha, ejercicios: ejerciciosValidos}])
+      }
+      
+      setIsModalOpen(false)
+      resetForm()
+    } else {
+      alert('Por favor completa todos los campos')
+    }
+  }
+
+  const resetForm = () => {
+    setNuevaRutina({
+      dia: '',
+      fecha: new Date(),
+      grupo: '',
+      ejercicios: [{ nombre: '', series: 0, reps: '', peso: '' }],
+      duracion: '',
+    })
+    setEditandoIndex(null)
+  }
+
+  const agregarEjercicio = () => {
+    setNuevaRutina({
+      ...nuevaRutina,
+      ejercicios: [...nuevaRutina.ejercicios, { nombre: '', series: 0, reps: '', peso: '' }]
+    })
+  }
+
+  const eliminarEjercicio = (index: number) => {
+    const nuevosEjercicios = nuevaRutina.ejercicios.filter((_, i) => i !== index)
+    setNuevaRutina({
+      ...nuevaRutina,
+      ejercicios: nuevosEjercicios.length > 0 ? nuevosEjercicios : [{ nombre: '', series: 0, reps: '', peso: '' }]
+    })
+  }
+
+  const actualizarEjercicio = (index: number, campo: keyof Ejercicio, valor: any) => {
+    const nuevosEjercicios = [...nuevaRutina.ejercicios]
+    nuevosEjercicios[index] = {
+      ...nuevosEjercicios[index],
+      [campo]: valor
+    }
+    setNuevaRutina({
+      ...nuevaRutina,
+      ejercicios: nuevosEjercicios
+    })
   }
 
   return (
@@ -591,6 +670,154 @@ export default function RutinasPage() {
               >
                 Eliminar Rango
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Nueva Rutina */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-black">{editandoIndex !== null ? 'Editar Rutina' : 'Nueva Rutina'}</h2>
+              <button onClick={() => {setIsModalOpen(false); resetForm()}} className="p-2 hover:bg-gray-100 rounded-lg transition">
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Información básica */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Día de la semana</label>
+                  <select
+                    value={nuevaRutina.dia}
+                    onChange={(e) => setNuevaRutina({...nuevaRutina, dia: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                  >
+                    <option value="">Selecciona...</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Grupo Muscular</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Pecho y Tríceps"
+                    value={nuevaRutina.grupo}
+                    onChange={(e) => setNuevaRutina({...nuevaRutina, grupo: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Duración</label>
+                  <input
+                    type="text"
+                    placeholder="Ej: 60 min"
+                    value={nuevaRutina.duracion}
+                    onChange={(e) => setNuevaRutina({...nuevaRutina, duracion: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+              </div>
+
+              {/* Ejercicios */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-black">Ejercicios</h3>
+                  <button
+                    type="button"
+                    onClick={agregarEjercicio}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Agregar Ejercicio
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {nuevaRutina.ejercicios.map((ejercicio, idx) => (
+                    <div key={idx} className="p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-semibold text-gray-700">Ejercicio {idx + 1}</span>
+                        {nuevaRutina.ejercicios.length > 1 && (
+                          <button
+                            onClick={() => eliminarEjercicio(idx)}
+                            className="text-gray-400 hover:text-red-600 transition"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="md:col-span-2">
+                          <label className="block text-xs text-gray-600 mb-1">Nombre del ejercicio</label>
+                          <input
+                            type="text"
+                            placeholder="Ej: Press de Banca"
+                            value={ejercicio.nombre}
+                            onChange={(e) => actualizarEjercicio(idx, 'nombre', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Series</label>
+                          <input
+                            type="number"
+                            placeholder="4"
+                            value={ejercicio.series || ''}
+                            onChange={(e) => actualizarEjercicio(idx, 'series', Number(e.target.value))}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Repeticiones</label>
+                          <input
+                            type="text"
+                            placeholder="8-10"
+                            value={ejercicio.reps}
+                            onChange={(e) => actualizarEjercicio(idx, 'reps', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-xs text-gray-600 mb-1">Peso / Carga</label>
+                          <input
+                            type="text"
+                            placeholder="Ej: 80 kg, Corporal, Banda"
+                            value={ejercicio.peso}
+                            onChange={(e) => actualizarEjercicio(idx, 'peso', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Botones */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => {setIsModalOpen(false); resetForm()}}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleAgregarRutina}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+                >
+                  {editandoIndex !== null ? 'Guardar Cambios' : 'Agregar Rutina'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
