@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock } from 'lucide-react'
+import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock, Trash2 } from 'lucide-react'
 
 type Receta = {
   nombre: string
@@ -28,6 +28,89 @@ export default function RecetasPage() {
   const [listaSupermercado, setListaSupermercado] = useState<ItemSupermercado[]>([])
   const [generandoLista, setGenerandoLista] = useState(false)
   const [mostrarLista, setMostrarLista] = useState(false)
+  const [modalNuevaReceta, setModalNuevaReceta] = useState(false)
+  
+  const recetasIniciales: Receta[] = [
+    {
+      nombre: 'Bowl de Proteína con Quinoa',
+      categoria: 'Almuerzo',
+      tiempo: 25,
+      calorias: 520,
+      proteina: 45,
+      dificultad: 'Fácil',
+      porciones: 2,
+      ingredientes: ['150g quinoa cocida', '200g pechuga de pollo', '100g espinaca', '50g aguacate', 'Tomate cherry'],
+      preparacion: ['Cocina la quinoa según las instrucciones del paquete', 'Cocina la pechuga de pollo a la plancha', 'Mezcla todos los ingredientes en un bowl', 'Añade aderezo al gusto'],
+    },
+    {
+      nombre: 'Batido Post-Entreno',
+      categoria: 'Post-Entreno',
+      tiempo: 5,
+      calorias: 380,
+      proteina: 35,
+      dificultad: 'Muy Fácil',
+      porciones: 1,
+      ingredientes: ['1 scoop proteína de suero', '1 plátano', '200ml leche de almendras', '1 cucharada mantequilla de maní', 'Hielo'],
+      preparacion: ['Añade todos los ingredientes a la licuadora', 'Licua hasta obtener consistencia suave', 'Sirve inmediatamente'],
+    },
+    {
+      nombre: 'Avena Proteica con Frutas',
+      categoria: 'Desayuno',
+      tiempo: 15,
+      calorias: 450,
+      proteina: 30,
+      dificultad: 'Fácil',
+      porciones: 1,
+      ingredientes: ['80g avena', '1 scoop proteína vainilla', '250ml leche', 'Frutos rojos', '1 cucharada miel'],
+      preparacion: ['Cocina la avena con la leche', 'Añade la proteína y mezcla bien', 'Decora con frutos rojos y miel'],
+    },
+    {
+      nombre: 'Salmón al Horno con Vegetales',
+      categoria: 'Cena',
+      tiempo: 35,
+      calorias: 520,
+      proteina: 42,
+      dificultad: 'Media',
+      porciones: 2,
+      ingredientes: ['300g filete de salmón', 'Brócoli', 'Pimientos', 'Aceite de oliva', 'Limón y especias'],
+      preparacion: ['Precalienta el horno a 180°C', 'Coloca el salmón y vegetales en bandeja', 'Rocía con aceite y especias', 'Hornea por 25 minutos'],
+    },
+    {
+      nombre: 'Tortilla de Claras y Espinacas',
+      categoria: 'Desayuno',
+      tiempo: 10,
+      calorias: 280,
+      proteina: 32,
+      dificultad: 'Fácil',
+      porciones: 1,
+      ingredientes: ['6 claras de huevo', '100g espinaca fresca', '50g queso bajo en grasa', 'Cebolla', 'Tomate'],
+      preparacion: ['Saltea la espinaca y cebolla', 'Bate las claras y vierte en la sartén', 'Añade el queso y cocina hasta cuajar'],
+    },
+    {
+      nombre: 'Wrap de Atún con Vegetales',
+      categoria: 'Snacks',
+      tiempo: 10,
+      calorias: 320,
+      proteina: 28,
+      dificultad: 'Muy Fácil',
+      porciones: 1,
+      ingredientes: ['1 tortilla integral', '150g atún en agua', 'Lechuga', 'Tomate', 'Yogur griego'],
+      preparacion: ['Mezcla el atún con yogur griego', 'Coloca los vegetales en la tortilla', 'Añade el atún y enrolla'],
+    },
+  ]
+  
+  const [recetas, setRecetas] = useState<Receta[]>(recetasIniciales)
+  const [nuevaReceta, setNuevaReceta] = useState<Receta>({
+    nombre: '',
+    categoria: 'Almuerzo',
+    tiempo: 0,
+    calorias: 0,
+    proteina: 0,
+    dificultad: 'Fácil',
+    porciones: 1,
+    ingredientes: [''],
+    preparacion: ['']
+  })
 
   const abrirReceta = (receta: Receta) => {
     setRecetaSeleccionada(receta)
@@ -39,6 +122,89 @@ export default function RecetasPage() {
     setRecetaSeleccionada(null)
     setListaSupermercado([])
     setMostrarLista(false)
+  }
+
+  const cerrarModalNuevaReceta = () => {
+    setModalNuevaReceta(false)
+    setNuevaReceta({
+      nombre: '',
+      categoria: 'Almuerzo',
+      tiempo: 0,
+      calorias: 0,
+      proteina: 0,
+      dificultad: 'Fácil',
+      porciones: 1,
+      ingredientes: [''],
+      preparacion: ['']
+    })
+  }
+
+  const agregarIngrediente = () => {
+    setNuevaReceta({
+      ...nuevaReceta,
+      ingredientes: [...nuevaReceta.ingredientes, '']
+    })
+  }
+
+  const eliminarIngrediente = (index: number) => {
+    if (nuevaReceta.ingredientes.length > 1) {
+      setNuevaReceta({
+        ...nuevaReceta,
+        ingredientes: nuevaReceta.ingredientes.filter((_, i) => i !== index)
+      })
+    }
+  }
+
+  const actualizarIngrediente = (index: number, valor: string) => {
+    const nuevosIngredientes = [...nuevaReceta.ingredientes]
+    nuevosIngredientes[index] = valor
+    setNuevaReceta({ ...nuevaReceta, ingredientes: nuevosIngredientes })
+  }
+
+  const agregarPaso = () => {
+    setNuevaReceta({
+      ...nuevaReceta,
+      preparacion: [...nuevaReceta.preparacion, '']
+    })
+  }
+
+  const eliminarPaso = (index: number) => {
+    if (nuevaReceta.preparacion.length > 1) {
+      setNuevaReceta({
+        ...nuevaReceta,
+        preparacion: nuevaReceta.preparacion.filter((_, i) => i !== index)
+      })
+    }
+  }
+
+  const actualizarPaso = (index: number, valor: string) => {
+    const nuevosPasos = [...nuevaReceta.preparacion]
+    nuevosPasos[index] = valor
+    setNuevaReceta({ ...nuevaReceta, preparacion: nuevosPasos })
+  }
+
+  const guardarReceta = () => {
+    if (!nuevaReceta.nombre.trim()) {
+      alert('Por favor ingresa el nombre de la receta')
+      return
+    }
+    if (nuevaReceta.ingredientes.filter(i => i.trim()).length === 0) {
+      alert('Por favor agrega al menos un ingrediente')
+      return
+    }
+    if (nuevaReceta.preparacion.filter(p => p.trim()).length === 0) {
+      alert('Por favor agrega al menos un paso de preparación')
+      return
+    }
+
+    const recetaLimpia: Receta = {
+      ...nuevaReceta,
+      ingredientes: nuevaReceta.ingredientes.filter(i => i.trim()),
+      preparacion: nuevaReceta.preparacion.filter(p => p.trim())
+    }
+
+    setRecetas([...recetas, recetaLimpia])
+    cerrarModalNuevaReceta()
   }
 
   const generarListaSupermercado = async () => {
@@ -119,137 +285,6 @@ export default function RecetasPage() {
 
   const categorias = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Snacks', 'Post-Entreno']
 
-  const recetas = [
-    {
-      nombre: 'Bowl de Proteína con Quinoa',
-      categoria: 'Almuerzo',
-      tiempo: 25,
-      calorias: 520,
-      proteina: 45,
-      dificultad: 'Fácil',
-      porciones: 2,
-      ingredientes: [
-        '150g quinoa cocida',
-        '200g pechuga de pollo',
-        '100g espinaca',
-        '50g aguacate',
-        'Tomate cherry',
-      ],
-      preparacion: [
-        'Cocina la quinoa según las instrucciones del paquete',
-        'Cocina la pechuga de pollo a la plancha',
-        'Mezcla todos los ingredientes en un bowl',
-        'Añade aderezo al gusto',
-      ],
-    },
-    {
-      nombre: 'Batido Post-Entreno',
-      categoria: 'Post-Entreno',
-      tiempo: 5,
-      calorias: 380,
-      proteina: 35,
-      dificultad: 'Muy Fácil',
-      porciones: 1,
-      ingredientes: [
-        '1 scoop proteína de suero',
-        '1 plátano',
-        '200ml leche de almendras',
-        '1 cucharada mantequilla de maní',
-        'Hielo',
-      ],
-      preparacion: [
-        'Añade todos los ingredientes a la licuadora',
-        'Licua hasta obtener consistencia suave',
-        'Sirve inmediatamente',
-      ],
-    },
-    {
-      nombre: 'Avena Proteica con Frutas',
-      categoria: 'Desayuno',
-      tiempo: 15,
-      calorias: 450,
-      proteina: 30,
-      dificultad: 'Fácil',
-      porciones: 1,
-      ingredientes: [
-        '80g avena',
-        '1 scoop proteína vainilla',
-        '250ml leche',
-        'Frutos rojos',
-        '1 cucharada miel',
-      ],
-      preparacion: [
-        'Cocina la avena con la leche',
-        'Añade la proteína y mezcla bien',
-        'Decora con frutos rojos y miel',
-      ],
-    },
-    {
-      nombre: 'Salmón al Horno con Vegetales',
-      categoria: 'Cena',
-      tiempo: 35,
-      calorias: 520,
-      proteina: 42,
-      dificultad: 'Media',
-      porciones: 2,
-      ingredientes: [
-        '300g filete de salmón',
-        'Brócoli',
-        'Pimientos',
-        'Aceite de oliva',
-        'Limón y especias',
-      ],
-      preparacion: [
-        'Precalienta el horno a 180°C',
-        'Coloca el salmón y vegetales en bandeja',
-        'Rocía con aceite y especias',
-        'Hornea por 25 minutos',
-      ],
-    },
-    {
-      nombre: 'Tortilla de Claras y Espinacas',
-      categoria: 'Desayuno',
-      tiempo: 10,
-      calorias: 280,
-      proteina: 32,
-      dificultad: 'Fácil',
-      porciones: 1,
-      ingredientes: [
-        '6 claras de huevo',
-        '100g espinaca fresca',
-        '50g queso bajo en grasa',
-        'Cebolla',
-        'Tomate',
-      ],
-      preparacion: [
-        'Saltea la espinaca y cebolla',
-        'Bate las claras y vierte en la sartén',
-        'Añade el queso y cocina hasta cuajar',
-      ],
-    },
-    {
-      nombre: 'Wrap de Atún con Vegetales',
-      categoria: 'Snacks',
-      tiempo: 10,
-      calorias: 320,
-      proteina: 28,
-      dificultad: 'Muy Fácil',
-      porciones: 1,
-      ingredientes: [
-        '1 tortilla integral',
-        '150g atún en agua',
-        'Lechuga',
-        'Tomate',
-        'Yogur griego',
-      ],
-      preparacion: [
-        'Mezcla el atún con yogur griego',
-        'Coloca los vegetales en la tortilla',
-        'Añade el atún y enrolla',
-      ],
-    },
-  ]
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -258,7 +293,10 @@ export default function RecetasPage() {
           <h1 className="text-2xl font-bold text-black mb-2">Recetas</h1>
           <p className="text-gray-600">Opciones saludables y deliciosas</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition shadow-lg">
+        <button 
+          onClick={() => setModalNuevaReceta(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition shadow-lg"
+        >
           <Plus className="w-5 h-5" />
           Nueva Receta
         </button>
@@ -585,6 +623,213 @@ export default function RecetasPage() {
                   Agregar a Mi Dieta
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Nueva Receta */}
+      {modalNuevaReceta && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b-2 border-gray-200 px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
+                  <ChefHat className="w-5 h-5 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-black">Nueva Receta</h2>
+              </div>
+              <button
+                onClick={cerrarModalNuevaReceta}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Formulario */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-10rem)] space-y-6">
+              {/* Nombre */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de la Receta</label>
+                <input
+                  type="text"
+                  placeholder="Ej: Bowl de Proteína con Quinoa"
+                  value={nuevaReceta.nombre}
+                  onChange={(e) => setNuevaReceta({...nuevaReceta, nombre: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+
+              {/* Categoría y Dificultad */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <select
+                    value={nuevaReceta.categoria}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, categoria: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                  >
+                    <option value="Desayuno">Desayuno</option>
+                    <option value="Almuerzo">Almuerzo</option>
+                    <option value="Cena">Cena</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Post-Entreno">Post-Entreno</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Dificultad</label>
+                  <select
+                    value={nuevaReceta.dificultad}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, dificultad: e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                  >
+                    <option value="Muy Fácil">Muy Fácil</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Media">Media</option>
+                    <option value="Difícil">Difícil</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tiempo (min)</label>
+                  <input
+                    type="number"
+                    placeholder="25"
+                    value={nuevaReceta.tiempo || ''}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, tiempo: Number(e.target.value)})}
+                    className="w-full px-3 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Calorías</label>
+                  <input
+                    type="number"
+                    placeholder="450"
+                    value={nuevaReceta.calorias || ''}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, calorias: Number(e.target.value)})}
+                    className="w-full px-3 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Proteína (g)</label>
+                  <input
+                    type="number"
+                    placeholder="35"
+                    value={nuevaReceta.proteina || ''}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, proteina: Number(e.target.value)})}
+                    className="w-full px-3 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Porciones</label>
+                  <input
+                    type="number"
+                    placeholder="2"
+                    value={nuevaReceta.porciones || ''}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, porciones: Number(e.target.value)})}
+                    className="w-full px-3 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+              </div>
+
+              {/* Ingredientes */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-semibold text-gray-700">Ingredientes</label>
+                  <button
+                    type="button"
+                    onClick={agregarIngrediente}
+                    className="text-sm text-gray-600 hover:text-black font-medium flex items-center gap-1"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Agregar
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {nuevaReceta.ingredientes.map((ingrediente, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder={`Ingrediente ${idx + 1} (ej: 200g pechuga de pollo)`}
+                        value={ingrediente}
+                        onChange={(e) => actualizarIngrediente(idx, e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                      />
+                      {nuevaReceta.ingredientes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => eliminarIngrediente(idx)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preparación */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-semibold text-gray-700">Pasos de Preparación</label>
+                  <button
+                    type="button"
+                    onClick={agregarPaso}
+                    className="text-sm text-gray-600 hover:text-black font-medium flex items-center gap-1"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Agregar Paso
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {nuevaReceta.preparacion.map((paso, idx) => (
+                    <div key={idx} className="flex gap-2 items-start">
+                      <span className="w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-2">
+                        {idx + 1}
+                      </span>
+                      <textarea
+                        placeholder={`Paso ${idx + 1} de la preparación`}
+                        value={paso}
+                        onChange={(e) => actualizarPaso(idx, e.target.value)}
+                        rows={2}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black text-sm resize-none"
+                      />
+                      {nuevaReceta.preparacion.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => eliminarPaso(idx)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition mt-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer con botones */}
+            <div className="sticky bottom-0 bg-white border-t-2 border-gray-200 px-6 py-4 flex gap-4">
+              <button
+                onClick={cerrarModalNuevaReceta}
+                className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={guardarReceta}
+                className="flex-1 py-3 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition shadow-lg flex items-center justify-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Guardar Receta
+              </button>
             </div>
           </div>
         </div>
