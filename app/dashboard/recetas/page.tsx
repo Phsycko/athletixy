@@ -29,6 +29,7 @@ export default function RecetasPage() {
   const [generandoLista, setGenerandoLista] = useState(false)
   const [mostrarLista, setMostrarLista] = useState(false)
   const [modalNuevaReceta, setModalNuevaReceta] = useState(false)
+  const [generandoRecetaIA, setGenerandoRecetaIA] = useState(false)
   
   const recetasIniciales: Receta[] = [
     {
@@ -205,6 +206,74 @@ export default function RecetasPage() {
 
     setRecetas([...recetas, recetaLimpia])
     cerrarModalNuevaReceta()
+  }
+
+  const generarRecetaConIA = async () => {
+    if (!nuevaReceta.nombre.trim()) {
+      alert('Por favor escribe el nombre de la receta primero')
+      return
+    }
+
+    setGenerandoRecetaIA(true)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Base de datos de recetas generadas por IA
+    const recetasIA: { [key: string]: { ingredientes: string[], preparacion: string[], tiempo: number, calorias: number, proteina: number, porciones: number } } = {
+      'default': {
+        ingredientes: ['200g proteína principal', '150g carbohidrato', '100g vegetales', '2 cucharadas aceite de oliva', 'Sal y especias al gusto'],
+        preparacion: ['Prepara todos los ingredientes y córtalos', 'Cocina la proteína a fuego medio por 5-7 minutos', 'Añade los vegetales y saltea por 3 minutos', 'Incorpora el carbohidrato y mezcla bien', 'Sazona al gusto y sirve caliente'],
+        tiempo: 25, calorias: 450, proteina: 35, porciones: 2
+      }
+    }
+
+    const nombreLower = nuevaReceta.nombre.toLowerCase()
+    
+    // Detectar tipo de receta y generar contenido apropiado
+    let recetaGenerada = recetasIA['default']
+    
+    if (nombreLower.includes('pollo')) {
+      recetaGenerada = {
+        ingredientes: ['300g pechuga de pollo', '200g arroz integral', '150g brócoli', '1 diente de ajo', '2 cucharadas salsa de soya', 'Aceite de oliva', 'Sal y pimienta'],
+        preparacion: ['Corta el pollo en cubos y sazona con sal y pimienta', 'Cocina el arroz según las instrucciones', 'En una sartén caliente, cocina el pollo hasta dorarlo', 'Añade el ajo y el brócoli, saltea 3 minutos', 'Agrega la salsa de soya y mezcla bien', 'Sirve sobre el arroz'],
+        tiempo: 30, calorias: 520, proteina: 45, porciones: 2
+      }
+    } else if (nombreLower.includes('ensalada')) {
+      recetaGenerada = {
+        ingredientes: ['200g lechuga mixta', '150g pollo a la plancha', '100g tomate cherry', '50g queso feta', '30g nueces', 'Aderezo de limón y aceite'],
+        preparacion: ['Lava y seca bien las lechugas', 'Corta el pollo en tiras', 'Parte los tomates por la mitad', 'Mezcla todo en un bowl grande', 'Añade el queso y las nueces', 'Aliña justo antes de servir'],
+        tiempo: 15, calorias: 380, proteina: 32, porciones: 1
+      }
+    } else if (nombreLower.includes('batido') || nombreLower.includes('smoothie')) {
+      recetaGenerada = {
+        ingredientes: ['1 scoop proteína en polvo', '1 plátano maduro', '200ml leche de almendras', '1 cucharada mantequilla de maní', '5 cubos de hielo', '1 cucharadita miel'],
+        preparacion: ['Añade la leche a la licuadora primero', 'Agrega el plátano y la proteína', 'Incorpora la mantequilla de maní y miel', 'Añade el hielo', 'Licua por 1-2 minutos hasta obtener consistencia suave', 'Sirve inmediatamente'],
+        tiempo: 5, calorias: 350, proteina: 30, porciones: 1
+      }
+    } else if (nombreLower.includes('avena') || nombreLower.includes('oatmeal')) {
+      recetaGenerada = {
+        ingredientes: ['80g avena', '250ml leche', '1 scoop proteína vainilla', '1 plátano', 'Frutos rojos al gusto', '1 cucharada miel', 'Canela al gusto'],
+        preparacion: ['Cocina la avena con la leche a fuego medio', 'Revuelve constantemente por 5 minutos', 'Retira del fuego y deja enfriar 2 minutos', 'Añade la proteína y mezcla bien', 'Decora con plátano, frutos rojos y miel', 'Espolvorea canela al gusto'],
+        tiempo: 10, calorias: 420, proteina: 28, porciones: 1
+      }
+    } else if (nombreLower.includes('salmon') || nombreLower.includes('salmón') || nombreLower.includes('pescado')) {
+      recetaGenerada = {
+        ingredientes: ['300g filete de salmón', '200g espárragos', '150g papa', 'Jugo de 1 limón', '2 cucharadas aceite de oliva', 'Eneldo fresco', 'Sal y pimienta'],
+        preparacion: ['Precalienta el horno a 200°C', 'Sazona el salmón con sal, pimienta y limón', 'Corta las papas en rodajas finas', 'Coloca todo en una bandeja para hornear', 'Rocía con aceite de oliva', 'Hornea por 20-25 minutos', 'Decora con eneldo fresco'],
+        tiempo: 35, calorias: 480, proteina: 40, porciones: 2
+      }
+    }
+
+    setNuevaReceta({
+      ...nuevaReceta,
+      ingredientes: recetaGenerada.ingredientes,
+      preparacion: recetaGenerada.preparacion,
+      tiempo: recetaGenerada.tiempo,
+      calorias: recetaGenerada.calorias,
+      proteina: recetaGenerada.proteina,
+      porciones: recetaGenerada.porciones
+    })
+
+    setGenerandoRecetaIA(false)
   }
 
   const generarListaSupermercado = async () => {
@@ -653,44 +722,50 @@ export default function RecetasPage() {
               {/* Nombre */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de la Receta</label>
-                <input
-                  type="text"
-                  placeholder="Ej: Bowl de Proteína con Quinoa"
-                  value={nuevaReceta.nombre}
-                  onChange={(e) => setNuevaReceta({...nuevaReceta, nombre: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Ej: Bowl de Proteína con Quinoa"
+                    value={nuevaReceta.nombre}
+                    onChange={(e) => setNuevaReceta({...nuevaReceta, nombre: e.target.value})}
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                  {esPremium && (
+                    <button
+                      type="button"
+                      onClick={generarRecetaConIA}
+                      disabled={generandoRecetaIA}
+                      className="px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white rounded-lg transition flex items-center gap-2 disabled:opacity-70"
+                      title="Generar receta con IA"
+                    >
+                      {generandoRecetaIA ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Sparkles className="w-5 h-5" />
+                      )}
+                      <span className="hidden sm:inline">IA</span>
+                    </button>
+                  )}
+                </div>
+                {esPremium && (
+                  <p className="text-xs text-gray-500 mt-1">Escribe el nombre y presiona IA para generar la receta automáticamente</p>
+                )}
               </div>
 
-              {/* Categoría y Dificultad */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
-                  <select
-                    value={nuevaReceta.categoria}
-                    onChange={(e) => setNuevaReceta({...nuevaReceta, categoria: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
-                  >
-                    <option value="Desayuno">Desayuno</option>
-                    <option value="Almuerzo">Almuerzo</option>
-                    <option value="Cena">Cena</option>
-                    <option value="Snacks">Snacks</option>
-                    <option value="Post-Entreno">Post-Entreno</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Dificultad</label>
-                  <select
-                    value={nuevaReceta.dificultad}
-                    onChange={(e) => setNuevaReceta({...nuevaReceta, dificultad: e.target.value})}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
-                  >
-                    <option value="Muy Fácil">Muy Fácil</option>
-                    <option value="Fácil">Fácil</option>
-                    <option value="Media">Media</option>
-                    <option value="Difícil">Difícil</option>
-                  </select>
-                </div>
+              {/* Categoría */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                <select
+                  value={nuevaReceta.categoria}
+                  onChange={(e) => setNuevaReceta({...nuevaReceta, categoria: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                >
+                  <option value="Desayuno">Desayuno</option>
+                  <option value="Almuerzo">Almuerzo</option>
+                  <option value="Cena">Cena</option>
+                  <option value="Snacks">Snacks</option>
+                  <option value="Post-Entreno">Post-Entreno</option>
+                </select>
               </div>
 
               {/* Stats */}
