@@ -17,12 +17,30 @@ export default function LoginPage() {
     
     // Validación simple de credenciales
     if (credentials.email && credentials.password) {
+      // Detectar rol según credenciales
+      let role = 'atleta' // Rol por defecto
+      
+      // Credenciales de nutriólogo
+      if (
+        (credentials.email === 'nutriologo@athletixy.com' && credentials.password === 'nutriologo123') ||
+        (credentials.email === 'patricia.mendoza@athletixy.com' && credentials.password === 'nutriologo123')
+      ) {
+        role = 'nutriologo'
+      }
+      
       // Guardar sesión en localStorage
       localStorage.setItem('athletixy_session', JSON.stringify({
         email: credentials.email,
+        role: role,
         loggedIn: true
       }))
-      router.push('/dashboard')
+      
+      // Redirigir según rol
+      if (role === 'nutriologo') {
+        router.push('/dashboard/nutriologo')
+      } else {
+        router.push('/dashboard')
+      }
     } else {
       setError('Por favor ingresa email y contraseña')
     }

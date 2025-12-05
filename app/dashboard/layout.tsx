@@ -32,6 +32,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState('')
+  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach'>('atleta')
 
   useEffect(() => {
     // Verificar autenticación
@@ -41,6 +42,7 @@ export default function DashboardLayout({
     } else {
       const sessionData = JSON.parse(session)
       setUserEmail(sessionData.email)
+      setUserRole(sessionData.role || 'atleta')
     }
   }, [router])
 
@@ -49,21 +51,25 @@ export default function DashboardLayout({
     router.push('/')
   }
 
-  const menuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas' },
-    { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas' },
-    { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías' },
-    { href: '/dashboard/progreso', icon: TrendingUp, label: 'Progreso' },
-    { href: '/dashboard/recetas', icon: Book, label: 'Recetas' },
-    { href: '/dashboard/nutriologo', icon: Apple, label: 'Nutriólogo' },
-    { href: '/dashboard/coach', icon: User, label: 'Coach' },
-    { href: '/dashboard/comunidad', icon: MessageSquare, label: 'Comunidad' },
-    { href: '/dashboard/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-    { href: '/dashboard/notificaciones', icon: Bell, label: 'Notificaciones' },
-    { href: '/dashboard/soporte', icon: HeadphonesIcon, label: 'Soporte' },
-    { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
+  // Menú completo
+  const allMenuItems = [
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach'] },
+    { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas', roles: ['atleta'] },
+    { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas', roles: ['atleta'] },
+    { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta'] },
+    { href: '/dashboard/progreso', icon: TrendingUp, label: 'Progreso', roles: ['atleta'] },
+    { href: '/dashboard/recetas', icon: Book, label: 'Recetas', roles: ['atleta'] },
+    { href: '/dashboard/nutriologo', icon: Apple, label: 'Panel Nutriólogo', roles: ['nutriologo'] },
+    { href: '/dashboard/coach', icon: User, label: 'Coach', roles: ['atleta', 'coach'] },
+    { href: '/dashboard/comunidad', icon: MessageSquare, label: 'Comunidad', roles: ['atleta'] },
+    { href: '/dashboard/marketplace', icon: ShoppingBag, label: 'Marketplace', roles: ['atleta'] },
+    { href: '/dashboard/notificaciones', icon: Bell, label: 'Notificaciones', roles: ['atleta', 'nutriologo', 'coach'] },
+    { href: '/dashboard/soporte', icon: HeadphonesIcon, label: 'Soporte', roles: ['atleta', 'nutriologo', 'coach'] },
+    { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', roles: ['atleta', 'nutriologo', 'coach'] },
   ]
+
+  // Filtrar menú según rol
+  const menuItems = allMenuItems.filter(item => item.roles.includes(userRole))
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -108,7 +114,7 @@ export default function DashboardLayout({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-black truncate">{userEmail}</p>
-              <p className="text-xs text-gray-600">Atleta</p>
+              <p className="text-xs text-gray-600 capitalize">{userRole === 'nutriologo' ? 'Nutriólogo' : userRole === 'coach' ? 'Coach' : 'Atleta'}</p>
             </div>
           </div>
           <button
