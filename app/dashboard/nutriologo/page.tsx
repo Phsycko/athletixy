@@ -126,7 +126,7 @@ export default function NutriologoPage() {
     certificaciones: ['Nutrición Clínica', 'Nutrición Deportiva', 'Dietética'],
   }
 
-  // Pacientes iniciales
+  // Pacientes iniciales - definidos fuera del estado para evitar problemas de referencia
   const pacientesIniciales: Paciente[] = [
     {
       id: '1',
@@ -183,97 +183,99 @@ export default function NutriologoPage() {
     }
   ]
 
-  const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciales)
+  const [pacientes, setPacientes] = useState<Paciente[]>([])
 
   const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
 
-  // Estadísticas
+  // Estadísticas - calculadas de forma segura
   const estadisticas = {
-    totalPacientes: pacientes.length,
-    pacientesActivos: pacientes.filter(p => p.estado === 'activo').length,
-    pacientesApp: pacientes.filter(p => p.tipo === 'app').length,
-    pacientesExistentes: pacientes.filter(p => p.tipo === 'existente').length,
+    totalPacientes: pacientes?.length || 0,
+    pacientesActivos: pacientes?.filter(p => p?.estado === 'activo').length || 0,
+    pacientesApp: pacientes?.filter(p => p?.tipo === 'app').length || 0,
+    pacientesExistentes: pacientes?.filter(p => p?.tipo === 'existente').length || 0,
     consultasEsteMes: 24,
-    planesActivos: planesNutricionales.filter(p => p.estado === 'activo').length
+    planesActivos: planesNutricionales?.filter(p => p?.estado === 'activo').length || 0
   }
 
   // Cargar datos del localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return
+
+    try {
       // Cargar pacientes
       const pacientesGuardados = localStorage.getItem('athletixy_pacientes_nutriologo')
       if (pacientesGuardados) {
-        try {
-          const pacientesParsed = JSON.parse(pacientesGuardados)
-          if (Array.isArray(pacientesParsed) && pacientesParsed.length > 0) {
-            setPacientes(pacientesParsed)
-          }
-        } catch (e) {
-          console.error('Error al cargar pacientes:', e)
+        const pacientesParsed = JSON.parse(pacientesGuardados)
+        if (Array.isArray(pacientesParsed) && pacientesParsed.length > 0) {
+          setPacientes(pacientesParsed)
+        } else {
+          setPacientes(pacientesIniciales)
         }
       } else {
-        // Guardar pacientes iniciales
-        localStorage.setItem('athletixy_pacientes_nutriologo', JSON.stringify(pacientesIniciales))
+        setPacientes(pacientesIniciales)
       }
+    } catch (e) {
+      console.error('Error al cargar pacientes:', e)
+      setPacientes(pacientesIniciales)
+    }
 
+    try {
       // Cargar consultas
       const consultasGuardadas = localStorage.getItem('athletixy_consultas_nutriologo')
       if (consultasGuardadas) {
-        try {
-          const consultasParsed = JSON.parse(consultasGuardadas)
-          if (Array.isArray(consultasParsed)) {
-            setConsultas(consultasParsed)
-          }
-        } catch (e) {
-          console.error('Error al cargar consultas:', e)
+        const consultasParsed = JSON.parse(consultasGuardadas)
+        if (Array.isArray(consultasParsed)) {
+          setConsultas(consultasParsed)
         }
       }
-      
+    } catch (e) {
+      console.error('Error al cargar consultas:', e)
+    }
+    
+    try {
       // Cargar fechas bloqueadas
       const fechasBloqueadasGuardadas = localStorage.getItem('athletixy_fechas_bloqueadas_nutriologo')
       if (fechasBloqueadasGuardadas) {
-        try {
-          const fechasParsed = JSON.parse(fechasBloqueadasGuardadas)
-          if (Array.isArray(fechasParsed)) {
-            setFechasBloqueadas(fechasParsed)
-          }
-        } catch (e) {
-          console.error('Error al cargar fechas bloqueadas:', e)
+        const fechasParsed = JSON.parse(fechasBloqueadasGuardadas)
+        if (Array.isArray(fechasParsed)) {
+          setFechasBloqueadas(fechasParsed)
         }
       }
+    } catch (e) {
+      console.error('Error al cargar fechas bloqueadas:', e)
     }
   }, [])
 
   // Guardar pacientes en localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined' && pacientes.length > 0) {
-      try {
-        localStorage.setItem('athletixy_pacientes_nutriologo', JSON.stringify(pacientes))
-      } catch (e) {
-        console.error('Error al guardar pacientes:', e)
-      }
+    if (typeof window === 'undefined' || pacientes.length === 0) return
+    
+    try {
+      localStorage.setItem('athletixy_pacientes_nutriologo', JSON.stringify(pacientes))
+    } catch (e) {
+      console.error('Error al guardar pacientes:', e)
     }
   }, [pacientes])
 
   // Guardar consultas en localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('athletixy_consultas_nutriologo', JSON.stringify(consultas))
-      } catch (e) {
-        console.error('Error al guardar consultas:', e)
-      }
+    if (typeof window === 'undefined') return
+    
+    try {
+      localStorage.setItem('athletixy_consultas_nutriologo', JSON.stringify(consultas))
+    } catch (e) {
+      console.error('Error al guardar consultas:', e)
     }
   }, [consultas])
 
   // Guardar fechas bloqueadas en localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('athletixy_fechas_bloqueadas_nutriologo', JSON.stringify(fechasBloqueadas))
-      } catch (e) {
-        console.error('Error al guardar fechas bloqueadas:', e)
-      }
+    if (typeof window === 'undefined') return
+    
+    try {
+      localStorage.setItem('athletixy_fechas_bloqueadas_nutriologo', JSON.stringify(fechasBloqueadas))
+    } catch (e) {
+      console.error('Error al guardar fechas bloqueadas:', e)
     }
   }, [fechasBloqueadas])
 
@@ -349,8 +351,11 @@ export default function NutriologoPage() {
       return
     }
 
-    const paciente = pacientes.find(p => p.id === nuevaConsulta.pacienteId)
-    if (!paciente) return
+    const paciente = (pacientes || []).find(p => p?.id === nuevaConsulta.pacienteId)
+    if (!paciente) {
+      alert('Paciente no encontrado')
+      return
+    }
 
     const consulta = {
       id: Date.now().toString(),
@@ -458,7 +463,7 @@ export default function NutriologoPage() {
     }
 
     // Verificar si el email ya existe
-    if (pacientes.some(p => p.email.toLowerCase() === nuevoPaciente.email.toLowerCase())) {
+    if ((pacientes || []).some(p => p?.email?.toLowerCase() === nuevoPaciente.email.toLowerCase())) {
       alert('Ya existe un paciente con este email')
       return
     }
@@ -506,7 +511,8 @@ export default function NutriologoPage() {
     .slice(0, 5)
 
   // Filtrar pacientes
-  const pacientesFiltrados = pacientes.filter(p => {
+  const pacientesFiltrados = (pacientes || []).filter(p => {
+    if (!p || !p.nombre || !p.email) return false
     const coincideBusqueda = p.nombre.toLowerCase().includes(busquedaPaciente.toLowerCase()) ||
                              p.email.toLowerCase().includes(busquedaPaciente.toLowerCase())
     const coincideFiltro = filtroPacientes === 'todos' ||
@@ -896,7 +902,7 @@ export default function NutriologoPage() {
           {planesNutricionales.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {planesNutricionales.map((plan) => {
-                const paciente = pacientes.find(p => p.id === plan.pacienteId)
+                const paciente = (pacientes || []).find(p => p?.id === plan.pacienteId)
                 return (
                   <div
                     key={plan.id}
@@ -1236,9 +1242,9 @@ export default function NutriologoPage() {
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option value="">Seleccionar paciente</option>
-                  {pacientes.map((paciente) => (
-                    <option key={paciente.id} value={paciente.id}>
-                      {paciente.nombre} - {paciente.email}
+                  {(pacientes || []).map((paciente) => (
+                    <option key={paciente?.id} value={paciente?.id}>
+                      {paciente?.nombre} - {paciente?.email}
                     </option>
                   ))}
                 </select>
