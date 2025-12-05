@@ -92,6 +92,8 @@ export default function DietasPage() {
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
   const [modoSeleccion, setModoSeleccion] = useState<'ver' | 'eliminar'>('ver')
   const [rangoEliminar, setRangoEliminar] = useState<{inicio: Date | null, fin: Date | null}>({inicio: null, fin: null})
+  const [confirmDeleteRangoOpen, setConfirmDeleteRangoOpen] = useState(false)
+  const [editarDatosModalOpen, setEditarDatosModalOpen] = useState(false)
 
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
@@ -618,22 +620,23 @@ export default function DietasPage() {
     return dietaPlan.some(dieta => esMismoDia(dieta.fecha, fecha))
   }
 
-  const eliminarDietasEnRango = () => {
+  const abrirConfirmacionEliminarRango = () => {
     if (!rangoEliminar.inicio || !rangoEliminar.fin) {
       alert('Selecciona un rango de fechas')
       return
     }
+    setConfirmDeleteRangoOpen(true)
+  }
 
-    const confirmar = confirm(`¿Eliminar todas las dietas desde ${formatoFecha(rangoEliminar.inicio)} hasta ${formatoFecha(rangoEliminar.fin)}?`)
-    if (confirmar) {
-      const nuevoPlan = dietaPlan.filter(dieta => {
-        return dieta.fecha < rangoEliminar.inicio! || dieta.fecha > rangoEliminar.fin!
-      })
-      setDietaPlan(nuevoPlan)
-      setRangoEliminar({inicio: null, fin: null})
-      setModoSeleccion('ver')
-      setCalendarioOpen(false)
-    }
+  const confirmarEliminacionRango = () => {
+    const nuevoPlan = dietaPlan.filter(dieta => {
+      return dieta.fecha < rangoEliminar.inicio! || dieta.fecha > rangoEliminar.fin!
+    })
+    setDietaPlan(nuevoPlan)
+    setRangoEliminar({inicio: null, fin: null})
+    setModoSeleccion('ver')
+    setCalendarioOpen(false)
+    setConfirmDeleteRangoOpen(false)
   }
 
   return (
@@ -655,7 +658,16 @@ export default function DietasPage() {
 
       {/* Macros Objetivo */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-black mb-6">Objetivos Diarios</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-black">Objetivos Diarios</h2>
+          <button
+            onClick={() => setEditarDatosModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 hover:border-black text-gray-700 hover:text-black rounded-lg transition text-sm font-medium"
+          >
+            <Edit className="w-4 h-4" />
+            Editar Datos
+          </button>
+        </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <div className="bg-orange-500/10 p-4 rounded-lg border border-orange-500/20">
@@ -818,7 +830,7 @@ export default function DietasPage() {
                         </div>
                       )}
                       <button
-                        onClick={eliminarDietasEnRango}
+                        onClick={abrirConfirmacionEliminarRango}
                         disabled={!rangoEliminar.inicio || !rangoEliminar.fin}
                         className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
@@ -1645,7 +1657,222 @@ export default function DietasPage() {
         </div>
       )}
 
-      {/* Modal de Confirmación de Eliminación */}
+      {/* Modal de Editar Datos del Usuario */}
+      {editarDatosModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-black">Editar Información Personal</h2>
+              <button
+                onClick={() => setEditarDatosModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {/* Datos físicos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
+                  <input
+                    type="number"
+                    value={datosUsuario.peso}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, peso: Number(e.target.value)})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Altura (cm)</label>
+                  <input
+                    type="number"
+                    value={datosUsuario.altura}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, altura: Number(e.target.value)})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Edad</label>
+                  <input
+                    type="number"
+                    value={datosUsuario.edad}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, edad: Number(e.target.value)})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                  <select
+                    value={datosUsuario.sexo}
+                    onChange={(e) => setDatosUsuario({...datosUsuario, sexo: e.target.value as any})}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                  >
+                    <option value="masculino">Masculino</option>
+                    <option value="femenino">Femenino</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Nivel de actividad */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad</label>
+                <select
+                  value={datosUsuario.nivelActividad}
+                  onChange={(e) => setDatosUsuario({...datosUsuario, nivelActividad: e.target.value as any})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                >
+                  <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
+                  <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
+                  <option value="moderado">Moderado (ejercicio 3-5 días/semana)</option>
+                  <option value="intenso">Intenso (ejercicio 6-7 días/semana)</option>
+                  <option value="atleta">Atleta (entrenamiento 2 veces al día)</option>
+                </select>
+              </div>
+
+              {/* Objetivo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Objetivo Principal</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { valor: 'perder', label: 'Perder Peso' },
+                    { valor: 'mantener', label: 'Mantener' },
+                    { valor: 'ganar', label: 'Ganar Músculo' }
+                  ].map((obj) => (
+                    <button
+                      key={obj.valor}
+                      type="button"
+                      onClick={() => setDatosUsuario({...datosUsuario, objetivo: obj.valor as any})}
+                      className={`py-3 px-4 rounded-lg border-2 font-medium transition ${
+                        datosUsuario.objetivo === obj.valor
+                          ? 'border-black bg-gray-100 text-black'
+                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {obj.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Macros calculados */}
+              <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Calculados</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Calorías</label>
+                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-orange-600 font-bold text-sm">
+                      {datosUsuario.caloriasObjetivo}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Proteína (g)</label>
+                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-red-600 font-bold text-sm">
+                      {datosUsuario.proteinaObjetivo}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Carbohidratos (g)</label>
+                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-blue-600 font-bold text-sm">
+                      {datosUsuario.carbsObjetivo}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Grasas (g)</label>
+                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-yellow-600 font-bold text-sm">
+                      {datosUsuario.grasasObjetivo}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={calcularMacrosAutomatico}
+                  className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Recalcular Macros Automáticamente
+                </button>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setEditarDatosModalOpen(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.setItem('athletixy_datos_usuario', JSON.stringify(datosUsuario))
+                    setDatosGuardados(true)
+                    setEditarDatosModalOpen(false)
+                  }}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium shadow-lg"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación de Eliminación de Rango */}
+      {confirmDeleteRangoOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Calendar className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-black">Eliminar Rango de Dietas</h3>
+                <p className="text-gray-600 text-sm">Esta acción eliminará múltiples días</p>
+              </div>
+            </div>
+            
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-4">
+              <p className="text-gray-800 text-sm mb-2">
+                <strong>Rango seleccionado:</strong>
+              </p>
+              <p className="text-red-800 font-bold text-lg">
+                {rangoEliminar.inicio && formatoFecha(rangoEliminar.inicio)} - {rangoEliminar.fin && formatoFecha(rangoEliminar.fin)}
+              </p>
+              <p className="text-gray-600 text-xs mt-2">
+                {rangoEliminar.inicio && rangoEliminar.fin && (
+                  <>
+                    Se eliminarán {Math.ceil((rangoEliminar.fin.getTime() - rangoEliminar.inicio.getTime()) / (1000 * 60 * 60 * 24)) + 1} día(s) de dietas
+                  </>
+                )}
+              </p>
+            </div>
+
+            <p className="text-gray-700 mb-6 text-sm">
+              ¿Estás seguro de que quieres eliminar todas las dietas en este rango? Esta acción no se puede deshacer.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setConfirmDeleteRangoOpen(false)
+                }}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmarEliminacionRango}
+                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium shadow-lg"
+              >
+                Eliminar Rango
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación de Eliminación Individual */}
       {confirmDeleteOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
