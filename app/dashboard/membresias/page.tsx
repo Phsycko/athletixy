@@ -16,11 +16,13 @@ export default function MembresiasPage() {
       nombre: 'Básico',
       precio: 29.99,
       periodo: 'mes',
+      conAnuncios: true,
       caracteristicas: [
         'Acceso a rutinas básicas',
         'Planes de dieta estándar',
         'Seguimiento de progreso',
         'Comunidad de usuarios',
+        'Incluye anuncios',
       ],
       popular: false,
     },
@@ -134,7 +136,12 @@ export default function MembresiasPage() {
                   </span>
                 </div>
               )}
-              <h3 className="text-xl font-bold text-black mb-2">{plan.nombre}</h3>
+              <div className="mb-2">
+                <h3 className="text-xl font-bold text-black">{plan.nombre}</h3>
+                {plan.conAnuncios && (
+                  <span className="text-xs text-gray-500 font-medium">con anuncios</span>
+                )}
+              </div>
               <div className="mb-6">
                 <span className="text-4xl font-bold text-black">${plan.precio}</span>
                 <span className="text-gray-600">/{plan.periodo}</span>
