@@ -154,11 +154,12 @@ export default function DietasPage() {
     cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
   })
 
+  // Los macros objetivo ahora vienen de datosUsuario (se actualizan dinámicamente)
   const macrosObjetivo = {
-    calorias: 2800,
-    proteina: 180,
-    carbohidratos: 320,
-    grasas: 80,
+    calorias: datosUsuario.caloriasObjetivo,
+    proteina: datosUsuario.proteinaObjetivo,
+    carbohidratos: datosUsuario.carbsObjetivo,
+    grasas: datosUsuario.grasasObjetivo,
   }
 
   const handleAgregarDieta = () => {
