@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock, Trash2 } from 'lucide-react'
@@ -24,7 +24,7 @@ type ItemSupermercado = {
 export default function RecetasPage() {
   const [recetaSeleccionada, setRecetaSeleccionada] = useState<Receta | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [esPremium] = useState(true) // Cambiar a false para simular usuario bÃ¡sico
+  const [esPremium] = useState(true) // Cambiar a false para simular usuario básico
   const [listaSupermercado, setListaSupermercado] = useState<ItemSupermercado[]>([])
   const [generandoLista, setGenerandoLista] = useState(false)
   const [mostrarLista, setMostrarLista] = useState(false)
@@ -33,15 +33,15 @@ export default function RecetasPage() {
   
   const recetasIniciales: Receta[] = [
     {
-      nombre: 'Bowl de ProteÃ­na con Quinoa',
+      nombre: 'Bowl de Proteína con Quinoa',
       categoria: 'Almuerzo',
       tiempo: 25,
       calorias: 520,
       proteina: 45,
-      dificultad: 'FÃ¡cil',
+      dificultad: 'Fácil',
       porciones: 2,
       ingredientes: ['150g quinoa cocida', '200g pechuga de pollo', '100g espinaca', '50g aguacate', 'Tomate cherry'],
-      preparacion: ['Cocina la quinoa segÃºn las instrucciones del paquete', 'Cocina la pechuga de pollo a la plancha', 'Mezcla todos los ingredientes en un bowl', 'AÃ±ade aderezo al gusto'],
+      preparacion: ['Cocina la quinoa según las instrucciones del paquete', 'Cocina la pechuga de pollo a la plancha', 'Mezcla todos los ingredientes en un bowl', 'Añade aderezo al gusto'],
     },
     {
       nombre: 'Batido Post-Entreno',
@@ -49,10 +49,10 @@ export default function RecetasPage() {
       tiempo: 5,
       calorias: 380,
       proteina: 35,
-      dificultad: 'Muy FÃ¡cil',
+      dificultad: 'Muy Fácil',
       porciones: 1,
-      ingredientes: ['1 scoop proteÃ­na de suero', '1 plÃ¡tano', '200ml leche de almendras', '1 cucharada mantequilla de manÃ­', 'Hielo'],
-      preparacion: ['AÃ±ade todos los ingredientes a la licuadora', 'Licua hasta obtener consistencia suave', 'Sirve inmediatamente'],
+      ingredientes: ['1 scoop proteína de suero', '1 plátano', '200ml leche de almendras', '1 cucharada mantequilla de maní', 'Hielo'],
+      preparacion: ['Añade todos los ingredientes a la licuadora', 'Licua hasta obtener consistencia suave', 'Sirve inmediatamente'],
     },
     {
       nombre: 'Avena Proteica con Frutas',
@@ -60,21 +60,21 @@ export default function RecetasPage() {
       tiempo: 15,
       calorias: 450,
       proteina: 30,
-      dificultad: 'FÃ¡cil',
+      dificultad: 'Fácil',
       porciones: 1,
-      ingredientes: ['80g avena', '1 scoop proteÃ­na vainilla', '250ml leche', 'Frutos rojos', '1 cucharada miel'],
-      preparacion: ['Cocina la avena con la leche', 'AÃ±ade la proteÃ­na y mezcla bien', 'Decora con frutos rojos y miel'],
+      ingredientes: ['80g avena', '1 scoop proteína vainilla', '250ml leche', 'Frutos rojos', '1 cucharada miel'],
+      preparacion: ['Cocina la avena con la leche', 'Añade la proteína y mezcla bien', 'Decora con frutos rojos y miel'],
     },
     {
-      nombre: 'SalmÃ³n al Horno con Vegetales',
+      nombre: 'Salmón al Horno con Vegetales',
       categoria: 'Cena',
       tiempo: 35,
       calorias: 520,
       proteina: 42,
       dificultad: 'Media',
       porciones: 2,
-      ingredientes: ['300g filete de salmÃ³n', 'BrÃ³coli', 'Pimientos', 'Aceite de oliva', 'LimÃ³n y especias'],
-      preparacion: ['Precalienta el horno a 180Â°C', 'Coloca el salmÃ³n y vegetales en bandeja', 'RocÃ­a con aceite y especias', 'Hornea por 25 minutos'],
+      ingredientes: ['300g filete de salmón', 'Brócoli', 'Pimientos', 'Aceite de oliva', 'Limón y especias'],
+      preparacion: ['Precalienta el horno a 180Â°C', 'Coloca el salmón y vegetales en bandeja', 'Rocía con aceite y especias', 'Hornea por 25 minutos'],
     },
     {
       nombre: 'Tortilla de Claras y Espinacas',
@@ -82,21 +82,21 @@ export default function RecetasPage() {
       tiempo: 10,
       calorias: 280,
       proteina: 32,
-      dificultad: 'FÃ¡cil',
+      dificultad: 'Fácil',
       porciones: 1,
       ingredientes: ['6 claras de huevo', '100g espinaca fresca', '50g queso bajo en grasa', 'Cebolla', 'Tomate'],
-      preparacion: ['Saltea la espinaca y cebolla', 'Bate las claras y vierte en la sartÃ©n', 'AÃ±ade el queso y cocina hasta cuajar'],
+      preparacion: ['Saltea la espinaca y cebolla', 'Bate las claras y vierte en la sartén', 'Añade el queso y cocina hasta cuajar'],
     },
     {
-      nombre: 'Wrap de AtÃºn con Vegetales',
+      nombre: 'Wrap de Atún con Vegetales',
       categoria: 'Snacks',
       tiempo: 10,
       calorias: 320,
       proteina: 28,
-      dificultad: 'Muy FÃ¡cil',
+      dificultad: 'Muy Fácil',
       porciones: 1,
-      ingredientes: ['1 tortilla integral', '150g atÃºn en agua', 'Lechuga', 'Tomate', 'Yogur griego'],
-      preparacion: ['Mezcla el atÃºn con yogur griego', 'Coloca los vegetales en la tortilla', 'AÃ±ade el atÃºn y enrolla'],
+      ingredientes: ['1 tortilla integral', '150g atún en agua', 'Lechuga', 'Tomate', 'Yogur griego'],
+      preparacion: ['Mezcla el atún con yogur griego', 'Coloca los vegetales en la tortilla', 'Añade el atún y enrolla'],
     },
   ]
   
@@ -107,7 +107,7 @@ export default function RecetasPage() {
     tiempo: 0,
     calorias: 0,
     proteina: 0,
-    dificultad: 'FÃ¡cil',
+    dificultad: 'Fácil',
     porciones: 1,
     ingredientes: [''],
     preparacion: ['']
@@ -133,7 +133,7 @@ export default function RecetasPage() {
       tiempo: 0,
       calorias: 0,
       proteina: 0,
-      dificultad: 'FÃ¡cil',
+      dificultad: 'Fácil',
       porciones: 1,
       ingredientes: [''],
       preparacion: ['']
@@ -194,7 +194,7 @@ export default function RecetasPage() {
       return
     }
     if (nuevaReceta.preparacion.filter(p => p.trim()).length === 0) {
-      alert('Por favor agrega al menos un paso de preparaciÃ³n')
+      alert('Por favor agrega al menos un paso de preparación')
       return
     }
 
@@ -236,146 +236,146 @@ export default function RecetasPage() {
       // ============ BOWLS Y DESAYUNOS DULCES ============
       {
         keywords: ['bowl', 'frutos rojos', 'yogurt', 'yogur', 'yogurth', 'berries'],
-        ingredientes: ['200g de yogurt natural o griego', '80g de fresas frescas', '60g de arÃ¡ndanos', '50g de frambuesas', '50g de moras', '40g de granola', '1 cucharada de miel', '10g de semillas de chÃ­a'],
-        preparacion: ['Lava todas las frutas frescas', 'Corta las fresas en mitades o cuartos', 'Coloca el yogurt como base en un bowl', 'Distribuye las frutas de forma decorativa', 'AÃ±ade la granola crujiente', 'RocÃ­a con miel al gusto', 'Espolvorea las semillas de chÃ­a', 'Sirve inmediatamente'],
+        ingredientes: ['200g de yogurt natural o griego', '80g de fresas frescas', '60g de arándanos', '50g de frambuesas', '50g de moras', '40g de granola', '1 cucharada de miel', '10g de semillas de chía'],
+        preparacion: ['Lava todas las frutas frescas', 'Corta las fresas en mitades o cuartos', 'Coloca el yogurt como base en un bowl', 'Distribuye las frutas de forma decorativa', 'Añade la granola crujiente', 'Rocía con miel al gusto', 'Espolvorea las semillas de chía', 'Sirve inmediatamente'],
         tiempo: 10, calorias: 380, proteina: 18, porciones: 1
       },
       {
         keywords: ['avena', 'frutas', 'desayuno'],
-        ingredientes: ['80g de avena', '250ml de leche', '1 plÃ¡tano maduro', '50g de fresas', '30g de arÃ¡ndanos', '1 cucharada de miel', '1 pizca de canela', '20g de nueces picadas'],
-        preparacion: ['Calienta la leche en una olla', 'AÃ±ade la avena y cocina 5-7 minutos revolviendo', 'Agrega la canela mientras cocina', 'Sirve en un bowl', 'Corta el plÃ¡tano en rodajas y las fresas', 'Decora con las frutas y nueces', 'RocÃ­a con miel', 'Sirve caliente'],
+        ingredientes: ['80g de avena', '250ml de leche', '1 plátano maduro', '50g de fresas', '30g de arándanos', '1 cucharada de miel', '1 pizca de canela', '20g de nueces picadas'],
+        preparacion: ['Calienta la leche en una olla', 'Añade la avena y cocina 5-7 minutos revolviendo', 'Agrega la canela mientras cocina', 'Sirve en un bowl', 'Corta el plátano en rodajas y las fresas', 'Decora con las frutas y nueces', 'Rocía con miel', 'Sirve caliente'],
         tiempo: 15, calorias: 450, proteina: 15, porciones: 1
       },
       {
         keywords: ['hotcakes', 'pancakes', 'panqueques', 'hot cakes'],
-        ingredientes: ['200g de harina', '2 huevos', '250ml de leche', '30g de mantequilla derretida', '2 cucharadas de azÃºcar', '1 cucharadita de polvo para hornear', '1 pizca de sal', 'Miel o maple para servir', 'Frutas frescas al gusto'],
-        preparacion: ['Mezcla la harina, azÃºcar, polvo para hornear y sal', 'En otro bowl bate los huevos con la leche', 'Combina los ingredientes secos con los lÃ­quidos', 'AÃ±ade la mantequilla derretida y mezcla bien', 'Calienta un sartÃ©n antiadherente a fuego medio', 'Vierte porciones de masa y cocina hasta que salgan burbujas', 'Voltea y cocina 1-2 minutos mÃ¡s', 'Sirve con miel y frutas'],
+        ingredientes: ['200g de harina', '2 huevos', '250ml de leche', '30g de mantequilla derretida', '2 cucharadas de azúcar', '1 cucharadita de polvo para hornear', '1 pizca de sal', 'Miel o maple para servir', 'Frutas frescas al gusto'],
+        preparacion: ['Mezcla la harina, azúcar, polvo para hornear y sal', 'En otro bowl bate los huevos con la leche', 'Combina los ingredientes secos con los líquidos', 'Añade la mantequilla derretida y mezcla bien', 'Calienta un sartén antiadherente a fuego medio', 'Vierte porciones de masa y cocina hasta que salgan burbujas', 'Voltea y cocina 1-2 minutos más', 'Sirve con miel y frutas'],
         tiempo: 25, calorias: 520, proteina: 14, porciones: 4
       },
       {
         keywords: ['waffles', 'waffle', 'gofres'],
-        ingredientes: ['250g de harina', '2 huevos', '300ml de leche', '60g de mantequilla derretida', '3 cucharadas de azÃºcar', '2 cucharaditas de polvo para hornear', '1 cucharadita de vainilla', 'Frutas y crema batida para servir'],
-        preparacion: ['Precalienta la wafflera', 'Mezcla los ingredientes secos en un bowl', 'Bate los huevos con leche, mantequilla y vainilla', 'Combina todo hasta obtener una masa homogÃ©nea', 'Vierte en la wafflera caliente', 'Cocina hasta que estÃ©n dorados (3-5 min)', 'Sirve con frutas frescas y crema batida', 'AÃ±ade miel o maple al gusto'],
+        ingredientes: ['250g de harina', '2 huevos', '300ml de leche', '60g de mantequilla derretida', '3 cucharadas de azúcar', '2 cucharaditas de polvo para hornear', '1 cucharadita de vainilla', 'Frutas y crema batida para servir'],
+        preparacion: ['Precalienta la wafflera', 'Mezcla los ingredientes secos en un bowl', 'Bate los huevos con leche, mantequilla y vainilla', 'Combina todo hasta obtener una masa homogénea', 'Vierte en la wafflera caliente', 'Cocina hasta que estén dorados (3-5 min)', 'Sirve con frutas frescas y crema batida', 'Añade miel o maple al gusto'],
         tiempo: 20, calorias: 480, proteina: 12, porciones: 4
       },
       {
         keywords: ['smoothie', 'batido', 'licuado', 'proteina'],
-        ingredientes: ['1 plÃ¡tano congelado', '150g de fresas', '200ml de leche de almendras', '1 scoop de proteÃ­na (opcional)', '1 cucharada de mantequilla de manÃ­', '1 cucharada de miel', 'Hielo al gusto'],
-        preparacion: ['AÃ±ade el plÃ¡tano y fresas a la licuadora', 'Agrega la leche de almendras', 'AÃ±ade la proteÃ­na y mantequilla de manÃ­', 'Agrega el hielo', 'LicÃºa hasta obtener consistencia suave', 'Prueba y ajusta dulzor con miel', 'Sirve inmediatamente', 'Decora con fruta picada si deseas'],
+        ingredientes: ['1 plátano congelado', '150g de fresas', '200ml de leche de almendras', '1 scoop de proteína (opcional)', '1 cucharada de mantequilla de maní', '1 cucharada de miel', 'Hielo al gusto'],
+        preparacion: ['Añade el plátano y fresas a la licuadora', 'Agrega la leche de almendras', 'Añade la proteína y mantequilla de maní', 'Agrega el hielo', 'Licúa hasta obtener consistencia suave', 'Prueba y ajusta dulzor con miel', 'Sirve inmediatamente', 'Decora con fruta picada si deseas'],
         tiempo: 5, calorias: 350, proteina: 28, porciones: 1
       },
       {
-        keywords: ['acai', 'aÃ§aÃ­', 'acai bowl'],
-        ingredientes: ['100g de pulpa de aÃ§aÃ­ congelada', '1 plÃ¡tano congelado', '100ml de leche de coco', '50g de granola', '30g de coco rallado', '50g de fresas', '30g de arÃ¡ndanos', '1 cucharada de miel'],
-        preparacion: ['LicÃºa el aÃ§aÃ­ con plÃ¡tano y leche de coco', 'La mezcla debe quedar espesa como helado', 'Vierte en un bowl', 'AÃ±ade la granola en un lado', 'Coloca las frutas de forma decorativa', 'Espolvorea el coco rallado', 'RocÃ­a con miel', 'Sirve inmediatamente'],
+        keywords: ['acai', 'açaí', 'acai bowl'],
+        ingredientes: ['100g de pulpa de açaí congelada', '1 plátano congelado', '100ml de leche de coco', '50g de granola', '30g de coco rallado', '50g de fresas', '30g de arándanos', '1 cucharada de miel'],
+        preparacion: ['Licúa el açaí con plátano y leche de coco', 'La mezcla debe quedar espesa como helado', 'Vierte en un bowl', 'Añade la granola en un lado', 'Coloca las frutas de forma decorativa', 'Espolvorea el coco rallado', 'Rocía con miel', 'Sirve inmediatamente'],
         tiempo: 10, calorias: 420, proteina: 8, porciones: 1
       },
       {
         keywords: ['french toast', 'tostadas francesas', 'torrijas'],
-        ingredientes: ['4 rebanadas de pan brioche', '2 huevos', '100ml de leche', '1 cucharadita de canela', '1 cucharadita de vainilla', '30g de mantequilla', 'AzÃºcar glass para decorar', 'Frutas frescas y miel para servir'],
-        preparacion: ['Bate los huevos con leche, canela y vainilla', 'Sumerge cada rebanada de pan en la mezcla', 'Deja que absorba bien por ambos lados', 'Calienta la mantequilla en un sartÃ©n', 'Cocina el pan 2-3 minutos por lado hasta dorar', 'Espolvorea con azÃºcar glass', 'Sirve con frutas frescas', 'AÃ±ade miel al gusto'],
+        ingredientes: ['4 rebanadas de pan brioche', '2 huevos', '100ml de leche', '1 cucharadita de canela', '1 cucharadita de vainilla', '30g de mantequilla', 'Azúcar glass para decorar', 'Frutas frescas y miel para servir'],
+        preparacion: ['Bate los huevos con leche, canela y vainilla', 'Sumerge cada rebanada de pan en la mezcla', 'Deja que absorba bien por ambos lados', 'Calienta la mantequilla en un sartén', 'Cocina el pan 2-3 minutos por lado hasta dorar', 'Espolvorea con azúcar glass', 'Sirve con frutas frescas', 'Añade miel al gusto'],
         tiempo: 15, calorias: 450, proteina: 14, porciones: 2
       },
 
       // ============ HUEVOS Y DESAYUNOS SALADOS ============
       {
         keywords: ['huevos revueltos', 'huevo revuelto', 'scrambled'],
-        ingredientes: ['3 huevos', '30ml de leche', '20g de mantequilla', 'Sal al gusto', 'Pimienta al gusto', 'CebollÃ­n picado para decorar'],
-        preparacion: ['Bate los huevos con la leche, sal y pimienta', 'Derrite la mantequilla en sartÃ©n a fuego bajo', 'Vierte los huevos batidos', 'Revuelve suavemente con espÃ¡tula', 'Cocina hasta que estÃ©n cremosos (no secos)', 'Retira del fuego cuando aÃºn estÃ©n hÃºmedos', 'Decora con cebollÃ­n', 'Sirve inmediatamente'],
+        ingredientes: ['3 huevos', '30ml de leche', '20g de mantequilla', 'Sal al gusto', 'Pimienta al gusto', 'Cebollín picado para decorar'],
+        preparacion: ['Bate los huevos con la leche, sal y pimienta', 'Derrite la mantequilla en sartén a fuego bajo', 'Vierte los huevos batidos', 'Revuelve suavemente con espátula', 'Cocina hasta que estén cremosos (no secos)', 'Retira del fuego cuando aún estén húmedos', 'Decora con cebollín', 'Sirve inmediatamente'],
         tiempo: 8, calorias: 280, proteina: 18, porciones: 1
       },
       {
         keywords: ['huevos estrellados', 'huevo estrellado', 'huevo frito', 'huevos fritos'],
         ingredientes: ['2 huevos', '2 cucharadas de aceite', 'Sal al gusto', 'Pimienta al gusto'],
-        preparacion: ['Calienta el aceite en sartÃ©n a fuego medio', 'Rompe los huevos con cuidado en el sartÃ©n', 'Cocina sin mover hasta que la clara estÃ© blanca', 'Sazona con sal y pimienta', 'Para yema suave: 2-3 minutos', 'Para yema cocida: 4-5 minutos', 'Retira con espÃ¡tula', 'Sirve inmediatamente'],
+        preparacion: ['Calienta el aceite en sartén a fuego medio', 'Rompe los huevos con cuidado en el sartén', 'Cocina sin mover hasta que la clara esté blanca', 'Sazona con sal y pimienta', 'Para yema suave: 2-3 minutos', 'Para yema cocida: 4-5 minutos', 'Retira con espátula', 'Sirve inmediatamente'],
         tiempo: 5, calorias: 220, proteina: 12, porciones: 1
       },
       {
         keywords: ['omelette', 'omelet', 'tortilla francesa'],
-        ingredientes: ['3 huevos', '50g de jamÃ³n picado', '30g de queso rallado', '20g de mantequilla', '1/4 de cebolla picada', 'Sal y pimienta al gusto'],
-        preparacion: ['Bate los huevos con sal y pimienta', 'Derrite la mantequilla en sartÃ©n antiadherente', 'Saltea la cebolla y jamÃ³n brevemente', 'Vierte los huevos y deja que cuajen por debajo', 'AÃ±ade el queso en el centro', 'Dobla el omelette por la mitad', 'Cocina 30 segundos mÃ¡s', 'Sirve inmediatamente'],
+        ingredientes: ['3 huevos', '50g de jamón picado', '30g de queso rallado', '20g de mantequilla', '1/4 de cebolla picada', 'Sal y pimienta al gusto'],
+        preparacion: ['Bate los huevos con sal y pimienta', 'Derrite la mantequilla en sartén antiadherente', 'Saltea la cebolla y jamón brevemente', 'Vierte los huevos y deja que cuajen por debajo', 'Añade el queso en el centro', 'Dobla el omelette por la mitad', 'Cocina 30 segundos más', 'Sirve inmediatamente'],
         tiempo: 10, calorias: 380, proteina: 26, porciones: 1
       },
       {
         keywords: ['huevos benedictinos', 'eggs benedict', 'benedictine'],
-        ingredientes: ['2 huevos', '1 muffin inglÃ©s', '2 rebanadas de jamÃ³n o tocino', '60ml de salsa holandesa', 'Vinagre blanco', 'CebollÃ­n para decorar', 'Sal y pimienta'],
-        preparacion: ['Hierve agua con un chorrito de vinagre', 'Crea un remolino y aÃ±ade los huevos para pochar', 'Cocina 3-4 minutos para yema lÃ­quida', 'Tuesta el muffin inglÃ©s', 'Calienta el jamÃ³n o tocino', 'Coloca jamÃ³n sobre cada mitad del muffin', 'AÃ±ade el huevo pochado encima', 'Cubre con salsa holandesa y cebollÃ­n'],
+        ingredientes: ['2 huevos', '1 muffin inglés', '2 rebanadas de jamón o tocino', '60ml de salsa holandesa', 'Vinagre blanco', 'Cebollín para decorar', 'Sal y pimienta'],
+        preparacion: ['Hierve agua con un chorrito de vinagre', 'Crea un remolino y añade los huevos para pochar', 'Cocina 3-4 minutos para yema líquida', 'Tuesta el muffin inglés', 'Calienta el jamón o tocino', 'Coloca jamón sobre cada mitad del muffin', 'Añade el huevo pochado encima', 'Cubre con salsa holandesa y cebollín'],
         tiempo: 20, calorias: 520, proteina: 24, porciones: 1
       },
       {
         keywords: ['chilaquiles', 'chilaquil'],
         ingredientes: ['200g de totopos', '400ml de salsa verde o roja', '100g de pollo deshebrado', '100g de crema', '80g de queso fresco', '1/4 de cebolla en aros', 'Cilantro fresco', '2 huevos estrellados (opcional)'],
-        preparacion: ['Calienta la salsa en un sartÃ©n amplio', 'AÃ±ade los totopos y mezcla bien', 'Cocina 2-3 minutos hasta que absorban salsa', 'Agrega el pollo deshebrado', 'Sirve en plato hondo', 'Decora con crema, queso y cebolla', 'AÃ±ade cilantro fresco', 'AcompaÃ±a con huevos estrellados'],
+        preparacion: ['Calienta la salsa en un sartén amplio', 'Añade los totopos y mezcla bien', 'Cocina 2-3 minutos hasta que absorban salsa', 'Agrega el pollo deshebrado', 'Sirve en plato hondo', 'Decora con crema, queso y cebolla', 'Añade cilantro fresco', 'Acompaña con huevos estrellados'],
         tiempo: 15, calorias: 580, proteina: 32, porciones: 2
       },
 
       // ============ CARNES Y PROTEÃNAS ============
       {
         keywords: ['pollo', 'pechuga', 'grilled chicken', 'pollo a la plancha'],
-        ingredientes: ['2 pechugas de pollo (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', '1 cucharadita de paprika', '1 cucharadita de orÃ©gano', 'Jugo de 1 limÃ³n', 'Sal y pimienta al gusto'],
-        preparacion: ['Aplana las pechugas para grosor uniforme', 'Mezcla aceite, ajo, paprika, orÃ©gano y limÃ³n', 'Marina el pollo mÃ­nimo 30 minutos', 'Calienta un sartÃ©n o grill a fuego alto', 'Cocina 6-7 minutos por lado', 'Verifica que estÃ© bien cocido por dentro', 'Deja reposar 5 minutos antes de cortar', 'Sirve con ensalada o vegetales'],
+        ingredientes: ['2 pechugas de pollo (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', '1 cucharadita de paprika', '1 cucharadita de orégano', 'Jugo de 1 limón', 'Sal y pimienta al gusto'],
+        preparacion: ['Aplana las pechugas para grosor uniforme', 'Mezcla aceite, ajo, paprika, orégano y limón', 'Marina el pollo mínimo 30 minutos', 'Calienta un sartén o grill a fuego alto', 'Cocina 6-7 minutos por lado', 'Verifica que esté bien cocido por dentro', 'Deja reposar 5 minutos antes de cortar', 'Sirve con ensalada o vegetales'],
         tiempo: 25, calorias: 350, proteina: 52, porciones: 2
       },
       {
         keywords: ['bistec', 'steak', 'carne asada', 'res'],
         ingredientes: ['400g de bistec de res', '2 cucharadas de aceite', '3 dientes de ajo', '1 rama de romero', '30g de mantequilla', 'Sal gruesa', 'Pimienta negra molida'],
-        preparacion: ['Saca la carne del refrigerador 30 min antes', 'Sazona generosamente con sal y pimienta', 'Calienta el sartÃ©n a fuego muy alto', 'AÃ±ade aceite y coloca el bistec', 'Cocina 3-4 min por lado (tÃ©rmino medio)', 'AÃ±ade mantequilla, ajo y romero al final', 'BaÃ±a la carne con la mantequilla derretida', 'Deja reposar 5 minutos antes de servir'],
+        preparacion: ['Saca la carne del refrigerador 30 min antes', 'Sazona generosamente con sal y pimienta', 'Calienta el sartén a fuego muy alto', 'Añade aceite y coloca el bistec', 'Cocina 3-4 min por lado (término medio)', 'Añade mantequilla, ajo y romero al final', 'Baña la carne con la mantequilla derretida', 'Deja reposar 5 minutos antes de servir'],
         tiempo: 20, calorias: 480, proteina: 45, porciones: 2
       },
       {
         keywords: ['tacos', 'taco', 'carne'],
-        ingredientes: ['300g de carne para tacos', '8 tortillas de maÃ­z', '1 cebolla picada', '1 manojo de cilantro', '2 limones', 'Salsa verde y roja', 'Sal al gusto'],
-        preparacion: ['Sazona la carne con sal', 'Cocina en sartÃ©n caliente hasta dorar', 'Pica finamente la cebolla y cilantro', 'Calienta las tortillas en comal', 'Arma los tacos con carne', 'AÃ±ade cebolla y cilantro', 'Exprime limÃ³n al gusto', 'AcompaÃ±a con salsas'],
+        ingredientes: ['300g de carne para tacos', '8 tortillas de maíz', '1 cebolla picada', '1 manojo de cilantro', '2 limones', 'Salsa verde y roja', 'Sal al gusto'],
+        preparacion: ['Sazona la carne con sal', 'Cocina en sartén caliente hasta dorar', 'Pica finamente la cebolla y cilantro', 'Calienta las tortillas en comal', 'Arma los tacos con carne', 'Añade cebolla y cilantro', 'Exprime limón al gusto', 'Acompaña con salsas'],
         tiempo: 20, calorias: 450, proteina: 35, porciones: 2
       },
       {
         keywords: ['hamburguesa', 'burger', 'hamburgesa'],
         ingredientes: ['400g de carne molida de res', '2 panes para hamburguesa', '2 rebanadas de queso americano', '4 hojas de lechuga', '4 rodajas de tomate', '1/2 cebolla en aros', 'Ketchup y mostaza', 'Sal y pimienta'],
-        preparacion: ['Forma 2 tortitas con la carne, sazona', 'Calienta sartÃ©n o grill a fuego alto', 'Cocina las tortitas 4-5 min por lado', 'AÃ±ade el queso al final para que se derrita', 'Tuesta los panes ligeramente', 'Arma: pan, lechuga, carne con queso, tomate', 'AÃ±ade cebolla y salsas al gusto', 'Tapa con el pan superior'],
+        preparacion: ['Forma 2 tortitas con la carne, sazona', 'Calienta sartén o grill a fuego alto', 'Cocina las tortitas 4-5 min por lado', 'Añade el queso al final para que se derrita', 'Tuesta los panes ligeramente', 'Arma: pan, lechuga, carne con queso, tomate', 'Añade cebolla y salsas al gusto', 'Tapa con el pan superior'],
         tiempo: 20, calorias: 650, proteina: 42, porciones: 2
       },
       {
         keywords: ['albondigas', 'albondiga', 'meatballs'],
-        ingredientes: ['500g de carne molida mixta', '1/2 taza de pan molido', '1 huevo', '1/4 de cebolla picada finamente', '2 dientes de ajo picados', '500ml de salsa de tomate', 'OrÃ©gano, sal y pimienta', 'Perejil para decorar'],
-        preparacion: ['Mezcla carne, pan molido, huevo, cebolla, ajo y especias', 'Forma bolitas del tamaÃ±o deseado', 'FrÃ­e las albÃ³ndigas hasta dorar por fuera', 'Calienta la salsa de tomate', 'AÃ±ade las albÃ³ndigas a la salsa', 'Cocina a fuego bajo 20 minutos', 'Verifica que estÃ©n cocidas por dentro', 'Sirve con arroz o pasta'],
+        ingredientes: ['500g de carne molida mixta', '1/2 taza de pan molido', '1 huevo', '1/4 de cebolla picada finamente', '2 dientes de ajo picados', '500ml de salsa de tomate', 'Orégano, sal y pimienta', 'Perejil para decorar'],
+        preparacion: ['Mezcla carne, pan molido, huevo, cebolla, ajo y especias', 'Forma bolitas del tamaño deseado', 'Fríe las albóndigas hasta dorar por fuera', 'Calienta la salsa de tomate', 'Añade las albóndigas a la salsa', 'Cocina a fuego bajo 20 minutos', 'Verifica que estén cocidas por dentro', 'Sirve con arroz o pasta'],
         tiempo: 40, calorias: 520, proteina: 38, porciones: 4
       },
 
       // ============ PESCADOS Y MARISCOS ============
       {
-        keywords: ['salmon', 'salmÃ³n'],
-        ingredientes: ['2 filetes de salmÃ³n (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', 'Jugo de 1 limÃ³n', '1 cucharadita de eneldo', 'Sal y pimienta al gusto', 'Rodajas de limÃ³n para decorar'],
-        preparacion: ['Precalienta el horno a 200Â°C', 'Sazona el salmÃ³n con sal, pimienta y eneldo', 'Coloca en bandeja con aceite de oliva', 'AÃ±ade el ajo picado encima', 'Exprime el jugo de limÃ³n', 'Hornea 12-15 minutos', 'El salmÃ³n debe estar rosado por dentro', 'Sirve con rodajas de limÃ³n'],
+        keywords: ['salmon', 'salmón'],
+        ingredientes: ['2 filetes de salmón (400g)', '2 cucharadas de aceite de oliva', '2 dientes de ajo picados', 'Jugo de 1 limón', '1 cucharadita de eneldo', 'Sal y pimienta al gusto', 'Rodajas de limón para decorar'],
+        preparacion: ['Precalienta el horno a 200Â°C', 'Sazona el salmón con sal, pimienta y eneldo', 'Coloca en bandeja con aceite de oliva', 'Añade el ajo picado encima', 'Exprime el jugo de limón', 'Hornea 12-15 minutos', 'El salmón debe estar rosado por dentro', 'Sirve con rodajas de limón'],
         tiempo: 20, calorias: 420, proteina: 46, porciones: 2
       },
       {
-        keywords: ['salmon con esparrago', 'salmon esparrago', 'salmÃ³n con espÃ¡rragos', 'salmon y esparragos'],
-        ingredientes: ['2 filetes de salmÃ³n (400g)', '1 manojo de espÃ¡rragos (250g)', '3 cucharadas de aceite de oliva', '3 dientes de ajo picados', 'Jugo de 1 limÃ³n', 'Sal y pimienta', 'Eneldo fresco'],
-        preparacion: ['Precalienta el horno a 200Â°C', 'Corta los extremos duros de los espÃ¡rragos', 'Coloca salmÃ³n y espÃ¡rragos en bandeja', 'RocÃ­a con aceite de oliva', 'Sazona con sal, pimienta y ajo', 'Exprime limÃ³n sobre todo', 'Hornea 15-18 minutos', 'Decora con eneldo y sirve'],
+        keywords: ['salmon con esparrago', 'salmon esparrago', 'salmón con espárragos', 'salmon y esparragos'],
+        ingredientes: ['2 filetes de salmón (400g)', '1 manojo de espárragos (250g)', '3 cucharadas de aceite de oliva', '3 dientes de ajo picados', 'Jugo de 1 limón', 'Sal y pimienta', 'Eneldo fresco'],
+        preparacion: ['Precalienta el horno a 200Â°C', 'Corta los extremos duros de los espárragos', 'Coloca salmón y espárragos en bandeja', 'Rocía con aceite de oliva', 'Sazona con sal, pimienta y ajo', 'Exprime limón sobre todo', 'Hornea 15-18 minutos', 'Decora con eneldo y sirve'],
         tiempo: 25, calorias: 480, proteina: 48, porciones: 2
       },
       {
         keywords: ['camarones', 'camaron', 'gambas', 'shrimp'],
-        ingredientes: ['400g de camarones limpios', '4 cucharadas de mantequilla', '4 dientes de ajo picados', '1/4 taza de vino blanco', 'Jugo de 1 limÃ³n', 'Perejil fresco picado', 'Sal y pimienta', 'Hojuelas de chile (opcional)'],
-        preparacion: ['Limpia y desena los camarones', 'Derrite la mantequilla a fuego medio', 'Saltea el ajo hasta que estÃ© fragante', 'AÃ±ade los camarones en una sola capa', 'Cocina 2 minutos, voltea', 'Agrega vino y limÃ³n', 'Cocina 2-3 minutos mÃ¡s hasta que estÃ©n rosados', 'Sirve con perejil encima'],
+        ingredientes: ['400g de camarones limpios', '4 cucharadas de mantequilla', '4 dientes de ajo picados', '1/4 taza de vino blanco', 'Jugo de 1 limón', 'Perejil fresco picado', 'Sal y pimienta', 'Hojuelas de chile (opcional)'],
+        preparacion: ['Limpia y desena los camarones', 'Derrite la mantequilla a fuego medio', 'Saltea el ajo hasta que esté fragante', 'Añade los camarones en una sola capa', 'Cocina 2 minutos, voltea', 'Agrega vino y limón', 'Cocina 2-3 minutos más hasta que estén rosados', 'Sirve con perejil encima'],
         tiempo: 15, calorias: 320, proteina: 42, porciones: 2
       },
       {
         keywords: ['ceviche', 'cebiche'],
-        ingredientes: ['500g de pescado blanco fresco', '1 taza de jugo de limÃ³n', '1/2 cebolla morada en juliana', '2 tomates picados', '1 pepino picado', '1 chile serrano picado', 'Cilantro fresco', 'Sal y pimienta', 'Aguacate para servir'],
-        preparacion: ['Corta el pescado en cubos pequeÃ±os', 'Coloca en bowl y cubre con jugo de limÃ³n', 'Refrigera 30-45 minutos hasta que estÃ© "cocido"', 'Escurre el exceso de limÃ³n', 'Mezcla con cebolla, tomate, pepino y chile', 'AÃ±ade cilantro picado', 'Sazona con sal y pimienta', 'Sirve con aguacate y tostadas'],
+        ingredientes: ['500g de pescado blanco fresco', '1 taza de jugo de limón', '1/2 cebolla morada en juliana', '2 tomates picados', '1 pepino picado', '1 chile serrano picado', 'Cilantro fresco', 'Sal y pimienta', 'Aguacate para servir'],
+        preparacion: ['Corta el pescado en cubos pequeños', 'Coloca en bowl y cubre con jugo de limón', 'Refrigera 30-45 minutos hasta que esté "cocido"', 'Escurre el exceso de limón', 'Mezcla con cebolla, tomate, pepino y chile', 'Añade cilantro picado', 'Sazona con sal y pimienta', 'Sirve con aguacate y tostadas'],
         tiempo: 45, calorias: 250, proteina: 35, porciones: 4
       },
       {
-        keywords: ['atun', 'atÃºn', 'tuna'],
-        ingredientes: ['2 filetes de atÃºn (300g)', '2 cucharadas de aceite de sÃ©samo', '2 cucharadas de salsa de soya', '1 cucharada de miel', 'Semillas de sÃ©samo', 'Jengibre rallado', 'CebollÃ­n picado'],
-        preparacion: ['Mezcla soya, miel, sÃ©samo y jengibre', 'Marina el atÃºn 15 minutos', 'Calienta sartÃ©n a fuego muy alto', 'Sella el atÃºn 1-2 min por lado (sellado)', 'El centro debe quedar rosado', 'Corta en rebanadas', 'Espolvorea semillas de sÃ©samo', 'Decora con cebollÃ­n'],
+        keywords: ['atun', 'atún', 'tuna'],
+        ingredientes: ['2 filetes de atún (300g)', '2 cucharadas de aceite de sésamo', '2 cucharadas de salsa de soya', '1 cucharada de miel', 'Semillas de sésamo', 'Jengibre rallado', 'Cebollín picado'],
+        preparacion: ['Mezcla soya, miel, sésamo y jengibre', 'Marina el atún 15 minutos', 'Calienta sartén a fuego muy alto', 'Sella el atún 1-2 min por lado (sellado)', 'El centro debe quedar rosado', 'Corta en rebanadas', 'Espolvorea semillas de sésamo', 'Decora con cebollín'],
         tiempo: 20, calorias: 350, proteina: 45, porciones: 2
       },
       {
         keywords: ['pescado empanizado', 'pescado frito', 'fish and chips'],
-        ingredientes: ['4 filetes de pescado blanco', '1 taza de harina', '2 huevos batidos', '1.5 tazas de pan molido', 'Aceite para freÃ­r', 'Sal y pimienta', 'Limones para servir', 'Salsa tÃ¡rtara'],
-        preparacion: ['Sazona el pescado con sal y pimienta', 'Prepara 3 platos: harina, huevo, pan molido', 'Pasa cada filete por harina, huevo y pan molido', 'Calienta abundante aceite a 180Â°C', 'FrÃ­e el pescado 3-4 minutos por lado', 'Escurre en papel absorbente', 'Sirve con limÃ³n', 'AcompaÃ±a con salsa tÃ¡rtara'],
+        ingredientes: ['4 filetes de pescado blanco', '1 taza de harina', '2 huevos batidos', '1.5 tazas de pan molido', 'Aceite para freír', 'Sal y pimienta', 'Limones para servir', 'Salsa tártara'],
+        preparacion: ['Sazona el pescado con sal y pimienta', 'Prepara 3 platos: harina, huevo, pan molido', 'Pasa cada filete por harina, huevo y pan molido', 'Calienta abundante aceite a 180Â°C', 'Fríe el pescado 3-4 minutos por lado', 'Escurre en papel absorbente', 'Sirve con limón', 'Acompaña con salsa tártara'],
         tiempo: 25, calorias: 450, proteina: 38, porciones: 4
       },
 
@@ -383,51 +383,51 @@ export default function RecetasPage() {
       {
         keywords: ['pasta', 'espagueti', 'spaghetti', 'carbonara'],
         ingredientes: ['400g de espagueti', '200g de tocino o panceta', '4 yemas de huevo', '100g de queso parmesano rallado', '2 dientes de ajo', 'Pimienta negra', 'Sal para el agua'],
-        preparacion: ['Hierve agua con sal y cocina la pasta al dente', 'Corta el tocino en cubos y frÃ­e hasta crujiente', 'Mezcla yemas con parmesano y pimienta', 'Reserva 1 taza del agua de cocciÃ³n', 'Escurre la pasta y aÃ±ade al sartÃ©n con tocino', 'Retira del fuego y aÃ±ade la mezcla de huevo', 'Mezcla rÃ¡pidamente aÃ±adiendo agua si necesita', 'Sirve con mÃ¡s parmesano y pimienta'],
+        preparacion: ['Hierve agua con sal y cocina la pasta al dente', 'Corta el tocino en cubos y fríe hasta crujiente', 'Mezcla yemas con parmesano y pimienta', 'Reserva 1 taza del agua de cocción', 'Escurre la pasta y añade al sartén con tocino', 'Retira del fuego y añade la mezcla de huevo', 'Mezcla rápidamente añadiendo agua si necesita', 'Sirve con más parmesano y pimienta'],
         tiempo: 25, calorias: 680, proteina: 28, porciones: 4
       },
       {
-        keywords: ['lasana', 'lasagna', 'lasaÃ±a'],
-        ingredientes: ['12 lÃ¡minas de lasaÃ±a', '500g de carne molida', '700ml de salsa de tomate', '500ml de bechamel', '200g de queso mozzarella', '1 cebolla picada', '3 dientes de ajo', 'OrÃ©gano, sal y pimienta'],
-        preparacion: ['SofrÃ­e cebolla y ajo, aÃ±ade carne hasta dorar', 'Agrega salsa de tomate y cocina 15 min', 'Prepara la bechamel', 'En refractario: salsa, pasta, carne, bechamel', 'Repite las capas 3 veces', 'Termina con bechamel y mozzarella', 'Hornea a 180Â°C por 35-40 minutos', 'Deja reposar 10 min antes de servir'],
+        keywords: ['lasana', 'lasagna', 'lasaña'],
+        ingredientes: ['12 láminas de lasaña', '500g de carne molida', '700ml de salsa de tomate', '500ml de bechamel', '200g de queso mozzarella', '1 cebolla picada', '3 dientes de ajo', 'Orégano, sal y pimienta'],
+        preparacion: ['Sofríe cebolla y ajo, añade carne hasta dorar', 'Agrega salsa de tomate y cocina 15 min', 'Prepara la bechamel', 'En refractario: salsa, pasta, carne, bechamel', 'Repite las capas 3 veces', 'Termina con bechamel y mozzarella', 'Hornea a 180Â°C por 35-40 minutos', 'Deja reposar 10 min antes de servir'],
         tiempo: 60, calorias: 720, proteina: 38, porciones: 6
       },
       {
         keywords: ['alfredo', 'fettuccine', 'pasta blanca'],
         ingredientes: ['400g de fettuccine', '300ml de crema para batir', '100g de mantequilla', '150g de queso parmesano', '2 dientes de ajo', 'Sal, pimienta y nuez moscada', 'Perejil para decorar'],
-        preparacion: ['Cocina la pasta al dente en agua con sal', 'Derrite mantequilla con ajo a fuego bajo', 'AÃ±ade la crema y calienta sin hervir', 'Incorpora el parmesano poco a poco', 'Sazona con sal, pimienta y nuez moscada', 'AÃ±ade la pasta escurrida a la salsa', 'Mezcla bien hasta cubrir toda la pasta', 'Sirve con perejil y mÃ¡s parmesano'],
+        preparacion: ['Cocina la pasta al dente en agua con sal', 'Derrite mantequilla con ajo a fuego bajo', 'Añade la crema y calienta sin hervir', 'Incorpora el parmesano poco a poco', 'Sazona con sal, pimienta y nuez moscada', 'Añade la pasta escurrida a la salsa', 'Mezcla bien hasta cubrir toda la pasta', 'Sirve con perejil y más parmesano'],
         tiempo: 25, calorias: 750, proteina: 22, porciones: 4
       },
       {
-        keywords: ['bolognesa', 'boloÃ±esa', 'ragu'],
-        ingredientes: ['400g de espagueti', '400g de carne molida', '1 cebolla picada', '2 zanahorias ralladas', '2 tallos de apio picados', '400ml de salsa de tomate', '100ml de vino tinto', 'Ajo, orÃ©gano, sal y pimienta'],
-        preparacion: ['SofrÃ­e cebolla, zanahoria y apio 5 min', 'AÃ±ade la carne y cocina hasta dorar', 'Agrega el ajo y el vino, deja reducir', 'Incorpora la salsa de tomate', 'Sazona y cocina a fuego bajo 30 min', 'Cocina la pasta al dente', 'Sirve la pasta con la salsa encima', 'AÃ±ade parmesano rallado'],
+        keywords: ['bolognesa', 'boloñesa', 'ragu'],
+        ingredientes: ['400g de espagueti', '400g de carne molida', '1 cebolla picada', '2 zanahorias ralladas', '2 tallos de apio picados', '400ml de salsa de tomate', '100ml de vino tinto', 'Ajo, orégano, sal y pimienta'],
+        preparacion: ['Sofríe cebolla, zanahoria y apio 5 min', 'Añade la carne y cocina hasta dorar', 'Agrega el ajo y el vino, deja reducir', 'Incorpora la salsa de tomate', 'Sazona y cocina a fuego bajo 30 min', 'Cocina la pasta al dente', 'Sirve la pasta con la salsa encima', 'Añade parmesano rallado'],
         tiempo: 45, calorias: 620, proteina: 32, porciones: 4
       },
 
       // ============ ARROZ ============
       {
         keywords: ['arroz con leche', 'arroz dulce'],
-        ingredientes: ['200g de arroz', '1 litro de leche entera', '150g de azÃºcar', '1 rama de canela', 'CÃ¡scara de 1 limÃ³n', '1 pizca de sal', 'Canela en polvo para decorar', 'Pasas (opcional)'],
-        preparacion: ['Lava el arroz y escÃºrrelo', 'Hierve la leche con canela y cÃ¡scara de limÃ³n', 'AÃ±ade el arroz y la pizca de sal', 'Cocina a fuego bajo 35-40 minutos', 'Revuelve frecuentemente para evitar que se pegue', 'Agrega el azÃºcar y las pasas', 'Retira canela y cÃ¡scara de limÃ³n', 'Sirve tibio o frÃ­o con canela espolvoreada'],
+        ingredientes: ['200g de arroz', '1 litro de leche entera', '150g de azúcar', '1 rama de canela', 'Cáscara de 1 limón', '1 pizca de sal', 'Canela en polvo para decorar', 'Pasas (opcional)'],
+        preparacion: ['Lava el arroz y escúrrelo', 'Hierve la leche con canela y cáscara de limón', 'Añade el arroz y la pizca de sal', 'Cocina a fuego bajo 35-40 minutos', 'Revuelve frecuentemente para evitar que se pegue', 'Agrega el azúcar y las pasas', 'Retira canela y cáscara de limón', 'Sirve tibio o frío con canela espolvoreada'],
         tiempo: 50, calorias: 320, proteina: 8, porciones: 6
       },
       {
         keywords: ['arroz blanco', 'arroz'],
         ingredientes: ['2 tazas de arroz', '4 tazas de agua', '2 cucharadas de aceite', '1/4 de cebolla', '2 dientes de ajo', '1 cucharadita de sal'],
-        preparacion: ['Lava el arroz hasta que el agua salga clara', 'Calienta aceite y sofrÃ­e cebolla y ajo', 'AÃ±ade el arroz y frÃ­e 2 minutos', 'Agrega el agua caliente y sal', 'Cuando hierva, baja el fuego al mÃ­nimo', 'Tapa y cocina 18-20 minutos', 'Deja reposar 5 minutos tapado', 'Esponja con tenedor y sirve'],
+        preparacion: ['Lava el arroz hasta que el agua salga clara', 'Calienta aceite y sofríe cebolla y ajo', 'Añade el arroz y fríe 2 minutos', 'Agrega el agua caliente y sal', 'Cuando hierva, baja el fuego al mínimo', 'Tapa y cocina 18-20 minutos', 'Deja reposar 5 minutos tapado', 'Esponja con tenedor y sirve'],
         tiempo: 25, calorias: 200, proteina: 4, porciones: 4
       },
       {
         keywords: ['arroz con pollo', 'arroz pollo'],
-        ingredientes: ['2 tazas de arroz', '400g de pollo en piezas', '4 tazas de caldo de pollo', '1 cebolla', '3 dientes de ajo', '1 pimiento', '100g de chÃ­charos', 'Comino, sal y pimienta'],
-        preparacion: ['Dora las piezas de pollo, reserva', 'SofrÃ­e cebolla, ajo y pimiento', 'AÃ±ade el arroz y sofrÃ­e 2 min', 'Agrega el caldo caliente y especias', 'Coloca el pollo encima', 'Tapa y cocina a fuego bajo 20 min', 'AÃ±ade los chÃ­charos los Ãºltimos 5 min', 'Deja reposar y sirve'],
+        ingredientes: ['2 tazas de arroz', '400g de pollo en piezas', '4 tazas de caldo de pollo', '1 cebolla', '3 dientes de ajo', '1 pimiento', '100g de chícharos', 'Comino, sal y pimienta'],
+        preparacion: ['Dora las piezas de pollo, reserva', 'Sofríe cebolla, ajo y pimiento', 'Añade el arroz y sofríe 2 min', 'Agrega el caldo caliente y especias', 'Coloca el pollo encima', 'Tapa y cocina a fuego bajo 20 min', 'Añade los chícharos los últimos 5 min', 'Deja reposar y sirve'],
         tiempo: 40, calorias: 480, proteina: 35, porciones: 4
       },
       {
         keywords: ['paella', 'arroz con mariscos'],
-        ingredientes: ['300g de arroz para paella', '200g de camarones', '200g de mejillones', '150g de calamares', '1 pimiento rojo', '1 cebolla', '3 dientes de ajo', '1 litro de caldo de pescado', 'AzafrÃ¡n, pimentÃ³n, sal'],
-        preparacion: ['SofrÃ­e cebolla, ajo y pimiento en paellera', 'AÃ±ade calamares y cocina 3 min', 'Agrega pimentÃ³n y arroz, sofrÃ­e', 'Vierte el caldo caliente con azafrÃ¡n', 'Distribuye uniformemente sin revolver', 'Cocina 10 min a fuego alto', 'AÃ±ade camarones y mejillones', 'Baja el fuego y cocina 10 min mÃ¡s'],
+        ingredientes: ['300g de arroz para paella', '200g de camarones', '200g de mejillones', '150g de calamares', '1 pimiento rojo', '1 cebolla', '3 dientes de ajo', '1 litro de caldo de pescado', 'Azafrán, pimentón, sal'],
+        preparacion: ['Sofríe cebolla, ajo y pimiento en paellera', 'Añade calamares y cocina 3 min', 'Agrega pimentón y arroz, sofríe', 'Vierte el caldo caliente con azafrán', 'Distribuye uniformemente sin revolver', 'Cocina 10 min a fuego alto', 'Añade camarones y mejillones', 'Baja el fuego y cocina 10 min más'],
         tiempo: 45, calorias: 520, proteina: 38, porciones: 4
       },
 
@@ -435,53 +435,53 @@ export default function RecetasPage() {
       {
         keywords: ['sopa', 'caldo de pollo', 'consome'],
         ingredientes: ['1 pollo entero o 6 piezas', '3 litros de agua', '2 zanahorias', '2 papas', '1 calabaza', '1/4 de col', '1 cebolla', 'Cilantro, sal y pimienta', 'Arroz o fideos (opcional)'],
-        preparacion: ['Hierve el pollo en agua con cebolla y sal', 'Retira la espuma que se forme', 'Cocina 40 min hasta que el pollo estÃ© suave', 'Retira el pollo y deshebra', 'AÃ±ade las verduras cortadas al caldo', 'Cocina hasta que estÃ©n suaves', 'Regresa el pollo deshebrado', 'Sirve con cilantro, limÃ³n y chile'],
+        preparacion: ['Hierve el pollo en agua con cebolla y sal', 'Retira la espuma que se forme', 'Cocina 40 min hasta que el pollo esté suave', 'Retira el pollo y deshebra', 'Añade las verduras cortadas al caldo', 'Cocina hasta que estén suaves', 'Regresa el pollo deshebrado', 'Sirve con cilantro, limón y chile'],
         tiempo: 60, calorias: 320, proteina: 35, porciones: 6
       },
       {
         keywords: ['crema', 'sopa crema', 'cream soup'],
-        ingredientes: ['500g de verdura principal (brÃ³coli/champiÃ±ones/espinaca)', '1 cebolla', '2 dientes de ajo', '500ml de caldo de pollo', '200ml de crema', '30g de mantequilla', 'Sal, pimienta, nuez moscada'],
-        preparacion: ['SofrÃ­e cebolla y ajo en mantequilla', 'AÃ±ade la verdura principal y saltea', 'Agrega el caldo y cocina 15 min', 'LicÃºa hasta obtener textura suave', 'Regresa a la olla y aÃ±ade la crema', 'Calienta sin hervir', 'Sazona con sal, pimienta y nuez moscada', 'Sirve con crema y crutones'],
+        ingredientes: ['500g de verdura principal (brócoli/champiñones/espinaca)', '1 cebolla', '2 dientes de ajo', '500ml de caldo de pollo', '200ml de crema', '30g de mantequilla', 'Sal, pimienta, nuez moscada'],
+        preparacion: ['Sofríe cebolla y ajo en mantequilla', 'Añade la verdura principal y saltea', 'Agrega el caldo y cocina 15 min', 'Licúa hasta obtener textura suave', 'Regresa a la olla y añade la crema', 'Calienta sin hervir', 'Sazona con sal, pimienta y nuez moscada', 'Sirve con crema y crutones'],
         tiempo: 30, calorias: 280, proteina: 10, porciones: 4
       },
 
       // ============ ENSALADAS ============
       {
         keywords: ['ensalada', 'salad', 'cesar', 'caesar'],
-        ingredientes: ['1 lechuga romana', '100g de crutones', '50g de queso parmesano', '200g de pechuga de pollo', 'Aderezo cÃ©sar', 'Jugo de limÃ³n', 'Sal y pimienta'],
-        preparacion: ['Cocina y corta el pollo en tiras', 'Lava y corta la lechuga en trozos', 'Coloca la lechuga en un bowl grande', 'AÃ±ade los crutones', 'Agrega el pollo en tiras', 'Vierte el aderezo cÃ©sar', 'Espolvorea el parmesano rallado', 'Mezcla y sirve inmediatamente'],
+        ingredientes: ['1 lechuga romana', '100g de crutones', '50g de queso parmesano', '200g de pechuga de pollo', 'Aderezo césar', 'Jugo de limón', 'Sal y pimienta'],
+        preparacion: ['Cocina y corta el pollo en tiras', 'Lava y corta la lechuga en trozos', 'Coloca la lechuga en un bowl grande', 'Añade los crutones', 'Agrega el pollo en tiras', 'Vierte el aderezo césar', 'Espolvorea el parmesano rallado', 'Mezcla y sirve inmediatamente'],
         tiempo: 20, calorias: 380, proteina: 32, porciones: 2
       },
       {
         keywords: ['guacamole', 'guac'],
         ingredientes: ['3 aguacates maduros', '1/2 cebolla picada finamente', '2 tomates picados', '1 chile serrano picado', 'Jugo de 2 limones', 'Cilantro fresco picado', 'Sal al gusto'],
-        preparacion: ['Corta los aguacates y extrae la pulpa', 'Machaca con tenedor dejando algunos trozos', 'AÃ±ade la cebolla y tomate', 'Agrega el chile picado', 'Exprime el jugo de limÃ³n', 'Mezcla con cilantro', 'Sazona con sal', 'Sirve con totopos'],
+        preparacion: ['Corta los aguacates y extrae la pulpa', 'Machaca con tenedor dejando algunos trozos', 'Añade la cebolla y tomate', 'Agrega el chile picado', 'Exprime el jugo de limón', 'Mezcla con cilantro', 'Sazona con sal', 'Sirve con totopos'],
         tiempo: 10, calorias: 240, proteina: 3, porciones: 4
       },
 
       // ============ POSTRES ============
       {
         keywords: ['flan', 'flan de huevo', 'flan casero'],
-        ingredientes: ['6 huevos', '1 lata de leche condensada', '1 lata de leche evaporada', '1 cucharadita de vainilla', '1 taza de azÃºcar para caramelo', '1/4 taza de agua'],
-        preparacion: ['Prepara el caramelo: derrite azÃºcar con agua', 'Vierte en el molde y distribuye', 'LicÃºa huevos, leches y vainilla', 'Cuela la mezcla', 'Vierte sobre el caramelo', 'Hornea a baÃ±o marÃ­a a 180Â°C por 1 hora', 'Deja enfriar completamente', 'Refrigera y desmolda para servir'],
+        ingredientes: ['6 huevos', '1 lata de leche condensada', '1 lata de leche evaporada', '1 cucharadita de vainilla', '1 taza de azúcar para caramelo', '1/4 taza de agua'],
+        preparacion: ['Prepara el caramelo: derrite azúcar con agua', 'Vierte en el molde y distribuye', 'Licúa huevos, leches y vainilla', 'Cuela la mezcla', 'Vierte sobre el caramelo', 'Hornea a baño maría a 180Â°C por 1 hora', 'Deja enfriar completamente', 'Refrigera y desmolda para servir'],
         tiempo: 90, calorias: 280, proteina: 8, porciones: 8
       },
       {
         keywords: ['brownie', 'brownies'],
-        ingredientes: ['200g de chocolate oscuro', '150g de mantequilla', '3 huevos', '200g de azÃºcar', '100g de harina', '1 cucharadita de vainilla', '1 pizca de sal', 'Nueces picadas (opcional)'],
-        preparacion: ['Derrite chocolate con mantequilla a baÃ±o marÃ­a', 'Bate huevos con azÃºcar hasta esponjar', 'Incorpora el chocolate derretido', 'AÃ±ade harina cernida, vainilla y sal', 'Agrega las nueces si deseas', 'Vierte en molde engrasado', 'Hornea a 180Â°C por 25-30 minutos', 'Deja enfriar antes de cortar'],
+        ingredientes: ['200g de chocolate oscuro', '150g de mantequilla', '3 huevos', '200g de azúcar', '100g de harina', '1 cucharadita de vainilla', '1 pizca de sal', 'Nueces picadas (opcional)'],
+        preparacion: ['Derrite chocolate con mantequilla a baño maría', 'Bate huevos con azúcar hasta esponjar', 'Incorpora el chocolate derretido', 'Añade harina cernida, vainilla y sal', 'Agrega las nueces si deseas', 'Vierte en molde engrasado', 'Hornea a 180Â°C por 25-30 minutos', 'Deja enfriar antes de cortar'],
         tiempo: 45, calorias: 320, proteina: 5, porciones: 12
       },
       {
         keywords: ['pastel', 'cake', 'bizcocho', 'torta'],
-        ingredientes: ['250g de harina', '200g de azÃºcar', '4 huevos', '125g de mantequilla', '200ml de leche', '1 sobre de polvo para hornear', '1 cucharadita de vainilla', 'BetÃºn o frosting al gusto'],
-        preparacion: ['Precalienta el horno a 180Â°C', 'Bate mantequilla con azÃºcar hasta cremosa', 'AÃ±ade los huevos uno a uno', 'Incorpora vainilla', 'Mezcla harina con polvo para hornear', 'Alterna harina y leche a la mezcla', 'Vierte en molde engrasado y enharinado', 'Hornea 35-40 min, decora al enfriar'],
+        ingredientes: ['250g de harina', '200g de azúcar', '4 huevos', '125g de mantequilla', '200ml de leche', '1 sobre de polvo para hornear', '1 cucharadita de vainilla', 'Betún o frosting al gusto'],
+        preparacion: ['Precalienta el horno a 180Â°C', 'Bate mantequilla con azúcar hasta cremosa', 'Añade los huevos uno a uno', 'Incorpora vainilla', 'Mezcla harina con polvo para hornear', 'Alterna harina y leche a la mezcla', 'Vierte en molde engrasado y enharinado', 'Hornea 35-40 min, decora al enfriar'],
         tiempo: 60, calorias: 350, proteina: 6, porciones: 12
       },
       {
         keywords: ['gelatina', 'jello'],
-        ingredientes: ['2 sobres de gelatina sin sabor', '1/2 taza de agua frÃ­a', '2 tazas de jugo o leche caliente', '1/2 taza de azÃºcar', 'Frutas picadas (opcional)', 'Crema batida para servir'],
-        preparacion: ['Hidrata la gelatina en agua frÃ­a 5 min', 'Calienta el jugo o leche con azÃºcar', 'AÃ±ade la gelatina hidratada y mezcla', 'Revuelve hasta disolver completamente', 'Si deseas, aÃ±ade frutas al molde', 'Vierte la mezcla en el molde', 'Refrigera 4 horas mÃ­nimo', 'Desmolda y sirve con crema'],
+        ingredientes: ['2 sobres de gelatina sin sabor', '1/2 taza de agua fría', '2 tazas de jugo o leche caliente', '1/2 taza de azúcar', 'Frutas picadas (opcional)', 'Crema batida para servir'],
+        preparacion: ['Hidrata la gelatina en agua fría 5 min', 'Calienta el jugo o leche con azúcar', 'Añade la gelatina hidratada y mezcla', 'Revuelve hasta disolver completamente', 'Si deseas, añade frutas al molde', 'Vierte la mezcla en el molde', 'Refrigera 4 horas mínimo', 'Desmolda y sirve con crema'],
         tiempo: 20, calorias: 120, proteina: 4, porciones: 6
       }
     ]
@@ -518,11 +518,11 @@ export default function RecetasPage() {
       return
     }
 
-    // Si no se encontrÃ³ receta en la base de datos, mostrar mensaje de receta no encontrada
+    // Si no se encontró receta en la base de datos, mostrar mensaje de receta no encontrada
     setNuevaReceta({
       ...nuevaReceta,
       ingredientes: ['Receta no encontrada en nuestra base de datos', 'Por favor intenta con otro nombre de receta', 'Ejemplos: bowl de frutos rojos, arroz con leche, pollo a la plancha, pasta carbonara'],
-      preparacion: ['Escribe el nombre de una receta conocida', 'Presiona el botÃ³n de IA nuevamente'],
+      preparacion: ['Escribe el nombre de una receta conocida', 'Presiona el botón de IA nuevamente'],
       tiempo: 0,
       calorias: 0,
       proteina: 0,
@@ -544,32 +544,32 @@ export default function RecetasPage() {
       'pollo': 'Carnes y Aves',
       'pechuga': 'Carnes y Aves',
       'carne': 'Carnes y Aves',
-      'salmÃ³n': 'Pescados y Mariscos',
-      'atÃºn': 'Pescados y Mariscos',
-      'huevo': 'LÃ¡cteos y Huevos',
-      'claras': 'LÃ¡cteos y Huevos',
-      'leche': 'LÃ¡cteos y Huevos',
-      'queso': 'LÃ¡cteos y Huevos',
-      'yogur': 'LÃ¡cteos y Huevos',
+      'salmón': 'Pescados y Mariscos',
+      'atún': 'Pescados y Mariscos',
+      'huevo': 'Lácteos y Huevos',
+      'claras': 'Lácteos y Huevos',
+      'leche': 'Lácteos y Huevos',
+      'queso': 'Lácteos y Huevos',
+      'yogur': 'Lácteos y Huevos',
       'quinoa': 'Granos y Cereales',
       'avena': 'Granos y Cereales',
       'arroz': 'Granos y Cereales',
-      'tortilla': 'PanaderÃ­a',
-      'pan': 'PanaderÃ­a',
+      'tortilla': 'Panadería',
+      'pan': 'Panadería',
       'espinaca': 'Frutas y Verduras',
       'aguacate': 'Frutas y Verduras',
       'tomate': 'Frutas y Verduras',
       'lechuga': 'Frutas y Verduras',
-      'brÃ³coli': 'Frutas y Verduras',
+      'brócoli': 'Frutas y Verduras',
       'pimientos': 'Frutas y Verduras',
       'cebolla': 'Frutas y Verduras',
-      'plÃ¡tano': 'Frutas y Verduras',
+      'plátano': 'Frutas y Verduras',
       'frutos': 'Frutas y Verduras',
-      'limÃ³n': 'Frutas y Verduras',
-      'proteÃ­na': 'Suplementos',
+      'limón': 'Frutas y Verduras',
+      'proteína': 'Suplementos',
       'scoop': 'Suplementos',
       'mantequilla': 'Despensa',
-      'manÃ­': 'Despensa',
+      'maní': 'Despensa',
       'miel': 'Despensa',
       'aceite': 'Despensa',
       'especias': 'Despensa',
@@ -599,7 +599,7 @@ export default function RecetasPage() {
       }
     })
 
-    // Ordenar por secciÃ³n
+    // Ordenar por sección
     lista.sort((a, b) => a.seccion.localeCompare(b.seccion))
     
     setListaSupermercado(lista)
@@ -698,7 +698,7 @@ export default function RecetasPage() {
                     <Users className="w-3 h-3" />
                   </div>
                   <p className="text-black text-sm font-semibold">{receta.porciones}</p>
-                  <p className="text-gray-600 text-xs">porciÃ³n</p>
+                  <p className="text-gray-600 text-xs">porción</p>
                 </div>
               </div>
 
@@ -714,7 +714,7 @@ export default function RecetasPage() {
                     ))}
                     {receta.ingredientes.length > 3 && (
                       <li className="text-gray-700 text-xs">
-                        +{receta.ingredientes.length - 3} mÃ¡s...
+                        +{receta.ingredientes.length - 3} más...
                       </li>
                     )}
                   </ul>
@@ -755,12 +755,12 @@ export default function RecetasPage() {
 
             {/* Contenido */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
-              {/* TÃ­tulo y dificultad */}
+              {/* Título y dificultad */}
               <div className="flex items-start justify-between mb-6">
                 <h2 className="text-2xl font-bold text-black">{recetaSeleccionada.nombre}</h2>
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                  recetaSeleccionada.dificultad === 'Muy FÃ¡cil' ? 'bg-green-100 text-green-700' :
-                  recetaSeleccionada.dificultad === 'FÃ¡cil' ? 'bg-blue-100 text-blue-700' :
+                  recetaSeleccionada.dificultad === 'Muy Fácil' ? 'bg-green-100 text-green-700' :
+                  recetaSeleccionada.dificultad === 'Fácil' ? 'bg-blue-100 text-blue-700' :
                   recetaSeleccionada.dificultad === 'Media' ? 'bg-yellow-100 text-yellow-700' :
                   'bg-red-100 text-red-700'
                 }`}>
@@ -789,7 +789,7 @@ export default function RecetasPage() {
                     <Dumbbell className="w-5 h-5 text-red-600" />
                   </div>
                   <p className="text-xl font-bold text-black">{recetaSeleccionada.proteina}g</p>
-                  <p className="text-gray-500 text-xs">proteÃ­na</p>
+                  <p className="text-gray-500 text-xs">proteína</p>
                 </div>
                 <div className="text-center">
                   <div className="w-10 h-10 mx-auto mb-2 bg-purple-100 rounded-full flex items-center justify-center">
@@ -819,13 +819,13 @@ export default function RecetasPage() {
                   </ul>
                 </div>
 
-                {/* PreparaciÃ³n */}
+                {/* Preparación */}
                 <div>
                   <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                       <ChefHat className="w-4 h-4 text-blue-600" />
                     </span>
-                    PreparaciÃ³n
+                    Preparación
                   </h3>
                   <ol className="space-y-4">
                     {recetaSeleccionada.preparacion.map((paso, idx) => (
@@ -840,7 +840,7 @@ export default function RecetasPage() {
                 </div>
               </div>
 
-              {/* BotÃ³n Lista de Supermercado con IA */}
+              {/* Botón Lista de Supermercado con IA */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 {esPremium ? (
                   <button
@@ -934,7 +934,7 @@ export default function RecetasPage() {
                 </div>
               )}
 
-              {/* Botones de acciÃ³n */}
+              {/* Botones de acción */}
               <div className="flex gap-4 mt-6">
                 <button
                   onClick={cerrarModal}
@@ -980,7 +980,7 @@ export default function RecetasPage() {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Ej: Bowl de ProteÃ­na con Quinoa"
+                    placeholder="Ej: Bowl de Proteína con Quinoa"
                     value={nuevaReceta.nombre}
                     onChange={(e) => setNuevaReceta({...nuevaReceta, nombre: e.target.value})}
                     className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
@@ -1003,13 +1003,13 @@ export default function RecetasPage() {
                   )}
                 </div>
                 {esPremium && (
-                  <p className="text-xs text-gray-500 mt-1">Escribe el nombre y presiona IA para generar la receta automÃ¡ticamente</p>
+                  <p className="text-xs text-gray-500 mt-1">Escribe el nombre y presiona IA para generar la receta automáticamente</p>
                 )}
               </div>
 
-              {/* CategorÃ­a */}
+              {/* Categoría */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">CategorÃ­a</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
                 <select
                   value={nuevaReceta.categoria}
                   onChange={(e) => setNuevaReceta({...nuevaReceta, categoria: e.target.value})}
@@ -1036,7 +1036,7 @@ export default function RecetasPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">CalorÃ­as</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Calorías</label>
                   <input
                     type="number"
                     placeholder="450"
@@ -1046,7 +1046,7 @@ export default function RecetasPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">ProteÃ­na (g)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Proteína (g)</label>
                   <input
                     type="number"
                     placeholder="35"
@@ -1104,10 +1104,10 @@ export default function RecetasPage() {
                 </div>
               </div>
 
-              {/* PreparaciÃ³n */}
+              {/* Preparación */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-semibold text-gray-700">Pasos de PreparaciÃ³n</label>
+                  <label className="text-sm font-semibold text-gray-700">Pasos de Preparación</label>
                   <button
                     type="button"
                     onClick={agregarPaso}
@@ -1124,7 +1124,7 @@ export default function RecetasPage() {
                         {idx + 1}
                       </span>
                       <textarea
-                        placeholder={`Paso ${idx + 1} de la preparaciÃ³n`}
+                        placeholder={`Paso ${idx + 1} de la preparación`}
                         value={paso}
                         onChange={(e) => actualizarPaso(idx, e.target.value)}
                         rows={2}
@@ -1167,4 +1167,5 @@ export default function RecetasPage() {
     </div>
   )
 }
+
 
