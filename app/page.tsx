@@ -73,12 +73,12 @@ export default function LoginPage() {
       return
     }
 
-    // Crear nuevo usuario
+    // Crear nuevo usuario (por defecto como atleta)
     const newUser = {
       email: emailNormalized,
       password: credentials.password,
       nombre: nombreNormalized,
-      tipoUsuario: credentials.tipoUsuario,
+      tipoUsuario: 'atleta', // Por defecto todos se registran como atletas
       fechaRegistro: new Date().toISOString()
     }
 
@@ -132,11 +132,10 @@ export default function LoginPage() {
     const usersStr = localStorage.getItem('athletixy_users')
     const users = usersStr ? JSON.parse(usersStr) : []
 
-    // Buscar usuario
+    // Buscar usuario (sin validar tipo de usuario)
     const user = users.find((u: any) => 
       u.email.toLowerCase() === emailNormalized && 
-      u.password === passwordNormalized &&
-      u.tipoUsuario === credentials.tipoUsuario
+      u.password === passwordNormalized
     )
 
     if (user) {
@@ -163,7 +162,7 @@ export default function LoginPage() {
         }
       }
     } else {
-      setError('Credenciales inválidas. Por favor verifica tu email, contraseña y tipo de usuario.')
+      setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
     }
   }
 
@@ -276,93 +275,6 @@ export default function LoginPage() {
                 className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
                 placeholder={isLogin ? "••••••••" : "Mínimo 6 caracteres"}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Tipo de Usuario
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setCredentials({...credentials, tipoUsuario: 'atleta'})}
-                  className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                    credentials.tipoUsuario === 'atleta'
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <User className={`w-6 h-6 ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-600'}`}>
-                    Atleta
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCredentials({...credentials, tipoUsuario: 'nutriologo'})}
-                  className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                    credentials.tipoUsuario === 'nutriologo'
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Apple className={`w-6 h-6 ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-600'}`}>
-                    Nutriólogo
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCredentials({...credentials, tipoUsuario: 'coach'})}
-                  className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                    credentials.tipoUsuario === 'coach'
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Users className={`w-6 h-6 ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-600'}`}>
-                    Coach
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCredentials({...credentials, tipoUsuario: 'gym'})}
-                  className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                    credentials.tipoUsuario === 'gym'
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Building2 className={`w-6 h-6 ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-600'}`}>
-                    Gym
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCredentials({...credentials, tipoUsuario: 'vendedor'})}
-                  className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                    credentials.tipoUsuario === 'vendedor'
-                      ? 'border-black bg-gray-100'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <ShoppingBag className={`w-6 h-6 ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-400'}`} />
-                  <span className={`font-medium text-sm ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-600'}`}>
-                    Vendedor
-                  </span>
-                </button>
-              </div>
-              <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600">
-                  {credentials.tipoUsuario === 'nutriologo' && 'Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.'}
-                  {credentials.tipoUsuario === 'coach' && 'Como coach podrás gestionar rutinas, entrenamientos y seguimiento de tus atletas.'}
-                  {credentials.tipoUsuario === 'gym' && 'Como gimnasio podrás administrar membresías, instalaciones y servicios para tus miembros.'}
-                  {credentials.tipoUsuario === 'vendedor' && 'Como vendedor podrás gestionar tu tienda en el marketplace, productos y ventas.'}
-                  {credentials.tipoUsuario === 'atleta' && 'Como atleta tendrás acceso a dietas, rutinas, progreso y todos los servicios de Athletixy.'}
-                </p>
-              </div>
             </div>
 
             {error && (
