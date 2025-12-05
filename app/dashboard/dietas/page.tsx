@@ -1248,18 +1248,8 @@ export default function DietasPage() {
 
                 {/* Macros objetivo */}
                 <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold text-gray-700">Macros Objetivo Diarios</h4>
-                    <button
-                      type="button"
-                      onClick={calcularMacrosAutomatico}
-                      className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition flex items-center gap-1"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                      Calcular Auto
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-4">Macros Objetivo Diarios</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     <div>
                       <label className="block text-xs text-gray-600 mb-1">Calorías</label>
                       <input
@@ -1297,6 +1287,14 @@ export default function DietasPage() {
                       />
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={calcularMacrosAutomatico}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    Calcular Macros Automáticamente
+                  </button>
                 </div>
                   </>
                 )}
