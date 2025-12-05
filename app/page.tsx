@@ -116,17 +116,17 @@ export default function LoginPage() {
     
       // Redirigir según tipo de usuario
       setTimeout(() => {
-        if (typeof window !== 'undefined' && router) {
+        if (typeof window !== 'undefined') {
           if (credentials.tipoUsuario === 'nutriologo') {
-            router.push('/dashboard/nutriologo')
+            window.location.href = '/dashboard/nutriologo'
           } else if (credentials.tipoUsuario === 'coach') {
-            router.push('/dashboard/coach')
+            window.location.href = '/dashboard/coach'
           } else if (credentials.tipoUsuario === 'gym') {
-            router.push('/dashboard')
+            window.location.href = '/dashboard'
           } else if (credentials.tipoUsuario === 'vendedor') {
-            router.push('/dashboard/marketplace')
+            window.location.href = '/dashboard/marketplace'
           } else {
-            router.push('/dashboard')
+            window.location.href = '/dashboard'
           }
         }
       }, 1000)
