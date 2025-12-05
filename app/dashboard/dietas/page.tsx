@@ -63,6 +63,8 @@ export default function DietasPage() {
     grasasObjetivo: 80,
   })
   const [duracionGeneracion, setDuracionGeneracion] = useState<'dia' | 'semana' | 'mes' | 'bimestre'>('dia')
+  const [mostrarFormularioDatos, setMostrarFormularioDatos] = useState(false)
+  const [datosGuardados, setDatosGuardados] = useState(false)
   const [editandoIndex, setEditandoIndex] = useState<number | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [dietaAEliminar, setDietaAEliminar] = useState<number | null>(null)
@@ -85,10 +87,11 @@ export default function DietasPage() {
   const [mesCalendario, setMesCalendario] = useState(new Date())
   const [seleccionandoRango, setSeleccionandoRango] = useState<'inicio' | 'fin'>('inicio')
 
-  // Cargar dietas desde localStorage
+  // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
     const dietasGuardadas = localStorage.getItem('athletixy_dietas')
     const primeraVez = localStorage.getItem('athletixy_dietas_initialized')
+    const datosGuardadosLS = localStorage.getItem('athletixy_datos_usuario')
     
     if (primeraVez) {
       try {
@@ -101,6 +104,17 @@ export default function DietasPage() {
       setDietaPlan(dietasIniciales)
       localStorage.setItem('athletixy_dietas', JSON.stringify(dietasIniciales))
       localStorage.setItem('athletixy_dietas_initialized', 'true')
+    }
+
+    // Cargar datos del usuario
+    if (datosGuardadosLS) {
+      try {
+        const datos = JSON.parse(datosGuardadosLS)
+        setDatosUsuario(datos)
+        setDatosGuardados(true)
+      } catch (error) {
+        setDatosGuardados(false)
+      }
     }
   }, [])
 
@@ -481,13 +495,20 @@ export default function DietasPage() {
       carbs = (calorias - (proteina * 4) - (grasas * 9)) / 4
     }
     
-    setDatosUsuario({
+    const nuevosDatos = {
       ...datosUsuario,
       caloriasObjetivo: Math.round(calorias),
       proteinaObjetivo: Math.round(proteina),
       carbsObjetivo: Math.round(carbs),
       grasasObjetivo: Math.round(grasas),
-    })
+    }
+    
+    setDatosUsuario(nuevosDatos)
+    
+    // Guardar en localStorage
+    localStorage.setItem('athletixy_datos_usuario', JSON.stringify(nuevosDatos))
+    setDatosGuardados(true)
+    setMostrarFormularioDatos(false)
   }
 
   const generarDietaCompletaConIA = async () => {
@@ -1089,7 +1110,60 @@ export default function DietasPage() {
                   </p>
                 </div>
 
-                {/* Configuración del usuario */}
+                {/* Resumen de datos guardados */}
+                {datosGuardados && !mostrarFormularioDatos ? (
+                  <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-gray-800">Tus Datos</h4>
+                      <button
+                        type="button"
+                        onClick={() => setMostrarFormularioDatos(true)}
+                        className="text-xs text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                      >
+                        <Edit className="w-3 h-3" />
+                        Editar Información
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="text-gray-600 text-xs">Peso</p>
+                        <p className="font-semibold text-gray-800">{datosUsuario.peso} kg</p>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="text-gray-600 text-xs">Altura</p>
+                        <p className="font-semibold text-gray-800">{datosUsuario.altura} cm</p>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="text-gray-600 text-xs">Edad</p>
+                        <p className="font-semibold text-gray-800">{datosUsuario.edad} años</p>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded">
+                        <p className="text-gray-600 text-xs">Objetivo</p>
+                        <p className="font-semibold text-gray-800 capitalize">{datosUsuario.objetivo}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-4 gap-2">
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600">Cal</p>
+                        <p className="font-bold text-orange-600">{datosUsuario.caloriasObjetivo}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600">Prot</p>
+                        <p className="font-bold text-red-600">{datosUsuario.proteinaObjetivo}g</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600">Carbs</p>
+                        <p className="font-bold text-blue-600">{datosUsuario.carbsObjetivo}g</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600">Grasas</p>
+                        <p className="font-bold text-yellow-600">{datosUsuario.grasasObjetivo}g</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                {/* Configuración del usuario - FORMULARIO COMPLETO */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
@@ -1224,6 +1298,8 @@ export default function DietasPage() {
                     </div>
                   </div>
                 </div>
+                  </>
+                )}
 
                 {/* Duración de la generación */}
                 <div>
