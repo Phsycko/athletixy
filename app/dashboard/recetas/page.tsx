@@ -217,202 +217,364 @@ export default function RecetasPage() {
     setGenerandoRecetaIA(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
 
-    const nombre = nuevaReceta.nombre.toLowerCase().trim()
+    const nombre = nuevaReceta.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
     
-    // Base de datos de ingredientes con sus propiedades
-    const ingredientesDB: { [key: string]: { nombre: string, cantidad: string, calorias: number, proteina: number } } = {
-      // Proteínas
-      'huevo': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18 },
-      'huevos': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18 },
-      'jamon': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21 },
-      'jamón': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21 },
-      'tocino': { nombre: 'Tocino', cantidad: '80g', calorias: 420, proteina: 12 },
-      'bacon': { nombre: 'Tocino/Bacon', cantidad: '80g', calorias: 420, proteina: 12 },
-      'pollo': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55 },
-      'pechuga': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55 },
-      'carne': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50 },
-      'res': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50 },
-      'bistec': { nombre: 'Bistec de res', cantidad: '200g', calorias: 400, proteina: 40 },
-      'salmon': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40 },
-      'salmón': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40 },
-      'pescado': { nombre: 'Filete de pescado', cantidad: '200g', calorias: 200, proteina: 40 },
-      'atun': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40 },
-      'atún': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40 },
-      'camaron': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
-      'camarón': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
-      'camarones': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
-      'chorizo': { nombre: 'Chorizo', cantidad: '100g', calorias: 300, proteina: 14 },
-      'salchicha': { nombre: 'Salchichas', cantidad: '100g', calorias: 300, proteina: 12 },
+    // BASE DE DATOS COMPLETA DE INGREDIENTES
+    const ingredientesDB: { [key: string]: { nombre: string, cantidad: string, calorias: number, proteina: number, tipo: string } } = {
+      // ============ PROTEÍNAS ANIMALES ============
+      'huevo': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18, tipo: 'proteina' },
+      'huevos': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18, tipo: 'proteina' },
+      'clara': { nombre: 'Claras de huevo', cantidad: '4 unidades', calorias: 60, proteina: 14, tipo: 'proteina' },
+      'claras': { nombre: 'Claras de huevo', cantidad: '4 unidades', calorias: 60, proteina: 14, tipo: 'proteina' },
+      'jamon': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21, tipo: 'proteina' },
+      'tocino': { nombre: 'Tocino', cantidad: '80g', calorias: 420, proteina: 12, tipo: 'proteina' },
+      'bacon': { nombre: 'Bacon', cantidad: '80g', calorias: 420, proteina: 12, tipo: 'proteina' },
+      'pollo': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55, tipo: 'proteina' },
+      'pechuga': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55, tipo: 'proteina' },
+      'muslo': { nombre: 'Muslos de pollo', cantidad: '300g', calorias: 350, proteina: 45, tipo: 'proteina' },
+      'alita': { nombre: 'Alitas de pollo', cantidad: '400g', calorias: 400, proteina: 40, tipo: 'proteina' },
+      'alitas': { nombre: 'Alitas de pollo', cantidad: '400g', calorias: 400, proteina: 40, tipo: 'proteina' },
+      'carne': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50, tipo: 'proteina' },
+      'res': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50, tipo: 'proteina' },
+      'bistec': { nombre: 'Bistec', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'proteina' },
+      'filete': { nombre: 'Filete', cantidad: '200g', calorias: 380, proteina: 42, tipo: 'proteina' },
+      'cerdo': { nombre: 'Carne de cerdo', cantidad: '200g', calorias: 450, proteina: 40, tipo: 'proteina' },
+      'costilla': { nombre: 'Costillas', cantidad: '300g', calorias: 600, proteina: 35, tipo: 'proteina' },
+      'costillas': { nombre: 'Costillas', cantidad: '300g', calorias: 600, proteina: 35, tipo: 'proteina' },
+      'chorizo': { nombre: 'Chorizo', cantidad: '100g', calorias: 300, proteina: 14, tipo: 'proteina' },
+      'salchicha': { nombre: 'Salchichas', cantidad: '100g', calorias: 300, proteina: 12, tipo: 'proteina' },
+      'longaniza': { nombre: 'Longaniza', cantidad: '100g', calorias: 320, proteina: 15, tipo: 'proteina' },
+      'carnitas': { nombre: 'Carnitas', cantidad: '200g', calorias: 450, proteina: 35, tipo: 'proteina' },
+      'barbacoa': { nombre: 'Barbacoa', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'proteina' },
+      'pastor': { nombre: 'Carne al pastor', cantidad: '200g', calorias: 380, proteina: 35, tipo: 'proteina' },
       
-      // Carbohidratos
-      'arroz': { nombre: 'Arroz', cantidad: '200g', calorias: 260, proteina: 5 },
-      'pasta': { nombre: 'Pasta', cantidad: '200g', calorias: 260, proteina: 8 },
-      'espagueti': { nombre: 'Espagueti', cantidad: '200g', calorias: 260, proteina: 8 },
-      'fideo': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8 },
-      'papa': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6 },
-      'papas': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6 },
-      'pan': { nombre: 'Pan', cantidad: '100g', calorias: 265, proteina: 9 },
-      'tortilla': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5 },
-      'avena': { nombre: 'Avena', cantidad: '80g', calorias: 300, proteina: 13 },
-      'quinoa': { nombre: 'Quinoa', cantidad: '150g', calorias: 180, proteina: 7 },
+      // ============ PESCADOS Y MARISCOS ============
+      'salmon': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40, tipo: 'pescado' },
+      'atun': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40, tipo: 'pescado' },
+      'pescado': { nombre: 'Filete de pescado', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'pescado' },
+      'tilapia': { nombre: 'Tilapia', cantidad: '200g', calorias: 200, proteina: 42, tipo: 'pescado' },
+      'robalo': { nombre: 'Robalo', cantidad: '200g', calorias: 180, proteina: 38, tipo: 'pescado' },
+      'mojarra': { nombre: 'Mojarra', cantidad: '250g', calorias: 200, proteina: 40, tipo: 'pescado' },
+      'trucha': { nombre: 'Trucha', cantidad: '200g', calorias: 190, proteina: 38, tipo: 'pescado' },
+      'bacalao': { nombre: 'Bacalao', cantidad: '200g', calorias: 160, proteina: 35, tipo: 'pescado' },
+      'sardina': { nombre: 'Sardinas', cantidad: '150g', calorias: 250, proteina: 30, tipo: 'pescado' },
+      'camaron': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'marisco' },
+      'camarones': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40, tipo: 'marisco' },
+      'pulpo': { nombre: 'Pulpo', cantidad: '200g', calorias: 160, proteina: 30, tipo: 'marisco' },
+      'calamar': { nombre: 'Calamar', cantidad: '200g', calorias: 170, proteina: 32, tipo: 'marisco' },
+      'mejillon': { nombre: 'Mejillones', cantidad: '200g', calorias: 150, proteina: 24, tipo: 'marisco' },
+      'mejillones': { nombre: 'Mejillones', cantidad: '200g', calorias: 150, proteina: 24, tipo: 'marisco' },
+      'almeja': { nombre: 'Almejas', cantidad: '200g', calorias: 140, proteina: 25, tipo: 'marisco' },
+      'almejas': { nombre: 'Almejas', cantidad: '200g', calorias: 140, proteina: 25, tipo: 'marisco' },
+      'langosta': { nombre: 'Langosta', cantidad: '200g', calorias: 180, proteina: 35, tipo: 'marisco' },
+      'cangrejo': { nombre: 'Cangrejo', cantidad: '150g', calorias: 140, proteina: 28, tipo: 'marisco' },
+      'ostiones': { nombre: 'Ostiones', cantidad: '150g', calorias: 120, proteina: 20, tipo: 'marisco' },
       
-      // Vegetales
-      'cebolla': { nombre: 'Cebolla', cantidad: '1 unidad', calorias: 40, proteina: 1 },
-      'tomate': { nombre: 'Tomate', cantidad: '2 unidades', calorias: 35, proteina: 2 },
-      'lechuga': { nombre: 'Lechuga', cantidad: '100g', calorias: 15, proteina: 1 },
-      'espinaca': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3 },
-      'brocoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4 },
-      'brócoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4 },
-      'zanahoria': { nombre: 'Zanahoria', cantidad: '100g', calorias: 40, proteina: 1 },
-      'pimiento': { nombre: 'Pimiento', cantidad: '1 unidad', calorias: 30, proteina: 1 },
-      'chile': { nombre: 'Chile', cantidad: '2 unidades', calorias: 20, proteina: 1 },
-      'aguacate': { nombre: 'Aguacate', cantidad: '1 unidad', calorias: 240, proteina: 3 },
-      'champiñon': { nombre: 'Champiñones', cantidad: '100g', calorias: 22, proteina: 3 },
-      'champiñones': { nombre: 'Champiñones', cantidad: '100g', calorias: 22, proteina: 3 },
-      'hongos': { nombre: 'Hongos', cantidad: '100g', calorias: 22, proteina: 3 },
-      'elote': { nombre: 'Elote', cantidad: '1 unidad', calorias: 90, proteina: 3 },
-      'maiz': { nombre: 'Maíz', cantidad: '100g', calorias: 90, proteina: 3 },
-      'frijol': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14 },
-      'frijoles': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14 },
+      // ============ CARBOHIDRATOS ============
+      'arroz': { nombre: 'Arroz', cantidad: '200g', calorias: 260, proteina: 5, tipo: 'carbohidrato' },
+      'pasta': { nombre: 'Pasta', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'espagueti': { nombre: 'Espagueti', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'spaghetti': { nombre: 'Spaghetti', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'fideo': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'fideos': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'tallarines': { nombre: 'Tallarines', cantidad: '200g', calorias: 260, proteina: 8, tipo: 'carbohidrato' },
+      'lasana': { nombre: 'Láminas de lasaña', cantidad: '200g', calorias: 280, proteina: 10, tipo: 'carbohidrato' },
+      'papa': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
+      'papas': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
+      'patata': { nombre: 'Patatas', cantidad: '300g', calorias: 230, proteina: 6, tipo: 'carbohidrato' },
+      'camote': { nombre: 'Camote', cantidad: '250g', calorias: 200, proteina: 4, tipo: 'carbohidrato' },
+      'pure': { nombre: 'Puré de papa', cantidad: '200g', calorias: 180, proteina: 4, tipo: 'carbohidrato' },
+      'pan': { nombre: 'Pan', cantidad: '100g', calorias: 265, proteina: 9, tipo: 'carbohidrato' },
+      'tortilla': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5, tipo: 'carbohidrato' },
+      'tortillas': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5, tipo: 'carbohidrato' },
+      'avena': { nombre: 'Avena', cantidad: '80g', calorias: 300, proteina: 13, tipo: 'carbohidrato' },
+      'quinoa': { nombre: 'Quinoa', cantidad: '150g', calorias: 180, proteina: 7, tipo: 'carbohidrato' },
+      'cuscus': { nombre: 'Cuscús', cantidad: '150g', calorias: 170, proteina: 6, tipo: 'carbohidrato' },
+      'lenteja': { nombre: 'Lentejas', cantidad: '150g', calorias: 230, proteina: 18, tipo: 'carbohidrato' },
+      'lentejas': { nombre: 'Lentejas', cantidad: '150g', calorias: 230, proteina: 18, tipo: 'carbohidrato' },
+      'garbanzo': { nombre: 'Garbanzos', cantidad: '150g', calorias: 270, proteina: 15, tipo: 'carbohidrato' },
+      'garbanzos': { nombre: 'Garbanzos', cantidad: '150g', calorias: 270, proteina: 15, tipo: 'carbohidrato' },
+      'frijol': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14, tipo: 'carbohidrato' },
+      'frijoles': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14, tipo: 'carbohidrato' },
       
-      // Lácteos
-      'queso': { nombre: 'Queso', cantidad: '80g', calorias: 320, proteina: 20 },
-      'leche': { nombre: 'Leche', cantidad: '250ml', calorias: 150, proteina: 8 },
-      'crema': { nombre: 'Crema', cantidad: '100ml', calorias: 200, proteina: 2 },
-      'yogurt': { nombre: 'Yogurt', cantidad: '150g', calorias: 90, proteina: 15 },
-      'mantequilla': { nombre: 'Mantequilla', cantidad: '30g', calorias: 215, proteina: 0 },
+      // ============ VEGETALES ============
+      'esparrago': { nombre: 'Espárragos', cantidad: '150g', calorias: 30, proteina: 3, tipo: 'vegetal' },
+      'esparragos': { nombre: 'Espárragos', cantidad: '150g', calorias: 30, proteina: 3, tipo: 'vegetal' },
+      'brocoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4, tipo: 'vegetal' },
+      'coliflor': { nombre: 'Coliflor', cantidad: '150g', calorias: 35, proteina: 3, tipo: 'vegetal' },
+      'espinaca': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3, tipo: 'vegetal' },
+      'espinacas': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3, tipo: 'vegetal' },
+      'acelga': { nombre: 'Acelgas', cantidad: '100g', calorias: 20, proteina: 2, tipo: 'vegetal' },
+      'kale': { nombre: 'Kale', cantidad: '100g', calorias: 35, proteina: 3, tipo: 'vegetal' },
+      'lechuga': { nombre: 'Lechuga', cantidad: '100g', calorias: 15, proteina: 1, tipo: 'vegetal' },
+      'arugula': { nombre: 'Arúgula', cantidad: '50g', calorias: 12, proteina: 1, tipo: 'vegetal' },
+      'cebolla': { nombre: 'Cebolla', cantidad: '1 unidad', calorias: 40, proteina: 1, tipo: 'vegetal' },
+      'ajo': { nombre: 'Ajo', cantidad: '3 dientes', calorias: 15, proteina: 1, tipo: 'vegetal' },
+      'tomate': { nombre: 'Tomates', cantidad: '2 unidades', calorias: 35, proteina: 2, tipo: 'vegetal' },
+      'jitomate': { nombre: 'Jitomates', cantidad: '2 unidades', calorias: 35, proteina: 2, tipo: 'vegetal' },
+      'zanahoria': { nombre: 'Zanahorias', cantidad: '2 unidades', calorias: 50, proteina: 1, tipo: 'vegetal' },
+      'zanahorias': { nombre: 'Zanahorias', cantidad: '2 unidades', calorias: 50, proteina: 1, tipo: 'vegetal' },
+      'pimiento': { nombre: 'Pimiento', cantidad: '1 unidad', calorias: 30, proteina: 1, tipo: 'vegetal' },
+      'pimientos': { nombre: 'Pimientos', cantidad: '2 unidades', calorias: 60, proteina: 2, tipo: 'vegetal' },
+      'chile': { nombre: 'Chile', cantidad: '2 unidades', calorias: 20, proteina: 1, tipo: 'vegetal' },
+      'jalapeno': { nombre: 'Jalapeño', cantidad: '2 unidades', calorias: 10, proteina: 0, tipo: 'vegetal' },
+      'aguacate': { nombre: 'Aguacate', cantidad: '1 unidad', calorias: 240, proteina: 3, tipo: 'vegetal' },
+      'pepino': { nombre: 'Pepino', cantidad: '1 unidad', calorias: 15, proteina: 1, tipo: 'vegetal' },
+      'calabaza': { nombre: 'Calabaza', cantidad: '200g', calorias: 50, proteina: 2, tipo: 'vegetal' },
+      'calabacin': { nombre: 'Calabacín', cantidad: '200g', calorias: 35, proteina: 2, tipo: 'vegetal' },
+      'zucchini': { nombre: 'Zucchini', cantidad: '200g', calorias: 35, proteina: 2, tipo: 'vegetal' },
+      'berenjena': { nombre: 'Berenjena', cantidad: '200g', calorias: 50, proteina: 2, tipo: 'vegetal' },
+      'champinon': { nombre: 'Champiñones', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
+      'champinones': { nombre: 'Champiñones', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
+      'hongo': { nombre: 'Hongos', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
+      'hongos': { nombre: 'Hongos', cantidad: '150g', calorias: 30, proteina: 4, tipo: 'vegetal' },
+      'elote': { nombre: 'Elote', cantidad: '1 unidad', calorias: 90, proteina: 3, tipo: 'vegetal' },
+      'maiz': { nombre: 'Maíz', cantidad: '100g', calorias: 90, proteina: 3, tipo: 'vegetal' },
+      'chicharo': { nombre: 'Chícharos', cantidad: '100g', calorias: 80, proteina: 5, tipo: 'vegetal' },
+      'chicharos': { nombre: 'Chícharos', cantidad: '100g', calorias: 80, proteina: 5, tipo: 'vegetal' },
+      'ejote': { nombre: 'Ejotes', cantidad: '100g', calorias: 30, proteina: 2, tipo: 'vegetal' },
+      'ejotes': { nombre: 'Ejotes', cantidad: '100g', calorias: 30, proteina: 2, tipo: 'vegetal' },
+      'nopales': { nombre: 'Nopales', cantidad: '150g', calorias: 25, proteina: 2, tipo: 'vegetal' },
+      'chayote': { nombre: 'Chayote', cantidad: '1 unidad', calorias: 40, proteina: 1, tipo: 'vegetal' },
+      'betabel': { nombre: 'Betabel', cantidad: '150g', calorias: 65, proteina: 2, tipo: 'vegetal' },
+      'apio': { nombre: 'Apio', cantidad: '2 tallos', calorias: 10, proteina: 0, tipo: 'vegetal' },
+      'col': { nombre: 'Col', cantidad: '150g', calorias: 35, proteina: 2, tipo: 'vegetal' },
+      'repollo': { nombre: 'Repollo', cantidad: '150g', calorias: 35, proteina: 2, tipo: 'vegetal' },
       
-      // Frutas
-      'platano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2 },
-      'plátano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2 },
-      'manzana': { nombre: 'Manzana', cantidad: '1 unidad', calorias: 95, proteina: 0 },
-      'fresa': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1 },
-      'fresas': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1 },
-      'naranja': { nombre: 'Naranja', cantidad: '1 unidad', calorias: 60, proteina: 1 },
-      'limon': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0 },
-      'limón': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0 },
+      // ============ LÁCTEOS ============
+      'queso': { nombre: 'Queso', cantidad: '100g', calorias: 350, proteina: 25, tipo: 'lacteo' },
+      'quesillo': { nombre: 'Quesillo/Oaxaca', cantidad: '100g', calorias: 300, proteina: 22, tipo: 'lacteo' },
+      'panela': { nombre: 'Queso panela', cantidad: '100g', calorias: 250, proteina: 20, tipo: 'lacteo' },
+      'parmesano': { nombre: 'Queso parmesano', cantidad: '50g', calorias: 200, proteina: 18, tipo: 'lacteo' },
+      'mozzarella': { nombre: 'Mozzarella', cantidad: '100g', calorias: 280, proteina: 22, tipo: 'lacteo' },
+      'cheddar': { nombre: 'Queso cheddar', cantidad: '100g', calorias: 400, proteina: 25, tipo: 'lacteo' },
+      'crema': { nombre: 'Crema', cantidad: '100ml', calorias: 200, proteina: 2, tipo: 'lacteo' },
+      'leche': { nombre: 'Leche', cantidad: '250ml', calorias: 150, proteina: 8, tipo: 'lacteo' },
+      'yogurt': { nombre: 'Yogurt', cantidad: '150g', calorias: 90, proteina: 15, tipo: 'lacteo' },
+      'yogur': { nombre: 'Yogur', cantidad: '150g', calorias: 90, proteina: 15, tipo: 'lacteo' },
+      'mantequilla': { nombre: 'Mantequilla', cantidad: '30g', calorias: 215, proteina: 0, tipo: 'lacteo' },
+      'requesón': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
+      'requeson': { nombre: 'Requesón', cantidad: '100g', calorias: 170, proteina: 11, tipo: 'lacteo' },
       
-      // Otros
-      'ajo': { nombre: 'Ajo', cantidad: '2 dientes', calorias: 10, proteina: 0 },
-      'aceite': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0 },
-      'sal': { nombre: 'Sal', cantidad: 'Al gusto', calorias: 0, proteina: 0 },
-      'pimienta': { nombre: 'Pimienta', cantidad: 'Al gusto', calorias: 0, proteina: 0 },
+      // ============ FRUTAS ============
+      'platano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2, tipo: 'fruta' },
+      'banana': { nombre: 'Banana', cantidad: '2 unidades', calorias: 180, proteina: 2, tipo: 'fruta' },
+      'manzana': { nombre: 'Manzana', cantidad: '1 unidad', calorias: 95, proteina: 0, tipo: 'fruta' },
+      'pera': { nombre: 'Pera', cantidad: '1 unidad', calorias: 100, proteina: 0, tipo: 'fruta' },
+      'naranja': { nombre: 'Naranja', cantidad: '1 unidad', calorias: 60, proteina: 1, tipo: 'fruta' },
+      'limon': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
+      'lima': { nombre: 'Lima', cantidad: '2 unidades', calorias: 20, proteina: 0, tipo: 'fruta' },
+      'fresa': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1, tipo: 'fruta' },
+      'fresas': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1, tipo: 'fruta' },
+      'mora': { nombre: 'Moras', cantidad: '100g', calorias: 40, proteina: 1, tipo: 'fruta' },
+      'moras': { nombre: 'Moras', cantidad: '100g', calorias: 40, proteina: 1, tipo: 'fruta' },
+      'arandano': { nombre: 'Arándanos', cantidad: '100g', calorias: 55, proteina: 1, tipo: 'fruta' },
+      'arandanos': { nombre: 'Arándanos', cantidad: '100g', calorias: 55, proteina: 1, tipo: 'fruta' },
+      'frambuesa': { nombre: 'Frambuesas', cantidad: '100g', calorias: 50, proteina: 1, tipo: 'fruta' },
+      'mango': { nombre: 'Mango', cantidad: '1 unidad', calorias: 100, proteina: 1, tipo: 'fruta' },
+      'pina': { nombre: 'Piña', cantidad: '200g', calorias: 100, proteina: 1, tipo: 'fruta' },
+      'papaya': { nombre: 'Papaya', cantidad: '200g', calorias: 80, proteina: 1, tipo: 'fruta' },
+      'melon': { nombre: 'Melón', cantidad: '200g', calorias: 65, proteina: 1, tipo: 'fruta' },
+      'sandia': { nombre: 'Sandía', cantidad: '200g', calorias: 60, proteina: 1, tipo: 'fruta' },
+      'uva': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
+      'uvas': { nombre: 'Uvas', cantidad: '150g', calorias: 100, proteina: 1, tipo: 'fruta' },
+      'durazno': { nombre: 'Durazno', cantidad: '2 unidades', calorias: 80, proteina: 2, tipo: 'fruta' },
+      'coco': { nombre: 'Coco', cantidad: '100g', calorias: 350, proteina: 3, tipo: 'fruta' },
+      'kiwi': { nombre: 'Kiwi', cantidad: '2 unidades', calorias: 85, proteina: 2, tipo: 'fruta' },
+      
+      // ============ CONDIMENTOS Y ESPECIAS ============
+      'sal': { nombre: 'Sal', cantidad: 'al gusto', calorias: 0, proteina: 0, tipo: 'condimento' },
+      'pimienta': { nombre: 'Pimienta negra', cantidad: 'al gusto', calorias: 0, proteina: 0, tipo: 'condimento' },
+      'comino': { nombre: 'Comino', cantidad: '1 cucharadita', calorias: 8, proteina: 0, tipo: 'condimento' },
+      'oregano': { nombre: 'Orégano', cantidad: '1 cucharadita', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'cilantro': { nombre: 'Cilantro fresco', cantidad: '1 manojo', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'perejil': { nombre: 'Perejil fresco', cantidad: '1 manojo', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'albahaca': { nombre: 'Albahaca fresca', cantidad: '10 hojas', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'romero': { nombre: 'Romero', cantidad: '1 rama', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'tomillo': { nombre: 'Tomillo', cantidad: '1 cucharadita', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'laurel': { nombre: 'Hojas de laurel', cantidad: '2 hojas', calorias: 0, proteina: 0, tipo: 'condimento' },
+      'canela': { nombre: 'Canela', cantidad: '1 raja', calorias: 5, proteina: 0, tipo: 'condimento' },
+      'curry': { nombre: 'Curry en polvo', cantidad: '1 cucharada', calorias: 20, proteina: 1, tipo: 'condimento' },
+      'paprika': { nombre: 'Paprika', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'condimento' },
+      'curcuma': { nombre: 'Cúrcuma', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'condimento' },
+      'jengibre': { nombre: 'Jengibre', cantidad: '1 cucharada rallado', calorias: 5, proteina: 0, tipo: 'condimento' },
+      
+      // ============ ACEITES Y GRASAS ============
+      'aceite': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
+      'oliva': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
+      'aceite de coco': { nombre: 'Aceite de coco', cantidad: '2 cucharadas', calorias: 240, proteina: 0, tipo: 'grasa' },
+      
+      // ============ SALSAS ============
+      'salsa': { nombre: 'Salsa', cantidad: '100ml', calorias: 30, proteina: 1, tipo: 'salsa' },
+      'soya': { nombre: 'Salsa de soya', cantidad: '2 cucharadas', calorias: 15, proteina: 2, tipo: 'salsa' },
+      'soja': { nombre: 'Salsa de soya', cantidad: '2 cucharadas', calorias: 15, proteina: 2, tipo: 'salsa' },
+      'teriyaki': { nombre: 'Salsa teriyaki', cantidad: '3 cucharadas', calorias: 45, proteina: 1, tipo: 'salsa' },
+      'bbq': { nombre: 'Salsa BBQ', cantidad: '3 cucharadas', calorias: 70, proteina: 0, tipo: 'salsa' },
+      'mayonesa': { nombre: 'Mayonesa', cantidad: '2 cucharadas', calorias: 180, proteina: 0, tipo: 'salsa' },
+      'mostaza': { nombre: 'Mostaza', cantidad: '1 cucharada', calorias: 10, proteina: 0, tipo: 'salsa' },
+      'ketchup': { nombre: 'Ketchup', cantidad: '2 cucharadas', calorias: 40, proteina: 0, tipo: 'salsa' },
+      'catsup': { nombre: 'Catsup', cantidad: '2 cucharadas', calorias: 40, proteina: 0, tipo: 'salsa' },
+      'vinagre': { nombre: 'Vinagre', cantidad: '1 cucharada', calorias: 5, proteina: 0, tipo: 'salsa' },
+      
+      // ============ DULCES/POSTRES ============
+      'azucar': { nombre: 'Azúcar', cantidad: '100g', calorias: 400, proteina: 0, tipo: 'dulce' },
+      'miel': { nombre: 'Miel', cantidad: '2 cucharadas', calorias: 120, proteina: 0, tipo: 'dulce' },
+      'chocolate': { nombre: 'Chocolate', cantidad: '50g', calorias: 270, proteina: 4, tipo: 'dulce' },
+      'vainilla': { nombre: 'Esencia de vainilla', cantidad: '1 cucharadita', calorias: 10, proteina: 0, tipo: 'dulce' },
+      'harina': { nombre: 'Harina', cantidad: '200g', calorias: 700, proteina: 20, tipo: 'dulce' },
+      
+      // ============ FRUTOS SECOS ============
+      'almendra': { nombre: 'Almendras', cantidad: '30g', calorias: 170, proteina: 6, tipo: 'fruto_seco' },
+      'almendras': { nombre: 'Almendras', cantidad: '30g', calorias: 170, proteina: 6, tipo: 'fruto_seco' },
+      'nuez': { nombre: 'Nueces', cantidad: '30g', calorias: 185, proteina: 4, tipo: 'fruto_seco' },
+      'nueces': { nombre: 'Nueces', cantidad: '30g', calorias: 185, proteina: 4, tipo: 'fruto_seco' },
+      'cacahuate': { nombre: 'Cacahuates', cantidad: '30g', calorias: 160, proteina: 7, tipo: 'fruto_seco' },
+      'mani': { nombre: 'Maní', cantidad: '30g', calorias: 160, proteina: 7, tipo: 'fruto_seco' },
+      'pistacho': { nombre: 'Pistachos', cantidad: '30g', calorias: 160, proteina: 6, tipo: 'fruto_seco' },
+      'avellana': { nombre: 'Avellanas', cantidad: '30g', calorias: 175, proteina: 4, tipo: 'fruto_seco' },
+      
+      // ============ OTROS ============
+      'proteina': { nombre: 'Proteína en polvo', cantidad: '1 scoop (30g)', calorias: 120, proteina: 24, tipo: 'suplemento' },
+      'whey': { nombre: 'Whey protein', cantidad: '1 scoop (30g)', calorias: 120, proteina: 24, tipo: 'suplemento' },
     }
 
     // Detectar ingredientes mencionados en el nombre
     const ingredientesDetectados: string[] = []
+    const tiposDetectados: string[] = []
     let caloriasTotal = 0
     let proteinaTotal = 0
 
+    // Buscar cada ingrediente en el nombre
     for (const [key, value] of Object.entries(ingredientesDB)) {
       if (nombre.includes(key)) {
-        // Evitar duplicados (ej: "huevo" y "huevos")
-        const yaExiste = ingredientesDetectados.some(i => i.toLowerCase().includes(value.nombre.toLowerCase().split(' ')[0]))
+        // Evitar duplicados
+        const palabraBase = value.nombre.toLowerCase().split(' ')[0]
+        const yaExiste = ingredientesDetectados.some(i => i.toLowerCase().includes(palabraBase))
         if (!yaExiste) {
-          ingredientesDetectados.push(`${value.cantidad} ${value.nombre.toLowerCase()}`)
+          ingredientesDetectados.push(`${value.cantidad} de ${value.nombre.toLowerCase()}`)
+          tiposDetectados.push(value.tipo)
           caloriasTotal += value.calorias
           proteinaTotal += value.proteina
         }
       }
     }
 
-    // Añadir ingredientes básicos si se detectaron ingredientes principales
+    // Añadir ingredientes complementarios básicos
     if (ingredientesDetectados.length > 0) {
+      // Añadir ajo si hay proteína o vegetal
+      if ((tiposDetectados.includes('proteina') || tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) && 
+          !ingredientesDetectados.some(i => i.includes('ajo'))) {
+        ingredientesDetectados.push('2 dientes de ajo picados')
+        caloriasTotal += 10
+      }
+      // Añadir aceite si no hay
       if (!ingredientesDetectados.some(i => i.includes('aceite'))) {
-        ingredientesDetectados.push('2 cucharadas aceite de oliva')
+        ingredientesDetectados.push('2 cucharadas de aceite de oliva')
         caloriasTotal += 240
       }
-      if (!ingredientesDetectados.some(i => i.includes('sal'))) {
-        ingredientesDetectados.push('Sal al gusto')
-      }
-      if (!ingredientesDetectados.some(i => i.includes('pimienta'))) {
-        ingredientesDetectados.push('Pimienta al gusto')
+      // Añadir sal y pimienta
+      ingredientesDetectados.push('Sal al gusto')
+      ingredientesDetectados.push('Pimienta negra al gusto')
+      
+      // Añadir limón si es pescado/marisco
+      if ((tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) &&
+          !ingredientesDetectados.some(i => i.includes('limón') || i.includes('limon'))) {
+        ingredientesDetectados.push('Jugo de 1 limón')
+        caloriasTotal += 10
       }
     }
 
-    // Generar pasos de preparación basados en los ingredientes
+    // Generar pasos de preparación inteligentes
     const pasosPreparacion: string[] = []
     
     if (ingredientesDetectados.length > 0) {
-      pasosPreparacion.push('Prepara y corta todos los ingredientes')
+      pasosPreparacion.push('Lava y prepara todos los ingredientes')
       
-      // Detectar método de cocción según ingredientes
-      if (nombre.includes('huevo') || nombre.includes('tortilla') || nombre.includes('omelette')) {
-        pasosPreparacion.push('Bate los huevos en un bowl con sal y pimienta')
-        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio')
-        if (ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo'))) {
-          pasosPreparacion.push('Cocina primero la proteína (jamón/tocino/chorizo) hasta que esté dorada')
+      // Pasos específicos según el tipo de proteína
+      if (tiposDetectados.includes('pescado')) {
+        pasosPreparacion.push('Sazona el pescado con sal, pimienta y limón')
+        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
+        pasosPreparacion.push('Cocina el pescado 3-4 minutos por cada lado hasta que esté dorado')
+      } else if (tiposDetectados.includes('marisco')) {
+        pasosPreparacion.push('Limpia bien los mariscos')
+        pasosPreparacion.push('Calienta el aceite con el ajo hasta que esté fragante')
+        pasosPreparacion.push('Añade los mariscos y cocina 3-5 minutos hasta que estén rosados')
+      } else if (tiposDetectados.includes('proteina') && nombre.includes('huevo')) {
+        pasosPreparacion.push('Bate los huevos con sal y pimienta')
+        pasosPreparacion.push('Calienta el aceite o mantequilla en sartén antiadherente')
+        if (tiposDetectados.some(t => ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo')))) {
+          pasosPreparacion.push('Cocina primero la carne (jamón/tocino/chorizo) hasta dorar')
         }
-        if (ingredientesDetectados.some(i => i.includes('cebolla') || i.includes('pimiento') || i.includes('tomate'))) {
-          pasosPreparacion.push('Saltea las verduras hasta que estén suaves')
-        }
-        pasosPreparacion.push('Vierte los huevos batidos y cocina revolviendo suavemente')
+        pasosPreparacion.push('Vierte los huevos y cocina revolviendo suavemente')
         if (ingredientesDetectados.some(i => i.includes('queso'))) {
           pasosPreparacion.push('Añade el queso y deja que se derrita')
         }
-        pasosPreparacion.push('Sirve caliente')
-      } else if (nombre.includes('arroz')) {
-        if (nombre.includes('leche')) {
-          // Arroz con leche (postre)
-          ingredientesDetectados.length = 0
-          ingredientesDetectados.push('200g arroz', '1 litro de leche', '150g azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
-          pasosPreparacion.length = 0
-          pasosPreparacion.push('Lava el arroz y escúrrelo bien')
-          pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
-          pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos, revolviendo frecuentemente')
-          pasosPreparacion.push('Agrega el azúcar y mezcla bien')
-          pasosPreparacion.push('Retira la canela y cáscara de limón')
-          pasosPreparacion.push('Sirve tibio o frío con canela espolvoreada')
-          caloriasTotal = 280
-          proteinaTotal = 6
-        } else {
-          pasosPreparacion.push('Lava el arroz hasta que el agua salga clara')
-          pasosPreparacion.push('Sofríe los ingredientes aromáticos (cebolla, ajo)')
-          pasosPreparacion.push('Añade el arroz y sofríe 2 minutos')
-          pasosPreparacion.push('Agrega el doble de agua o caldo caliente')
-          pasosPreparacion.push('Cocina tapado a fuego bajo por 18-20 minutos')
-          pasosPreparacion.push('Deja reposar 5 minutos y sirve')
-        }
-      } else if (nombre.includes('pollo') || nombre.includes('pechuga')) {
-        pasosPreparacion.push('Sazona el pollo con sal, pimienta y especias')
+      } else if (tiposDetectados.includes('proteina')) {
+        pasosPreparacion.push('Sazona la proteína con sal, pimienta y especias')
         pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
-        pasosPreparacion.push('Cocina el pollo 6-7 minutos por cada lado hasta que esté dorado')
-        if (ingredientesDetectados.some(i => i.includes('verdura') || i.includes('brócoli') || i.includes('pimiento'))) {
-          pasosPreparacion.push('Retira el pollo y saltea las verduras en la misma sartén')
+        pasosPreparacion.push('Cocina la proteína hasta que esté bien dorada y cocida por dentro')
+      }
+      
+      // Pasos para vegetales
+      if (tiposDetectados.includes('vegetal')) {
+        const vegetales = ingredientesDetectados.filter(i => {
+          const nombreLower = i.toLowerCase()
+          return nombreLower.includes('espárrago') || nombreLower.includes('brócoli') || 
+                 nombreLower.includes('espinaca') || nombreLower.includes('pimiento') ||
+                 nombreLower.includes('calabacín') || nombreLower.includes('champiñon') ||
+                 nombreLower.includes('zanahoria') || nombreLower.includes('cebolla')
+        })
+        if (vegetales.length > 0) {
+          pasosPreparacion.push('Corta los vegetales en trozos uniformes')
+          pasosPreparacion.push('Saltea los vegetales en la misma sartén 3-5 minutos hasta que estén tiernos pero crujientes')
         }
-        pasosPreparacion.push('Sirve caliente')
-      } else if (nombre.includes('pasta') || nombre.includes('espagueti') || nombre.includes('fideo')) {
-        pasosPreparacion.push('Hierve agua con sal y cocina la pasta según el paquete')
-        pasosPreparacion.push('Mientras, prepara la salsa o proteína')
-        pasosPreparacion.push('Escurre la pasta reservando un poco del agua')
-        pasosPreparacion.push('Mezcla la pasta con la salsa')
-        pasosPreparacion.push('Sirve con queso parmesano si lo deseas')
-      } else {
-        // Genérico
-        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio')
-        if (ingredientesDetectados.some(i => i.includes('carne') || i.includes('pollo') || i.includes('res'))) {
-          pasosPreparacion.push('Cocina la proteína hasta que esté bien hecha')
+      }
+      
+      // Pasos para carbohidratos
+      if (tiposDetectados.includes('carbohidrato')) {
+        if (ingredientesDetectados.some(i => i.includes('arroz'))) {
+          if (nombre.includes('leche')) {
+            // Arroz con leche - reemplazar todo
+            ingredientesDetectados.length = 0
+            ingredientesDetectados.push('200g de arroz', '1 litro de leche', '150g de azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
+            pasosPreparacion.length = 0
+            pasosPreparacion.push('Lava el arroz y escúrrelo')
+            pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
+            pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos revolviendo frecuentemente')
+            pasosPreparacion.push('Agrega el azúcar y mezcla bien')
+            pasosPreparacion.push('Retira la canela y cáscara, sirve tibio o frío con canela espolvoreada')
+            caloriasTotal = 280
+            proteinaTotal = 6
+          } else {
+            pasosPreparacion.push('Cocina el arroz aparte según las instrucciones del paquete')
+          }
         }
-        if (ingredientesDetectados.some(i => i.includes('cebolla') || i.includes('ajo'))) {
-          pasosPreparacion.push('Añade la cebolla y ajo, sofríe hasta dorar')
+        if (ingredientesDetectados.some(i => i.includes('pasta') || i.includes('espagueti') || i.includes('fideo'))) {
+          pasosPreparacion.push('Cocina la pasta en agua con sal hasta que esté al dente')
         }
-        pasosPreparacion.push('Incorpora el resto de ingredientes')
-        pasosPreparacion.push('Cocina hasta que todo esté bien integrado')
-        pasosPreparacion.push('Rectifica la sazón y sirve')
+        if (ingredientesDetectados.some(i => i.includes('papa'))) {
+          pasosPreparacion.push('Corta las papas y cocínalas hasta que estén tiernas')
+        }
+      }
+      
+      // Paso final
+      if (!nombre.includes('leche') || !nombre.includes('arroz')) {
+        pasosPreparacion.push('Combina todos los ingredientes, rectifica la sazón')
+        pasosPreparacion.push('Sirve caliente y disfruta')
       }
     }
 
-    // Si no se detectaron ingredientes, crear receta genérica basada en el nombre
+    // Si no se detectaron ingredientes
     if (ingredientesDetectados.length === 0) {
       ingredientesDetectados.push(
-        'Ingrediente principal de la receta',
-        'Aceite para cocinar',
+        'Ingredientes principales según tu receta',
+        '2 cucharadas de aceite',
         'Sal y pimienta al gusto',
-        'Especias de tu preferencia'
+        'Condimentos de tu preferencia'
       )
       pasosPreparacion.push(
         'Prepara todos los ingredientes',
-        'Cocina según el método apropiado para el platillo',
+        'Cocina según el método que prefieras',
         'Sazona al gusto',
         'Sirve y disfruta'
       )
@@ -420,12 +582,13 @@ export default function RecetasPage() {
       proteinaTotal = 15
     }
 
-    // Calcular tiempo basado en complejidad
-    let tiempo = 10 + (ingredientesDetectados.length * 3)
-    if (nombre.includes('horno') || nombre.includes('horneado')) tiempo += 20
-    if (nombre.includes('arroz') && !nombre.includes('leche')) tiempo = 25
+    // Calcular tiempo
+    let tiempo = 15
+    if (tiposDetectados.includes('pescado') || tiposDetectados.includes('marisco')) tiempo = 20
+    if (tiposDetectados.includes('proteina')) tiempo = 25
+    if (ingredientesDetectados.some(i => i.includes('arroz')) && !nombre.includes('leche')) tiempo = 30
     if (nombre.includes('arroz') && nombre.includes('leche')) tiempo = 45
-    if (tiempo > 60) tiempo = 60
+    if (nombre.includes('horno') || nombre.includes('horneado') || nombre.includes('asado')) tiempo = 40
 
     setNuevaReceta({
       ...nuevaReceta,
