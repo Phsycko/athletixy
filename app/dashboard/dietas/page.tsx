@@ -1762,40 +1762,47 @@ export default function DietasPage() {
                 </div>
               </div>
 
-              {/* Macros calculados */}
+              {/* Macros objetivo */}
               <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700">Macros Calculados</h4>
-                  {esPremium && (
-                    <span className="px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
-                      PREMIUM
-                    </span>
-                  )}
+                  <h4 className="text-sm font-semibold text-gray-700">Macros Objetivo Diarios</h4>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Calorías</label>
-                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-orange-600 font-bold text-sm">
-                      {datosUsuario.caloriasObjetivo}
-                    </div>
+                    <input
+                      type="number"
+                      value={datosUsuario.caloriasObjetivo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, caloriasObjetivo: Number(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded text-black font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Proteína (g)</label>
-                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-red-600 font-bold text-sm">
-                      {datosUsuario.proteinaObjetivo}
-                    </div>
+                    <input
+                      type="number"
+                      value={datosUsuario.proteinaObjetivo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, proteinaObjetivo: Number(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded text-black font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Carbohidratos (g)</label>
-                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-blue-600 font-bold text-sm">
-                      {datosUsuario.carbsObjetivo}
-                    </div>
+                    <input
+                      type="number"
+                      value={datosUsuario.carbsObjetivo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, carbsObjetivo: Number(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded text-black font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">Grasas (g)</label>
-                    <div className="px-3 py-2 bg-white border border-gray-300 rounded text-yellow-600 font-bold text-sm">
-                      {datosUsuario.grasasObjetivo}
-                    </div>
+                    <input
+                      type="number"
+                      value={datosUsuario.grasasObjetivo}
+                      onChange={(e) => setDatosUsuario({...datosUsuario, grasasObjetivo: Number(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white border-2 border-gray-300 rounded text-black font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                    />
                   </div>
                 </div>
                 {esPremium ? (
@@ -1808,14 +1815,20 @@ export default function DietasPage() {
                     Recalcular Macros Automáticamente
                   </button>
                 ) : (
-                  <div className="w-full py-3 bg-gray-200 text-gray-500 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                  <div className="w-full py-3 bg-gray-200 text-gray-500 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed relative group">
                     <Sparkles className="w-5 h-5" />
                     Recalcular Macros Automáticamente
                     <span className="ml-2 px-2 py-0.5 bg-yellow-400 text-black text-xs font-bold rounded">
                       PREMIUM
                     </span>
+                    <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded py-2 px-3 whitespace-nowrap">
+                      Los usuarios básicos pueden editar los valores manualmente
+                    </div>
                   </div>
                 )}
+                <p className="text-xs text-gray-600 mt-2 text-center">
+                  {esPremium ? 'Los macros se calculan automáticamente con fórmula Harris-Benedict' : 'Edita los valores manualmente o actualiza a Premium para cálculo automático'}
+                </p>
               </div>
 
               {/* Botones de acción */}
