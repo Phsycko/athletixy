@@ -25,7 +25,8 @@ import {
   BarChart3,
   Target,
   Activity,
-  Award
+  Award,
+  ChevronLeft
 } from 'lucide-react'
 
 type Paciente = {
@@ -70,6 +71,32 @@ export default function NutriologoPage() {
   const [busquedaPaciente, setBusquedaPaciente] = useState('')
   const [modalAsignarPlan, setModalAsignarPlan] = useState(false)
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
+  
+  // Estados para calendario
+  const [mesActual, setMesActual] = useState(new Date())
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null)
+  const [modalConsulta, setModalConsulta] = useState(false)
+  const [modalBloquearFecha, setModalBloquearFecha] = useState(false)
+  const [fechasBloqueadas, setFechasBloqueadas] = useState<string[]>([])
+  const [nuevaConsulta, setNuevaConsulta] = useState({
+    pacienteId: '',
+    fecha: '',
+    hora: '',
+    tipo: 'presencial' as 'presencial' | 'virtual',
+    duracion: '30',
+    notas: ''
+  })
+  const [consultas, setConsultas] = useState<Array<{
+    id: string
+    pacienteId: string
+    pacienteNombre: string
+    fecha: string
+    hora: string
+    tipo: 'presencial' | 'virtual'
+    duracion: string
+    notas: string
+    estado: 'programada' | 'completada' | 'cancelada'
+  }>>([])
   const [nuevoPlan, setNuevoPlan] = useState({
     nombre: '',
     fechaInicio: '',
@@ -159,16 +186,216 @@ export default function NutriologoPage() {
     planesActivos: planesNutricionales.filter(p => p.estado === 'activo').length
   }
 
+  // Cargar datos del localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const consultasGuardadas = localStorage.getItem('athletixy_consultas_nutriologo')
+      if (consultasGuardadas) {
+        setConsultas(JSON.parse(consultasGuardadas))
+      }
+      
+      const fechasBloqueadasGuardadas = localStorage.getItem('athletixy_fechas_bloqueadas_nutriologo')
+      if (fechasBloqueadasGuardadas) {
+        setFechasBloqueadas(JSON.parse(fechasBloqueadasGuardadas))
+      }
+    }
+  }, [])
+
+  // Guardar consultas en localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && consultas.length > 0) {
+      localStorage.setItem('athletixy_consultas_nutriologo', JSON.stringify(consultas))
+    }
+  }, [consultas])
+
+  // Guardar fechas bloqueadas en localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && fechasBloqueadas.length > 0) {
+      localStorage.setItem('athletixy_fechas_bloqueadas_nutriologo', JSON.stringify(fechasBloqueadas))
+    }
+  }, [fechasBloqueadas])
+
+  // Funciones del calendario
+  const obtenerDiasDelMes = () => {
+    const año = mesActual.getFullYear()
+    const mes = mesActual.getMonth()
+    const primerDia = new Date(año, mes, 1)
+    const ultimoDia = new Date(año, mes + 1, 0)
+    const diasEnMes = ultimoDia.getDate()
+    const diaInicioSemana = primerDia.getDay()
+    
+    const dias: (Date | null)[] = []
+    
+    // Días del mes anterior para completar la semana
+    for (let i = diaInicioSemana - 1; i >= 0; i--) {
+      dias.push(null)
+    }
+    
+    // Días del mes actual
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+      dias.push(new Date(año, mes, dia))
+    }
+    
+    return dias
+  }
+
+  const formatearFecha = (fecha: Date) => {
+    return fecha.toISOString().split('T')[0]
+  }
+
+  const tieneConsulta = (fecha: Date) => {
+    const fechaStr = formatearFecha(fecha)
+    return consultas.some(c => c.fecha === fechaStr && c.estado === 'programada')
+  }
+
+  const estaBloqueada = (fecha: Date) => {
+    const fechaStr = formatearFecha(fecha)
+    return fechasBloqueadas.includes(fechaStr)
+  }
+
+  const obtenerConsultasDelDia = (fecha: Date) => {
+    const fechaStr = formatearFecha(fecha)
+    return consultas.filter(c => c.fecha === fechaStr && c.estado === 'programada')
+  }
+
+  const cambiarMes = (direccion: 'anterior' | 'siguiente') => {
+    setMesActual(prev => {
+      const nuevoMes = new Date(prev)
+      if (direccion === 'anterior') {
+        nuevoMes.setMonth(prev.getMonth() - 1)
+      } else {
+        nuevoMes.setMonth(prev.getMonth() + 1)
+      }
+      return nuevoMes
+    })
+  }
+
+  const abrirModalConsulta = (fecha?: Date) => {
+    if (fecha) {
+      setFechaSeleccionada(fecha)
+      setNuevaConsulta({
+        ...nuevaConsulta,
+        fecha: formatearFecha(fecha)
+      })
+    }
+    setModalConsulta(true)
+  }
+
+  const guardarConsulta = () => {
+    if (!nuevaConsulta.pacienteId || !nuevaConsulta.fecha || !nuevaConsulta.hora) {
+      alert('Por favor completa todos los campos requeridos')
+      return
+    }
+
+    const paciente = pacientes.find(p => p.id === nuevaConsulta.pacienteId)
+    if (!paciente) return
+
+    const consulta = {
+      id: Date.now().toString(),
+      pacienteId: nuevaConsulta.pacienteId,
+      pacienteNombre: paciente.nombre,
+      fecha: nuevaConsulta.fecha,
+      hora: nuevaConsulta.hora,
+      tipo: nuevaConsulta.tipo,
+      duracion: nuevaConsulta.duracion,
+      notas: nuevaConsulta.notas,
+      estado: 'programada' as const
+    }
+
+    setConsultas([...consultas, consulta])
+
+    // Crear notificaciones
+    const notificacionNutriologo = {
+      id: Date.now().toString(),
+      tipo: 'consulta',
+      titulo: 'Nueva Consulta Programada',
+      mensaje: `Consulta con ${paciente.nombre} el ${nuevaConsulta.fecha} a las ${nuevaConsulta.hora}`,
+      fecha: new Date().toISOString(),
+      leido: false,
+      relacionado: consulta.id
+    }
+
+    const notificacionPaciente = {
+      id: (Date.now() + 1).toString(),
+      tipo: 'consulta',
+      titulo: 'Consulta Programada',
+      mensaje: `Tienes una consulta con ${nutriologo.nombre} el ${nuevaConsulta.fecha} a las ${nuevaConsulta.hora}`,
+      fecha: new Date().toISOString(),
+      leido: false,
+      relacionado: consulta.id,
+      pacienteId: paciente.id
+    }
+
+    // Guardar notificaciones
+    const notificacionesNutriologo = JSON.parse(localStorage.getItem('athletixy_notificaciones_nutriologo') || '[]')
+    notificacionesNutriologo.push(notificacionNutriologo)
+    localStorage.setItem('athletixy_notificaciones_nutriologo', JSON.stringify(notificacionesNutriologo))
+
+    const notificacionesPacientes = JSON.parse(localStorage.getItem('athletixy_notificaciones_pacientes') || '{}')
+    if (!notificacionesPacientes[paciente.id]) {
+      notificacionesPacientes[paciente.id] = []
+    }
+    notificacionesPacientes[paciente.id].push(notificacionPaciente)
+    localStorage.setItem('athletixy_notificaciones_pacientes', JSON.stringify(notificacionesPacientes))
+
+    // Programar notificaciones futuras (24h antes y 1h antes)
+    const fechaConsulta = new Date(`${nuevaConsulta.fecha}T${nuevaConsulta.hora}`)
+    const notificacion24h = new Date(fechaConsulta.getTime() - 24 * 60 * 60 * 1000)
+    const notificacion1h = new Date(fechaConsulta.getTime() - 60 * 60 * 1000)
+
+    if (notificacion24h > new Date()) {
+      setTimeout(() => {
+        const notif24h = {
+          id: (Date.now() + 2).toString(),
+          tipo: 'recordatorio',
+          titulo: 'Recordatorio: Consulta Mañana',
+          mensaje: `Consulta con ${paciente.nombre} mañana a las ${nuevaConsulta.hora}`,
+          fecha: new Date().toISOString(),
+          leido: false,
+          relacionado: consulta.id
+        }
+        const notifs = JSON.parse(localStorage.getItem('athletixy_notificaciones_nutriologo') || '[]')
+        notifs.push(notif24h)
+        localStorage.setItem('athletixy_notificaciones_nutriologo', JSON.stringify(notifs))
+      }, notificacion24h.getTime() - Date.now())
+    }
+
+    setModalConsulta(false)
+    setNuevaConsulta({
+      pacienteId: '',
+      fecha: '',
+      hora: '',
+      tipo: 'presencial',
+      duracion: '30',
+      notas: ''
+    })
+    setFechaSeleccionada(null)
+  }
+
+  const bloquearFecha = (fecha: Date) => {
+    const fechaStr = formatearFecha(fecha)
+    if (!fechasBloqueadas.includes(fechaStr)) {
+      setFechasBloqueadas([...fechasBloqueadas, fechaStr])
+    }
+  }
+
+  const desbloquearFecha = (fecha: Date) => {
+    const fechaStr = formatearFecha(fecha)
+    setFechasBloqueadas(fechasBloqueadas.filter(f => f !== fechaStr))
+  }
+
+  const eliminarConsulta = (id: string) => {
+    setConsultas(consultas.filter(c => c.id !== id))
+  }
+
   // Consultas próximas
-  const consultasProximas = pacientes
-    .filter(p => p.proximaConsulta)
-    .map(p => ({
-      paciente: p.nombre,
-      fecha: p.proximaConsulta!,
-      hora: '15:00',
-      tipo: 'Seguimiento'
-    }))
-    .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+  const consultasProximas = consultas
+    .filter(c => c.estado === 'programada' && new Date(c.fecha) >= new Date())
+    .sort((a, b) => {
+      const fechaA = new Date(`${a.fecha}T${a.hora}`)
+      const fechaB = new Date(`${b.fecha}T${b.hora}`)
+      return fechaA.getTime() - fechaB.getTime()
+    })
     .slice(0, 5)
 
   // Filtrar pacientes
@@ -336,24 +563,34 @@ export default function NutriologoPage() {
               <h2 className="text-lg font-semibold text-black mb-6">Próximas Consultas</h2>
               <div className="space-y-4">
                 {consultasProximas.length > 0 ? (
-                  consultasProximas.map((consulta, index) => (
+                  consultasProximas.map((consulta) => (
                     <div
-                      key={index}
+                      key={consulta.id}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
                     >
                       <div>
-                        <p className="font-semibold text-black">{consulta.paciente}</p>
+                        <p className="font-semibold text-black">{consulta.pacienteNombre}</p>
                         <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                           <Calendar className="w-4 h-4" />
                           <span>{consulta.fecha}</span>
                           <span>•</span>
                           <Clock className="w-4 h-4" />
                           <span>{consulta.hora}</span>
+                          <span>•</span>
+                          <span className={`px-2 py-0.5 rounded text-xs ${
+                            consulta.tipo === 'virtual' 
+                              ? 'bg-blue-100 text-blue-700' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {consulta.tipo === 'virtual' ? 'Virtual' : 'Presencial'}
+                          </span>
                         </div>
                       </div>
-                      <button className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium">
-                        Ver Detalles
-                      </button>
+                      {consulta.tipo === 'virtual' ? (
+                        <Video className="w-5 h-5 text-blue-500" />
+                      ) : (
+                        <Users className="w-5 h-5 text-gray-400" />
+                      )}
                     </div>
                   ))
                 ) : (
@@ -645,11 +882,401 @@ export default function NutriologoPage() {
 
       {/* Vista Calendario */}
       {vistaActiva === 'calendario' && (
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-black mb-6">Calendario de Consultas</h2>
-          <div className="text-center py-12">
-            <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Vista de calendario próximamente</p>
+        <div className="space-y-6">
+          {/* Header del Calendario */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-black mb-2">Calendario de Consultas</h2>
+                <p className="text-gray-600 text-sm">Gestiona tus consultas y bloquea fechas no disponibles</p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setModalBloquearFecha(true)}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium"
+                >
+                  Bloquear Fecha
+                </button>
+                <button
+                  onClick={() => abrirModalConsulta()}
+                  className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                >
+                  <Plus className="w-4 h-4 inline mr-2" />
+                  Nueva Consulta
+                </button>
+              </div>
+            </div>
+
+            {/* Navegación del Mes */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => cambiarMes('anterior')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              <h3 className="text-lg font-bold text-black capitalize">
+                {mesActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+              </h3>
+              <button
+                onClick={() => cambiarMes('siguiente')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Calendario */}
+            <div className="grid grid-cols-7 gap-2">
+              {/* Días de la semana */}
+              {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((dia) => (
+                <div key={dia} className="text-center font-semibold text-gray-700 py-2 text-sm">
+                  {dia}
+                </div>
+              ))}
+
+              {/* Días del mes */}
+              {obtenerDiasDelMes().map((dia, index) => {
+                if (!dia) {
+                  return <div key={`empty-${index}`} className="aspect-square"></div>
+                }
+
+                const tieneConsultas = tieneConsulta(dia)
+                const bloqueada = estaBloqueada(dia)
+                const esHoy = formatearFecha(dia) === formatearFecha(new Date())
+                const consultasDelDia = obtenerConsultasDelDia(dia)
+
+                return (
+                  <div
+                    key={dia.getTime()}
+                    onClick={() => {
+                      if (!bloqueada) {
+                        abrirModalConsulta(dia)
+                      }
+                    }}
+                    className={`aspect-square border-2 rounded-lg p-2 cursor-pointer transition ${
+                      bloqueada
+                        ? 'bg-red-50 border-red-300 cursor-not-allowed'
+                        : esHoy
+                        ? 'bg-black text-white border-black'
+                        : tieneConsultas
+                        ? 'bg-green-50 border-green-300 hover:border-green-500'
+                        : 'bg-white border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-sm font-semibold ${esHoy ? 'text-white' : 'text-black'}`}>
+                        {dia.getDate()}
+                      </span>
+                      {bloqueada && (
+                        <X className="w-3 h-3 text-red-500" />
+                      )}
+                    </div>
+                    {tieneConsultas && (
+                      <div className="space-y-1">
+                        {consultasDelDia.slice(0, 2).map((consulta) => (
+                          <div
+                            key={consulta.id}
+                            className={`text-xs px-1 py-0.5 rounded ${
+                              esHoy ? 'bg-white/20 text-white' : 'bg-green-200 text-green-800'
+                            }`}
+                            title={`${consulta.pacienteNombre} - ${consulta.hora}`}
+                          >
+                            {consulta.hora}
+                          </div>
+                        ))}
+                        {consultasDelDia.length > 2 && (
+                          <div className={`text-xs ${esHoy ? 'text-white/80' : 'text-gray-600'}`}>
+                            +{consultasDelDia.length - 2} más
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Leyenda */}
+            <div className="mt-6 flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-black rounded"></div>
+                <span className="text-gray-600">Hoy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-green-50 border-2 border-green-300 rounded"></div>
+                <span className="text-gray-600">Con consultas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-50 border-2 border-red-300 rounded"></div>
+                <span className="text-gray-600">Bloqueada</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-white border-2 border-gray-200 rounded"></div>
+                <span className="text-gray-600">Disponible</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Lista de Consultas del Mes */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-black mb-4">Consultas de {mesActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</h3>
+            <div className="space-y-3">
+              {consultas
+                .filter(c => {
+                  const fechaConsulta = new Date(c.fecha)
+                  return fechaConsulta.getMonth() === mesActual.getMonth() && 
+                         fechaConsulta.getFullYear() === mesActual.getFullYear() &&
+                         c.estado === 'programada'
+                })
+                .sort((a, b) => {
+                  const fechaA = new Date(`${a.fecha}T${a.hora}`)
+                  const fechaB = new Date(`${b.fecha}T${b.hora}`)
+                  return fechaA.getTime() - fechaB.getTime()
+                })
+                .map((consulta) => (
+                  <div
+                    key={consulta.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="bg-black p-2 rounded-lg">
+                        <Calendar className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-black">{consulta.pacienteNombre}</p>
+                        <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                          <span>{consulta.fecha}</span>
+                          <span>•</span>
+                          <span>{consulta.hora}</span>
+                          <span>•</span>
+                          <span className={`px-2 py-0.5 rounded ${
+                            consulta.tipo === 'virtual' 
+                              ? 'bg-blue-100 text-blue-700' 
+                              : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {consulta.tipo === 'virtual' ? 'Virtual' : 'Presencial'}
+                          </span>
+                          <span>•</span>
+                          <span>{consulta.duracion} min</span>
+                        </div>
+                        {consulta.notas && (
+                          <p className="text-xs text-gray-500 mt-1">{consulta.notas}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => eliminarConsulta(consulta.id)}
+                        className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition"
+                        title="Eliminar consulta"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              {consultas.filter(c => {
+                const fechaConsulta = new Date(c.fecha)
+                return fechaConsulta.getMonth() === mesActual.getMonth() && 
+                       fechaConsulta.getFullYear() === mesActual.getFullYear() &&
+                       c.estado === 'programada'
+              }).length === 0 && (
+                <p className="text-center text-gray-600 py-8">No hay consultas programadas este mes</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Nueva Consulta */}
+      {modalConsulta && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-black">Nueva Consulta</h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  {fechaSeleccionada ? `Fecha: ${fechaSeleccionada.toLocaleDateString('es-ES')}` : 'Programar consulta'}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setModalConsulta(false)
+                  setFechaSeleccionada(null)
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Paciente *</label>
+                <select
+                  value={nuevaConsulta.pacienteId}
+                  onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, pacienteId: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                  <option value="">Seleccionar paciente</option>
+                  {pacientes.map((paciente) => (
+                    <option key={paciente.id} value={paciente.id}>
+                      {paciente.nombre} - {paciente.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+                  <input
+                    type="date"
+                    value={nuevaConsulta.fecha}
+                    onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, fecha: e.target.value })}
+                    min={formatearFecha(new Date())}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Hora *</label>
+                  <input
+                    type="time"
+                    value={nuevaConsulta.hora}
+                    onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, hora: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Consulta</label>
+                  <select
+                    value={nuevaConsulta.tipo}
+                    onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, tipo: e.target.value as 'presencial' | 'virtual' })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  >
+                    <option value="presencial">Presencial</option>
+                    <option value="virtual">Virtual</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Duración (minutos)</label>
+                  <select
+                    value={nuevaConsulta.duracion}
+                    onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, duracion: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  >
+                    <option value="30">30 min</option>
+                    <option value="45">45 min</option>
+                    <option value="60">60 min</option>
+                    <option value="90">90 min</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notas (Opcional)</label>
+                <textarea
+                  value={nuevaConsulta.notas}
+                  onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, notas: e.target.value })}
+                  rows={3}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Notas adicionales sobre la consulta..."
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+                <button
+                  onClick={() => {
+                    setModalConsulta(false)
+                    setFechaSeleccionada(null)
+                  }}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={guardarConsulta}
+                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                >
+                  Programar Consulta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Bloquear Fecha */}
+      {modalBloquearFecha && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-black">Bloquear Fecha</h3>
+              <button
+                onClick={() => setModalBloquearFecha(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Fecha</label>
+                <input
+                  type="date"
+                  value={fechaSeleccionada ? formatearFecha(fechaSeleccionada) : ''}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setFechaSeleccionada(new Date(e.target.value))
+                    }
+                  }}
+                  min={formatearFecha(new Date())}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+
+              {fechaSeleccionada && estaBloqueada(fechaSeleccionada) && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    Esta fecha ya está bloqueada. ¿Deseas desbloquearla?
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+                <button
+                  onClick={() => setModalBloquearFecha(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                >
+                  Cancelar
+                </button>
+                {fechaSeleccionada && (
+                  <button
+                    onClick={() => {
+                      if (estaBloqueada(fechaSeleccionada)) {
+                        desbloquearFecha(fechaSeleccionada)
+                      } else {
+                        bloquearFecha(fechaSeleccionada)
+                      }
+                      setModalBloquearFecha(false)
+                      setFechaSeleccionada(null)
+                    }}
+                    className={`flex-1 px-6 py-3 rounded-lg transition font-medium ${
+                      estaBloqueada(fechaSeleccionada)
+                        ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                        : 'bg-black hover:bg-gray-800 text-white'
+                    }`}
+                  >
+                    {estaBloqueada(fechaSeleccionada) ? 'Desbloquear' : 'Bloquear'}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
