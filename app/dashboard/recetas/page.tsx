@@ -215,144 +215,226 @@ export default function RecetasPage() {
     }
 
     setGenerandoRecetaIA(true)
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
-    const nombreLower = nuevaReceta.nombre.toLowerCase()
+    const nombre = nuevaReceta.nombre.toLowerCase().trim()
     
-    // Detectar tipo de receta y generar contenido apropiado
-    let recetaGenerada = {
-      ingredientes: ['Ingrediente 1', 'Ingrediente 2'],
-      preparacion: ['Paso 1', 'Paso 2'],
-      tiempo: 20, calorias: 300, proteina: 20, porciones: 2
+    // Base de datos de ingredientes con sus propiedades
+    const ingredientesDB: { [key: string]: { nombre: string, cantidad: string, calorias: number, proteina: number } } = {
+      // Proteínas
+      'huevo': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18 },
+      'huevos': { nombre: 'Huevos', cantidad: '3 unidades', calorias: 210, proteina: 18 },
+      'jamon': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21 },
+      'jamón': { nombre: 'Jamón', cantidad: '100g', calorias: 145, proteina: 21 },
+      'tocino': { nombre: 'Tocino', cantidad: '80g', calorias: 420, proteina: 12 },
+      'bacon': { nombre: 'Tocino/Bacon', cantidad: '80g', calorias: 420, proteina: 12 },
+      'pollo': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55 },
+      'pechuga': { nombre: 'Pechuga de pollo', cantidad: '250g', calorias: 275, proteina: 55 },
+      'carne': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50 },
+      'res': { nombre: 'Carne de res', cantidad: '250g', calorias: 500, proteina: 50 },
+      'bistec': { nombre: 'Bistec de res', cantidad: '200g', calorias: 400, proteina: 40 },
+      'salmon': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40 },
+      'salmón': { nombre: 'Filete de salmón', cantidad: '200g', calorias: 400, proteina: 40 },
+      'pescado': { nombre: 'Filete de pescado', cantidad: '200g', calorias: 200, proteina: 40 },
+      'atun': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40 },
+      'atún': { nombre: 'Atún', cantidad: '150g', calorias: 180, proteina: 40 },
+      'camaron': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
+      'camarón': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
+      'camarones': { nombre: 'Camarones', cantidad: '200g', calorias: 200, proteina: 40 },
+      'chorizo': { nombre: 'Chorizo', cantidad: '100g', calorias: 300, proteina: 14 },
+      'salchicha': { nombre: 'Salchichas', cantidad: '100g', calorias: 300, proteina: 12 },
+      
+      // Carbohidratos
+      'arroz': { nombre: 'Arroz', cantidad: '200g', calorias: 260, proteina: 5 },
+      'pasta': { nombre: 'Pasta', cantidad: '200g', calorias: 260, proteina: 8 },
+      'espagueti': { nombre: 'Espagueti', cantidad: '200g', calorias: 260, proteina: 8 },
+      'fideo': { nombre: 'Fideos', cantidad: '200g', calorias: 260, proteina: 8 },
+      'papa': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6 },
+      'papas': { nombre: 'Papas', cantidad: '300g', calorias: 230, proteina: 6 },
+      'pan': { nombre: 'Pan', cantidad: '100g', calorias: 265, proteina: 9 },
+      'tortilla': { nombre: 'Tortillas', cantidad: '4 unidades', calorias: 200, proteina: 5 },
+      'avena': { nombre: 'Avena', cantidad: '80g', calorias: 300, proteina: 13 },
+      'quinoa': { nombre: 'Quinoa', cantidad: '150g', calorias: 180, proteina: 7 },
+      
+      // Vegetales
+      'cebolla': { nombre: 'Cebolla', cantidad: '1 unidad', calorias: 40, proteina: 1 },
+      'tomate': { nombre: 'Tomate', cantidad: '2 unidades', calorias: 35, proteina: 2 },
+      'lechuga': { nombre: 'Lechuga', cantidad: '100g', calorias: 15, proteina: 1 },
+      'espinaca': { nombre: 'Espinacas', cantidad: '100g', calorias: 23, proteina: 3 },
+      'brocoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4 },
+      'brócoli': { nombre: 'Brócoli', cantidad: '150g', calorias: 50, proteina: 4 },
+      'zanahoria': { nombre: 'Zanahoria', cantidad: '100g', calorias: 40, proteina: 1 },
+      'pimiento': { nombre: 'Pimiento', cantidad: '1 unidad', calorias: 30, proteina: 1 },
+      'chile': { nombre: 'Chile', cantidad: '2 unidades', calorias: 20, proteina: 1 },
+      'aguacate': { nombre: 'Aguacate', cantidad: '1 unidad', calorias: 240, proteina: 3 },
+      'champiñon': { nombre: 'Champiñones', cantidad: '100g', calorias: 22, proteina: 3 },
+      'champiñones': { nombre: 'Champiñones', cantidad: '100g', calorias: 22, proteina: 3 },
+      'hongos': { nombre: 'Hongos', cantidad: '100g', calorias: 22, proteina: 3 },
+      'elote': { nombre: 'Elote', cantidad: '1 unidad', calorias: 90, proteina: 3 },
+      'maiz': { nombre: 'Maíz', cantidad: '100g', calorias: 90, proteina: 3 },
+      'frijol': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14 },
+      'frijoles': { nombre: 'Frijoles', cantidad: '150g', calorias: 200, proteina: 14 },
+      
+      // Lácteos
+      'queso': { nombre: 'Queso', cantidad: '80g', calorias: 320, proteina: 20 },
+      'leche': { nombre: 'Leche', cantidad: '250ml', calorias: 150, proteina: 8 },
+      'crema': { nombre: 'Crema', cantidad: '100ml', calorias: 200, proteina: 2 },
+      'yogurt': { nombre: 'Yogurt', cantidad: '150g', calorias: 90, proteina: 15 },
+      'mantequilla': { nombre: 'Mantequilla', cantidad: '30g', calorias: 215, proteina: 0 },
+      
+      // Frutas
+      'platano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2 },
+      'plátano': { nombre: 'Plátano', cantidad: '2 unidades', calorias: 180, proteina: 2 },
+      'manzana': { nombre: 'Manzana', cantidad: '1 unidad', calorias: 95, proteina: 0 },
+      'fresa': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1 },
+      'fresas': { nombre: 'Fresas', cantidad: '150g', calorias: 50, proteina: 1 },
+      'naranja': { nombre: 'Naranja', cantidad: '1 unidad', calorias: 60, proteina: 1 },
+      'limon': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0 },
+      'limón': { nombre: 'Limón', cantidad: '2 unidades', calorias: 20, proteina: 0 },
+      
+      // Otros
+      'ajo': { nombre: 'Ajo', cantidad: '2 dientes', calorias: 10, proteina: 0 },
+      'aceite': { nombre: 'Aceite de oliva', cantidad: '2 cucharadas', calorias: 240, proteina: 0 },
+      'sal': { nombre: 'Sal', cantidad: 'Al gusto', calorias: 0, proteina: 0 },
+      'pimienta': { nombre: 'Pimienta', cantidad: 'Al gusto', calorias: 0, proteina: 0 },
     }
+
+    // Detectar ingredientes mencionados en el nombre
+    const ingredientesDetectados: string[] = []
+    let caloriasTotal = 0
+    let proteinaTotal = 0
+
+    for (const [key, value] of Object.entries(ingredientesDB)) {
+      if (nombre.includes(key)) {
+        // Evitar duplicados (ej: "huevo" y "huevos")
+        const yaExiste = ingredientesDetectados.some(i => i.toLowerCase().includes(value.nombre.toLowerCase().split(' ')[0]))
+        if (!yaExiste) {
+          ingredientesDetectados.push(`${value.cantidad} ${value.nombre.toLowerCase()}`)
+          caloriasTotal += value.calorias
+          proteinaTotal += value.proteina
+        }
+      }
+    }
+
+    // Añadir ingredientes básicos si se detectaron ingredientes principales
+    if (ingredientesDetectados.length > 0) {
+      if (!ingredientesDetectados.some(i => i.includes('aceite'))) {
+        ingredientesDetectados.push('2 cucharadas aceite de oliva')
+        caloriasTotal += 240
+      }
+      if (!ingredientesDetectados.some(i => i.includes('sal'))) {
+        ingredientesDetectados.push('Sal al gusto')
+      }
+      if (!ingredientesDetectados.some(i => i.includes('pimienta'))) {
+        ingredientesDetectados.push('Pimienta al gusto')
+      }
+    }
+
+    // Generar pasos de preparación basados en los ingredientes
+    const pasosPreparacion: string[] = []
     
-    // POSTRES Y DULCES
-    if (nombreLower.includes('arroz con leche')) {
-      recetaGenerada = {
-        ingredientes: ['200g arroz', '1 litro de leche', '150g azúcar', '1 rama de canela', 'Cáscara de 1 limón', '1 pizca de sal', 'Canela en polvo para decorar'],
-        preparacion: ['Lava el arroz y escúrrelo bien', 'En una olla, hierve la leche con la canela y cáscara de limón', 'Añade el arroz y cocina a fuego bajo por 30-40 minutos', 'Revuelve frecuentemente para evitar que se pegue', 'Agrega el azúcar y la pizca de sal, mezcla bien', 'Retira la canela y cáscara de limón', 'Sirve tibio o frío y espolvorea canela en polvo'],
-        tiempo: 45, calorias: 280, proteina: 6, porciones: 6
-      }
-    } else if (nombreLower.includes('flan') || nombreLower.includes('natilla')) {
-      recetaGenerada = {
-        ingredientes: ['4 huevos', '400ml leche condensada', '400ml leche evaporada', '1 cucharadita vainilla', '150g azúcar para caramelo'],
-        preparacion: ['Prepara el caramelo derritiendo el azúcar hasta dorar', 'Vierte el caramelo en el molde y deja enfriar', 'Licua los huevos, leches y vainilla', 'Vierte la mezcla sobre el caramelo', 'Cocina a baño maría por 1 hora', 'Deja enfriar y refrigera por 4 horas', 'Desmolda y sirve frío'],
-        tiempo: 90, calorias: 320, proteina: 8, porciones: 8
-      }
-    } else if (nombreLower.includes('pastel') || nombreLower.includes('torta') || nombreLower.includes('bizcocho')) {
-      recetaGenerada = {
-        ingredientes: ['200g harina', '200g azúcar', '4 huevos', '100g mantequilla', '100ml leche', '1 sobre polvo para hornear', '1 cucharadita vainilla'],
-        preparacion: ['Precalienta el horno a 180°C', 'Bate la mantequilla con el azúcar hasta cremoso', 'Añade los huevos uno a uno', 'Incorpora la harina y polvo para hornear tamizados', 'Agrega la leche y vainilla, mezcla bien', 'Vierte en molde engrasado', 'Hornea 35-40 minutos'],
-        tiempo: 50, calorias: 350, proteina: 6, porciones: 10
-      }
-    } else if (nombreLower.includes('galleta')) {
-      recetaGenerada = {
-        ingredientes: ['250g harina', '125g mantequilla', '100g azúcar', '1 huevo', '1 cucharadita vainilla', 'Chispas de chocolate opcional'],
-        preparacion: ['Mezcla la mantequilla con el azúcar', 'Añade el huevo y vainilla', 'Incorpora la harina poco a poco', 'Agrega las chispas de chocolate', 'Forma bolitas y coloca en bandeja', 'Hornea a 180°C por 12-15 minutos'],
-        tiempo: 25, calorias: 150, proteina: 2, porciones: 20
-      }
-    }
-    // PROTEÍNAS
-    else if (nombreLower.includes('pollo')) {
-      recetaGenerada = {
-        ingredientes: ['300g pechuga de pollo', '200g arroz integral', '150g brócoli', '1 diente de ajo', '2 cucharadas salsa de soya', 'Aceite de oliva', 'Sal y pimienta'],
-        preparacion: ['Corta el pollo en cubos y sazona con sal y pimienta', 'Cocina el arroz según las instrucciones', 'En una sartén caliente, cocina el pollo hasta dorarlo', 'Añade el ajo y el brócoli, saltea 3 minutos', 'Agrega la salsa de soya y mezcla bien', 'Sirve sobre el arroz'],
-        tiempo: 30, calorias: 520, proteina: 45, porciones: 2
-      }
-    } else if (nombreLower.includes('carne') || nombreLower.includes('res') || nombreLower.includes('bistec')) {
-      recetaGenerada = {
-        ingredientes: ['400g carne de res', '2 papas medianas', '1 cebolla', '2 tomates', 'Aceite de oliva', 'Sal, pimienta y comino', 'Cilantro fresco'],
-        preparacion: ['Corta la carne en trozos y sazona', 'Sella la carne en una sartén caliente', 'Añade la cebolla y tomate picados', 'Agrega las papas en cubos', 'Cocina a fuego medio por 25 minutos', 'Rectifica sazón y sirve con cilantro'],
-        tiempo: 35, calorias: 550, proteina: 42, porciones: 3
-      }
-    } else if (nombreLower.includes('salmon') || nombreLower.includes('salmón') || nombreLower.includes('pescado')) {
-      recetaGenerada = {
-        ingredientes: ['300g filete de salmón', '200g espárragos', '150g papa', 'Jugo de 1 limón', '2 cucharadas aceite de oliva', 'Eneldo fresco', 'Sal y pimienta'],
-        preparacion: ['Precalienta el horno a 200°C', 'Sazona el salmón con sal, pimienta y limón', 'Corta las papas en rodajas finas', 'Coloca todo en una bandeja para hornear', 'Rocía con aceite de oliva', 'Hornea por 20-25 minutos', 'Decora con eneldo fresco'],
-        tiempo: 35, calorias: 480, proteina: 40, porciones: 2
-      }
-    } else if (nombreLower.includes('huevo') || nombreLower.includes('tortilla') || nombreLower.includes('omelette')) {
-      recetaGenerada = {
-        ingredientes: ['4 huevos', '50g queso rallado', '1/4 cebolla', '1 tomate', 'Sal y pimienta', '1 cucharada aceite'],
-        preparacion: ['Bate los huevos con sal y pimienta', 'Pica la cebolla y tomate finamente', 'Calienta el aceite en sartén antiadherente', 'Vierte los huevos batidos', 'Añade las verduras y queso', 'Dobla cuando esté casi cuajado', 'Sirve caliente'],
-        tiempo: 10, calorias: 320, proteina: 24, porciones: 2
-      }
-    }
-    // ENSALADAS
-    else if (nombreLower.includes('ensalada')) {
-      recetaGenerada = {
-        ingredientes: ['200g lechuga mixta', '150g pollo a la plancha', '100g tomate cherry', '50g queso feta', '30g nueces', 'Aderezo de limón y aceite'],
-        preparacion: ['Lava y seca bien las lechugas', 'Corta el pollo en tiras', 'Parte los tomates por la mitad', 'Mezcla todo en un bowl grande', 'Añade el queso y las nueces', 'Aliña justo antes de servir'],
-        tiempo: 15, calorias: 380, proteina: 32, porciones: 1
-      }
-    }
-    // DESAYUNOS
-    else if (nombreLower.includes('batido') || nombreLower.includes('smoothie') || nombreLower.includes('licuado')) {
-      recetaGenerada = {
-        ingredientes: ['1 scoop proteína en polvo', '1 plátano maduro', '200ml leche de almendras', '1 cucharada mantequilla de maní', '5 cubos de hielo', '1 cucharadita miel'],
-        preparacion: ['Añade la leche a la licuadora primero', 'Agrega el plátano y la proteína', 'Incorpora la mantequilla de maní y miel', 'Añade el hielo', 'Licua por 1-2 minutos hasta obtener consistencia suave', 'Sirve inmediatamente'],
-        tiempo: 5, calorias: 350, proteina: 30, porciones: 1
-      }
-    } else if (nombreLower.includes('avena') || nombreLower.includes('oatmeal')) {
-      recetaGenerada = {
-        ingredientes: ['80g avena', '250ml leche', '1 scoop proteína vainilla', '1 plátano', 'Frutos rojos al gusto', '1 cucharada miel', 'Canela al gusto'],
-        preparacion: ['Cocina la avena con la leche a fuego medio', 'Revuelve constantemente por 5 minutos', 'Retira del fuego y deja enfriar 2 minutos', 'Añade la proteína y mezcla bien', 'Decora con plátano, frutos rojos y miel', 'Espolvorea canela al gusto'],
-        tiempo: 10, calorias: 420, proteina: 28, porciones: 1
-      }
-    } else if (nombreLower.includes('pancake') || nombreLower.includes('hotcake') || nombreLower.includes('panqueque')) {
-      recetaGenerada = {
-        ingredientes: ['150g harina de avena', '2 huevos', '150ml leche', '1 scoop proteína', '1 cucharadita polvo para hornear', 'Miel para servir', 'Fruta al gusto'],
-        preparacion: ['Mezcla todos los ingredientes secos', 'Añade los huevos y leche, bate hasta integrar', 'Calienta sartén antiadherente a fuego medio', 'Vierte porciones de masa', 'Voltea cuando aparezcan burbujas', 'Sirve con miel y fruta'],
-        tiempo: 15, calorias: 380, proteina: 28, porciones: 2
+    if (ingredientesDetectados.length > 0) {
+      pasosPreparacion.push('Prepara y corta todos los ingredientes')
+      
+      // Detectar método de cocción según ingredientes
+      if (nombre.includes('huevo') || nombre.includes('tortilla') || nombre.includes('omelette')) {
+        pasosPreparacion.push('Bate los huevos en un bowl con sal y pimienta')
+        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio')
+        if (ingredientesDetectados.some(i => i.includes('jamón') || i.includes('tocino') || i.includes('chorizo'))) {
+          pasosPreparacion.push('Cocina primero la proteína (jamón/tocino/chorizo) hasta que esté dorada')
+        }
+        if (ingredientesDetectados.some(i => i.includes('cebolla') || i.includes('pimiento') || i.includes('tomate'))) {
+          pasosPreparacion.push('Saltea las verduras hasta que estén suaves')
+        }
+        pasosPreparacion.push('Vierte los huevos batidos y cocina revolviendo suavemente')
+        if (ingredientesDetectados.some(i => i.includes('queso'))) {
+          pasosPreparacion.push('Añade el queso y deja que se derrita')
+        }
+        pasosPreparacion.push('Sirve caliente')
+      } else if (nombre.includes('arroz')) {
+        if (nombre.includes('leche')) {
+          // Arroz con leche (postre)
+          ingredientesDetectados.length = 0
+          ingredientesDetectados.push('200g arroz', '1 litro de leche', '150g azúcar', '1 rama de canela', 'Cáscara de 1 limón', 'Canela en polvo para decorar')
+          pasosPreparacion.length = 0
+          pasosPreparacion.push('Lava el arroz y escúrrelo bien')
+          pasosPreparacion.push('Hierve la leche con la canela y cáscara de limón')
+          pasosPreparacion.push('Añade el arroz y cocina a fuego bajo 35-40 minutos, revolviendo frecuentemente')
+          pasosPreparacion.push('Agrega el azúcar y mezcla bien')
+          pasosPreparacion.push('Retira la canela y cáscara de limón')
+          pasosPreparacion.push('Sirve tibio o frío con canela espolvoreada')
+          caloriasTotal = 280
+          proteinaTotal = 6
+        } else {
+          pasosPreparacion.push('Lava el arroz hasta que el agua salga clara')
+          pasosPreparacion.push('Sofríe los ingredientes aromáticos (cebolla, ajo)')
+          pasosPreparacion.push('Añade el arroz y sofríe 2 minutos')
+          pasosPreparacion.push('Agrega el doble de agua o caldo caliente')
+          pasosPreparacion.push('Cocina tapado a fuego bajo por 18-20 minutos')
+          pasosPreparacion.push('Deja reposar 5 minutos y sirve')
+        }
+      } else if (nombre.includes('pollo') || nombre.includes('pechuga')) {
+        pasosPreparacion.push('Sazona el pollo con sal, pimienta y especias')
+        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio-alto')
+        pasosPreparacion.push('Cocina el pollo 6-7 minutos por cada lado hasta que esté dorado')
+        if (ingredientesDetectados.some(i => i.includes('verdura') || i.includes('brócoli') || i.includes('pimiento'))) {
+          pasosPreparacion.push('Retira el pollo y saltea las verduras en la misma sartén')
+        }
+        pasosPreparacion.push('Sirve caliente')
+      } else if (nombre.includes('pasta') || nombre.includes('espagueti') || nombre.includes('fideo')) {
+        pasosPreparacion.push('Hierve agua con sal y cocina la pasta según el paquete')
+        pasosPreparacion.push('Mientras, prepara la salsa o proteína')
+        pasosPreparacion.push('Escurre la pasta reservando un poco del agua')
+        pasosPreparacion.push('Mezcla la pasta con la salsa')
+        pasosPreparacion.push('Sirve con queso parmesano si lo deseas')
+      } else {
+        // Genérico
+        pasosPreparacion.push('Calienta el aceite en una sartén a fuego medio')
+        if (ingredientesDetectados.some(i => i.includes('carne') || i.includes('pollo') || i.includes('res'))) {
+          pasosPreparacion.push('Cocina la proteína hasta que esté bien hecha')
+        }
+        if (ingredientesDetectados.some(i => i.includes('cebolla') || i.includes('ajo'))) {
+          pasosPreparacion.push('Añade la cebolla y ajo, sofríe hasta dorar')
+        }
+        pasosPreparacion.push('Incorpora el resto de ingredientes')
+        pasosPreparacion.push('Cocina hasta que todo esté bien integrado')
+        pasosPreparacion.push('Rectifica la sazón y sirve')
       }
     }
-    // SOPAS Y CALDOS
-    else if (nombreLower.includes('sopa') || nombreLower.includes('caldo')) {
-      recetaGenerada = {
-        ingredientes: ['1 litro caldo de pollo', '200g pechuga de pollo', '2 zanahorias', '2 papas', '1 cebolla', 'Cilantro fresco', 'Sal y pimienta'],
-        preparacion: ['Hierve el caldo con la pechuga entera', 'Retira el pollo y desmenúzalo', 'Añade las verduras en cubos al caldo', 'Cocina por 20 minutos', 'Regresa el pollo desmenuzado', 'Sazona y sirve con cilantro'],
-        tiempo: 40, calorias: 280, proteina: 25, porciones: 4
-      }
+
+    // Si no se detectaron ingredientes, crear receta genérica basada en el nombre
+    if (ingredientesDetectados.length === 0) {
+      ingredientesDetectados.push(
+        'Ingrediente principal de la receta',
+        'Aceite para cocinar',
+        'Sal y pimienta al gusto',
+        'Especias de tu preferencia'
+      )
+      pasosPreparacion.push(
+        'Prepara todos los ingredientes',
+        'Cocina según el método apropiado para el platillo',
+        'Sazona al gusto',
+        'Sirve y disfruta'
+      )
+      caloriasTotal = 300
+      proteinaTotal = 15
     }
-    // PASTA Y ARROZ
-    else if (nombreLower.includes('pasta') || nombreLower.includes('espagueti') || nombreLower.includes('spaghetti')) {
-      recetaGenerada = {
-        ingredientes: ['250g pasta', '200g carne molida', '400g salsa de tomate', '1 cebolla', '2 dientes de ajo', 'Queso parmesano', 'Albahaca fresca'],
-        preparacion: ['Cocina la pasta según instrucciones del paquete', 'Sofríe la cebolla y ajo', 'Añade la carne molida y cocina', 'Agrega la salsa de tomate', 'Cocina a fuego lento 15 minutos', 'Mezcla con la pasta', 'Sirve con queso y albahaca'],
-        tiempo: 30, calorias: 520, proteina: 28, porciones: 3
-      }
-    } else if (nombreLower.includes('arroz') && !nombreLower.includes('leche')) {
-      recetaGenerada = {
-        ingredientes: ['300g arroz', '400ml caldo de pollo', '1 cebolla', '2 dientes de ajo', '1 tomate', 'Aceite', 'Sal y cilantro'],
-        preparacion: ['Lava el arroz hasta que el agua salga clara', 'Sofríe cebolla, ajo y tomate', 'Añade el arroz y sofríe 2 minutos', 'Agrega el caldo caliente', 'Cocina a fuego bajo tapado 18-20 minutos', 'Deja reposar 5 minutos y sirve'],
-        tiempo: 30, calorias: 320, proteina: 8, porciones: 4
-      }
-    }
-    // SNACKS
-    else if (nombreLower.includes('wrap') || nombreLower.includes('burrito')) {
-      recetaGenerada = {
-        ingredientes: ['2 tortillas integrales', '200g pollo desmenuzado', 'Lechuga', 'Tomate', 'Aguacate', 'Yogur griego', 'Sal y limón'],
-        preparacion: ['Calienta las tortillas', 'Mezcla el pollo con yogur y limón', 'Coloca lechuga en la tortilla', 'Añade el pollo, tomate y aguacate', 'Enrolla firmemente', 'Corta por la mitad y sirve'],
-        tiempo: 15, calorias: 420, proteina: 35, porciones: 2
-      }
-    }
-    // DEFAULT - Receta genérica basada en el nombre
-    else {
-      recetaGenerada = {
-        ingredientes: ['Ingrediente principal según receta', 'Condimentos y especias', 'Aceite o grasa para cocinar', 'Sal al gusto'],
-        preparacion: ['Prepara todos los ingredientes', 'Cocina según el método apropiado', 'Sazona al gusto', 'Sirve y disfruta'],
-        tiempo: 20, calorias: 300, proteina: 15, porciones: 2
-      }
-    }
+
+    // Calcular tiempo basado en complejidad
+    let tiempo = 10 + (ingredientesDetectados.length * 3)
+    if (nombre.includes('horno') || nombre.includes('horneado')) tiempo += 20
+    if (nombre.includes('arroz') && !nombre.includes('leche')) tiempo = 25
+    if (nombre.includes('arroz') && nombre.includes('leche')) tiempo = 45
+    if (tiempo > 60) tiempo = 60
 
     setNuevaReceta({
       ...nuevaReceta,
-      ingredientes: recetaGenerada.ingredientes,
-      preparacion: recetaGenerada.preparacion,
-      tiempo: recetaGenerada.tiempo,
-      calorias: recetaGenerada.calorias,
-      proteina: recetaGenerada.proteina,
-      porciones: recetaGenerada.porciones
+      ingredientes: ingredientesDetectados,
+      preparacion: pasosPreparacion,
+      tiempo: tiempo,
+      calorias: Math.round(caloriasTotal),
+      proteina: Math.round(proteinaTotal),
+      porciones: 2
     })
 
     setGenerandoRecetaIA(false)
