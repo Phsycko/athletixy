@@ -129,7 +129,7 @@ export default function MembresiasPage() {
             >
               {plan.popular && (
                 <div className="mb-4">
-                  <span className="px-3 py-1 bg-white text-black text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full">
                     Más Popular
                   </span>
                 </div>
