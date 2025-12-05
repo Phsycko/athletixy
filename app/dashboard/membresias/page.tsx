@@ -1,6 +1,6 @@
 'use client'
 
-import { CreditCard, Calendar, Check, Star, Clock } from 'lucide-react'
+import { CreditCard, Calendar, Check, Star, Clock, Megaphone, X } from 'lucide-react'
 
 export default function MembresiasPage() {
   const membresiaActual = {
@@ -22,7 +22,10 @@ export default function MembresiasPage() {
         'Planes de dieta estándar',
         'Seguimiento de progreso',
         'Comunidad de usuarios',
-        'Incluye anuncios',
+      ],
+      limitaciones: [
+        'Contiene anuncios',
+        'Sin acceso a IA Premium',
       ],
       popular: false,
     },
@@ -137,23 +140,39 @@ export default function MembresiasPage() {
                 </div>
               )}
               <div className="mb-2">
-                <h3 className="text-xl font-bold text-black">{plan.nombre}</h3>
-                {plan.conAnuncios && (
-                  <span className="text-xs text-gray-500 font-medium">con anuncios</span>
-                )}
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-black">{plan.nombre}</h3>
+                  {plan.conAnuncios && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full border border-amber-200">
+                      <Megaphone className="w-3 h-3" />
+                      Ads
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="mb-6">
                 <span className="text-4xl font-bold text-black">${plan.precio}</span>
                 <span className="text-gray-600">/{plan.periodo}</span>
               </div>
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-3 mb-4">
                 {plan.caracteristicas.map((caracteristica, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-gray-700 text-sm">
-                    <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                     <span>{caracteristica}</span>
                   </li>
                 ))}
               </ul>
+              {plan.limitaciones && plan.limitaciones.length > 0 && (
+                <ul className="space-y-2 mb-6 pt-3 border-t border-gray-200">
+                  {plan.limitaciones.map((limitacion, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-gray-400 text-sm">
+                      <X className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                      <span>{limitacion}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {!plan.limitaciones && <div className="mb-6"></div>}
               <button
                 className={`w-full py-3 rounded-lg font-semibold transition ${
                   membresiaActual.plan === plan.nombre
