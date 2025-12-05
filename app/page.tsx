@@ -9,6 +9,11 @@ type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
 export default function LoginPage() {
   const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -154,6 +159,20 @@ export default function LoginPage() {
     } else {
       setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
     }
+  }
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="bg-black p-4 rounded-2xl shadow-2xl inline-block mb-4">
+            <Dumbbell className="w-12 h-12 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-black mb-2">Athletixy</h1>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
