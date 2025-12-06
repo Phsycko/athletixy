@@ -483,6 +483,576 @@ export default function RecetasPage() {
         ingredientes: ['2 sobres de gelatina sin sabor', '1/2 taza de agua fría', '2 tazas de jugo o leche caliente', '1/2 taza de azúcar', 'Frutas picadas (opcional)', 'Crema batida para servir'],
         preparacion: ['Hidrata la gelatina en agua fría 5 min', 'Calienta el jugo o leche con azúcar', 'Añade la gelatina hidratada y mezcla', 'Revuelve hasta disolver completamente', 'Si deseas, añade frutas al molde', 'Vierte la mezcla en el molde', 'Refrigera 4 horas mínimo', 'Desmolda y sirve con crema'],
         tiempo: 20, calorias: 120, proteina: 4, porciones: 6
+      },
+
+      // ============ COMIDA MEXICANA ============
+      {
+        keywords: ['enchiladas', 'enchilada'],
+        ingredientes: ['12 tortillas de maíz', '500g de pollo deshebrado', '500ml de salsa roja o verde', '200g de crema', '150g de queso fresco', '1 cebolla en aros', 'Aceite para freír'],
+        preparacion: ['Pasa las tortillas por aceite caliente', 'Rellena cada tortilla con pollo', 'Enrolla y coloca en refractario', 'Baña con la salsa caliente', 'Añade crema y queso encima', 'Hornea 10 min a 180°C', 'Decora con cebolla', 'Sirve caliente'],
+        tiempo: 35, calorias: 520, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['pozole', 'posole'],
+        ingredientes: ['500g de maíz pozolero', '500g de carne de cerdo', '3 chiles guajillo', '2 chiles ancho', '1 cebolla', '4 dientes de ajo', 'Orégano, lechuga, rábanos, tostadas'],
+        preparacion: ['Cuece el maíz hasta que reviente', 'Cuece la carne en trozos', 'Licua los chiles con ajo y cebolla', 'Fríe la salsa y añade al caldo', 'Agrega el maíz y carne', 'Cocina 30 min más', 'Sirve con lechuga, rábanos, orégano', 'Acompaña con tostadas'],
+        tiempo: 120, calorias: 450, proteina: 30, porciones: 8
+      },
+      {
+        keywords: ['tamales', 'tamal'],
+        ingredientes: ['1kg de masa de maíz', '300g de manteca', '500g de carne de cerdo', '500ml de salsa roja o verde', 'Hojas de maíz', 'Caldo de pollo', 'Sal y polvo para hornear'],
+        preparacion: ['Bate la manteca hasta esponjar', 'Agrega la masa poco a poco', 'Añade caldo, sal y polvo para hornear', 'Unta masa en hojas de maíz', 'Rellena con carne y salsa', 'Envuelve y cierra', 'Cocina al vapor 1.5 horas', 'Sirve calientes'],
+        tiempo: 120, calorias: 350, proteina: 15, porciones: 20
+      },
+      {
+        keywords: ['quesadilla', 'quesadillas'],
+        ingredientes: ['4 tortillas de harina grandes', '200g de queso Oaxaca', '100g de champiñones', '1 chile poblano', 'Crema y guacamole para servir'],
+        preparacion: ['Asa el chile y córtalo en rajas', 'Saltea los champiñones', 'Calienta tortilla en comal', 'Añade queso, rajas y champiñones', 'Dobla por la mitad', 'Cocina hasta que el queso derrita', 'Sirve con crema y guacamole', 'Corta en triángulos'],
+        tiempo: 15, calorias: 380, proteina: 18, porciones: 2
+      },
+      {
+        keywords: ['burrito', 'burritos'],
+        ingredientes: ['4 tortillas de harina grandes', '300g de carne asada', '200g de frijoles refritos', '150g de arroz', '100g de queso', 'Crema, guacamole, pico de gallo'],
+        preparacion: ['Calienta la tortilla', 'Unta frijoles en el centro', 'Añade arroz, carne, queso', 'Agrega crema, guacamole, pico de gallo', 'Dobla los lados hacia adentro', 'Enrolla apretando bien', 'Puedes dorar en plancha', 'Sirve entero o en mitades'],
+        tiempo: 20, calorias: 650, proteina: 40, porciones: 4
+      },
+      {
+        keywords: ['tostadas', 'tostada'],
+        ingredientes: ['8 tostadas de maíz', '400g de pollo deshebrado', '200g de frijoles refritos', 'Lechuga picada', 'Crema, queso fresco', 'Salsa verde o roja'],
+        preparacion: ['Unta frijoles en cada tostada', 'Añade el pollo deshebrado', 'Agrega lechuga picada', 'Añade crema y queso', 'Rocía con salsa al gusto', 'Sirve inmediatamente', 'Puedes añadir aguacate', 'Decora con rábanos'],
+        tiempo: 15, calorias: 320, proteina: 25, porciones: 4
+      },
+      {
+        keywords: ['sopes', 'sope'],
+        ingredientes: ['500g de masa de maíz', '300g de carne deshebrada', '200g de frijoles refritos', 'Lechuga, crema, queso', 'Salsa verde o roja', 'Aceite para freír'],
+        preparacion: ['Forma discos gruesos con la masa', 'Cuece en comal por ambos lados', 'Pellizca las orillas para formar borde', 'Fríe ligeramente en aceite', 'Unta frijoles', 'Añade carne, lechuga, crema', 'Agrega queso y salsa', 'Sirve calientes'],
+        tiempo: 30, calorias: 380, proteina: 22, porciones: 6
+      },
+      {
+        keywords: ['gorditas', 'gordita'],
+        ingredientes: ['500g de masa de maíz', '300g de chicharrón prensado', '200g de frijoles', 'Queso fresco', 'Crema y salsa', 'Sal al gusto'],
+        preparacion: ['Mezcla la masa con sal', 'Forma bolas y aplana', 'Cuece en comal por ambos lados', 'Abre por la mitad como pan', 'Rellena con chicharrón y frijoles', 'Añade queso y crema', 'Agrega salsa al gusto', 'Sirve calientes'],
+        tiempo: 25, calorias: 420, proteina: 18, porciones: 6
+      },
+      {
+        keywords: ['flautas', 'flauta', 'tacos dorados'],
+        ingredientes: ['12 tortillas de maíz', '400g de pollo deshebrado', 'Aceite para freír', 'Lechuga, crema, queso', 'Salsa verde', 'Palillos de dientes'],
+        preparacion: ['Rellena tortillas con pollo', 'Enrolla apretado y asegura con palillo', 'Fríe en aceite caliente hasta dorar', 'Escurre en papel absorbente', 'Coloca en plato', 'Cubre con crema y queso', 'Añade lechuga y salsa', 'Sirve calientes'],
+        tiempo: 25, calorias: 450, proteina: 28, porciones: 4
+      },
+      {
+        keywords: ['molletes', 'mollete'],
+        ingredientes: ['4 bolillos', '200g de frijoles refritos', '200g de queso manchego rallado', 'Pico de gallo', 'Jalapeños en escabeche'],
+        preparacion: ['Corta bolillos a la mitad', 'Unta frijoles generosamente', 'Cubre con queso rallado', 'Hornea hasta gratinar', 'Añade pico de gallo encima', 'Acompaña con jalapeños', 'Sirve calientes', 'Puedes añadir chorizo'],
+        tiempo: 15, calorias: 380, proteina: 18, porciones: 4
+      },
+      {
+        keywords: ['huevos rancheros'],
+        ingredientes: ['4 huevos', '4 tortillas de maíz', '300ml de salsa ranchera', '100g de frijoles refritos', 'Queso fresco', 'Aguacate'],
+        preparacion: ['Calienta las tortillas', 'Fríe los huevos estrellados', 'Calienta la salsa', 'Coloca tortilla, frijoles, huevo', 'Baña con salsa ranchera', 'Añade queso y aguacate', 'Sirve inmediatamente', 'Acompaña con más tortillas'],
+        tiempo: 15, calorias: 420, proteina: 22, porciones: 2
+      },
+      {
+        keywords: ['huevos divorciados'],
+        ingredientes: ['4 huevos', '4 tortillas', '200ml de salsa verde', '200ml de salsa roja', 'Frijoles refritos', 'Queso y crema'],
+        preparacion: ['Fríe los huevos estrellados', 'Calienta ambas salsas por separado', 'Coloca 2 huevos por plato', 'Baña uno con salsa verde', 'Baña otro con salsa roja', 'Separa con frijoles en medio', 'Añade queso y crema', 'Sirve con tortillas'],
+        tiempo: 15, calorias: 450, proteina: 24, porciones: 2
+      },
+      {
+        keywords: ['migas', 'migas con huevo'],
+        ingredientes: ['4 huevos', '4 tortillas en trozos', '1 tomate picado', '1/4 cebolla picada', '1 chile serrano', 'Aceite, sal, cilantro'],
+        preparacion: ['Fríe los trozos de tortilla', 'Añade cebolla y chile', 'Agrega tomate y saltea', 'Bate los huevos con sal', 'Vierte sobre la mezcla', 'Revuelve hasta cocinar', 'Añade cilantro fresco', 'Sirve con salsa'],
+        tiempo: 15, calorias: 380, proteina: 18, porciones: 2
+      },
+      {
+        keywords: ['machaca', 'machaca con huevo'],
+        ingredientes: ['200g de carne seca machaca', '4 huevos', '1 tomate', '1/4 cebolla', '1 chile serrano', 'Aceite, tortillas de harina'],
+        preparacion: ['Deshebra la machaca', 'Saltea cebolla, chile y tomate', 'Añade la machaca', 'Bate los huevos', 'Agrega a la sartén', 'Revuelve hasta cocinar', 'Sirve con tortillas de harina', 'Acompaña con salsa'],
+        tiempo: 20, calorias: 420, proteina: 35, porciones: 2
+      },
+      {
+        keywords: ['cochinita pibil', 'cochinita'],
+        ingredientes: ['1kg de carne de cerdo', '200g de achiote', 'Jugo de 4 naranjas agrias', '1/2 taza de vinagre', 'Hojas de plátano', 'Cebolla morada encurtida'],
+        preparacion: ['Licua achiote con jugo y vinagre', 'Marina la carne toda la noche', 'Envuelve en hojas de plátano', 'Hornea a 160°C por 3 horas', 'Deshebra la carne', 'Sirve en tortillas', 'Añade cebolla encurtida', 'Acompaña con habanero'],
+        tiempo: 200, calorias: 450, proteina: 40, porciones: 8
+      },
+      {
+        keywords: ['carnitas'],
+        ingredientes: ['1kg de carne de cerdo', '1 naranja', '500ml de aceite o manteca', 'Leche evaporada', 'Sal, pimienta, comino', 'Tortillas, cilantro, cebolla'],
+        preparacion: ['Corta carne en cubos grandes', 'Fríe en manteca o aceite', 'Añade jugo de naranja y leche', 'Cocina hasta dorar', 'El líquido debe evaporarse', 'Desmenuza la carne', 'Sirve en tortillas', 'Añade cilantro, cebolla, salsa'],
+        tiempo: 90, calorias: 520, proteina: 42, porciones: 6
+      },
+      {
+        keywords: ['birria', 'birria de res'],
+        ingredientes: ['1kg de carne de res', '5 chiles guajillo', '3 chiles ancho', '1 cebolla', '6 dientes de ajo', 'Especias: comino, orégano, clavo', 'Tortillas para tacos'],
+        preparacion: ['Cuece la carne hasta suavizar', 'Licua chiles con especias', 'Mezcla con el caldo', 'Cocina la carne en la salsa', 'Deja reducir el consomé', 'Deshebra la carne', 'Sirve tacos con consomé aparte', 'Sumerge el taco y come'],
+        tiempo: 180, calorias: 480, proteina: 45, porciones: 8
+      },
+      {
+        keywords: ['mole', 'mole poblano'],
+        ingredientes: ['1kg de pollo en piezas', 'Pasta de mole 250g', '50g de chocolate', '2 cucharadas de ajonjolí', 'Arroz rojo para acompañar', 'Tortillas'],
+        preparacion: ['Cuece el pollo con sal', 'Disuelve el mole en caldo', 'Añade el chocolate', 'Cocina 20 min a fuego bajo', 'Baña el pollo con el mole', 'Espolvorea ajonjolí', 'Sirve con arroz rojo', 'Acompaña con tortillas'],
+        tiempo: 45, calorias: 550, proteina: 40, porciones: 6
+      },
+      {
+        keywords: ['chiles rellenos', 'chile relleno'],
+        ingredientes: ['6 chiles poblanos', '300g de queso Oaxaca', '4 huevos', '1/2 taza de harina', 'Salsa de tomate', 'Aceite para freír'],
+        preparacion: ['Asa los chiles y pélalos', 'Haz una abertura y retira semillas', 'Rellena con queso', 'Pasa por harina', 'Cubre con huevo batido', 'Fríe hasta dorar', 'Baña con salsa de tomate', 'Sirve calientes'],
+        tiempo: 40, calorias: 380, proteina: 20, porciones: 6
+      },
+      {
+        keywords: ['elote', 'elotes', 'esquites'],
+        ingredientes: ['4 elotes', 'Mayonesa', 'Crema', 'Queso cotija', 'Chile en polvo', 'Limón'],
+        preparacion: ['Hierve los elotes 15-20 min', 'O asa en el carbón', 'Inserta palito de madera', 'Unta mayonesa y crema', 'Espolvorea queso y chile', 'Exprime limón', 'Para esquites: desgrana y sirve en vaso', 'Añade los mismos ingredientes'],
+        tiempo: 25, calorias: 280, proteina: 8, porciones: 4
+      },
+      {
+        keywords: ['torta', 'torta mexicana', 'torta de jamon'],
+        ingredientes: ['1 telera o bolillo', '100g de jamón', '50g de queso', 'Frijoles refritos', 'Aguacate', 'Jitomate, lechuga, cebolla', 'Mayonesa, jalapeños'],
+        preparacion: ['Corta el pan a la mitad', 'Unta frijoles y mayonesa', 'Añade jamón y queso', 'Agrega aguacate en rebanadas', 'Coloca jitomate, lechuga, cebolla', 'Añade jalapeños al gusto', 'Cierra y presiona', 'Puedes calentar en plancha'],
+        tiempo: 10, calorias: 480, proteina: 22, porciones: 1
+      },
+      {
+        keywords: ['sincronizada', 'sincronizadas'],
+        ingredientes: ['2 tortillas de harina', '100g de queso manchego', '50g de jamón', 'Salsa, guacamole'],
+        preparacion: ['Coloca queso en una tortilla', 'Añade jamón encima', 'Cubre con más queso', 'Tapa con otra tortilla', 'Cocina en sartén por ambos lados', 'El queso debe derretirse', 'Corta en triángulos', 'Sirve con salsa y guacamole'],
+        tiempo: 10, calorias: 420, proteina: 24, porciones: 1
+      },
+
+      // ============ COMIDA ITALIANA ============
+      {
+        keywords: ['pizza', 'pizza casera', 'pizza margarita'],
+        ingredientes: ['500g de harina', '7g de levadura', '300ml de agua tibia', 'Salsa de tomate', 'Mozzarella', 'Albahaca fresca', 'Aceite de oliva'],
+        preparacion: ['Mezcla harina, levadura, agua y sal', 'Amasa 10 minutos', 'Deja reposar 1 hora', 'Estira la masa fina', 'Añade salsa de tomate', 'Cubre con mozzarella', 'Hornea a 250°C 10-12 min', 'Añade albahaca fresca'],
+        tiempo: 90, calorias: 280, proteina: 12, porciones: 8
+      },
+      {
+        keywords: ['risotto', 'risotto de hongos', 'risotto champinones'],
+        ingredientes: ['300g de arroz arborio', '200g de champiñones', '1 cebolla', '150ml de vino blanco', '1L de caldo de pollo', '50g de parmesano', 'Mantequilla'],
+        preparacion: ['Saltea cebolla en mantequilla', 'Añade champiñones', 'Agrega el arroz y tuesta', 'Vierte el vino y deja evaporar', 'Añade caldo poco a poco', 'Revuelve constantemente 18-20 min', 'Añade parmesano y mantequilla', 'Sirve cremoso'],
+        tiempo: 35, calorias: 420, proteina: 14, porciones: 4
+      },
+      {
+        keywords: ['gnocchi', 'ñoquis'],
+        ingredientes: ['1kg de papas', '300g de harina', '1 huevo', 'Sal', 'Salsa de tomate o pesto', 'Parmesano rallado'],
+        preparacion: ['Cuece las papas con cáscara', 'Pela y haz puré', 'Mezcla con harina, huevo y sal', 'Forma rollos y corta en trozos', 'Marca con tenedor', 'Hierve en agua con sal', 'Retira cuando floten', 'Sirve con salsa y parmesano'],
+        tiempo: 45, calorias: 350, proteina: 10, porciones: 4
+      },
+      {
+        keywords: ['ravioli', 'ravioles'],
+        ingredientes: ['Para masa: 300g harina, 3 huevos', 'Relleno: 250g ricotta, espinaca', 'Salsa de mantequilla y salvia', 'Parmesano rallado'],
+        preparacion: ['Haz la masa y deja reposar', 'Prepara el relleno', 'Estira la masa muy fina', 'Coloca porciones de relleno', 'Cubre y sella', 'Corta los ravioles', 'Hierve 3-4 minutos', 'Sirve con salsa de mantequilla'],
+        tiempo: 60, calorias: 380, proteina: 16, porciones: 4
+      },
+      {
+        keywords: ['tiramisu', 'tiramisú'],
+        ingredientes: ['500g de mascarpone', '4 huevos', '100g de azúcar', '300ml de café frío', '200g de galletas savoiardi', 'Cacao en polvo', 'Amaretto (opcional)'],
+        preparacion: ['Separa claras y yemas', 'Bate yemas con azúcar', 'Añade mascarpone', 'Monta las claras e incorpora', 'Remoja galletas en café', 'Alterna capas de galleta y crema', 'Termina con crema', 'Refrigera 4 horas, espolvorea cacao'],
+        tiempo: 30, calorias: 380, proteina: 8, porciones: 8
+      },
+      {
+        keywords: ['minestrone', 'sopa minestrone'],
+        ingredientes: ['200g de pasta pequeña', 'Variedad de verduras', '400g de tomate', 'Frijoles blancos', 'Caldo de verduras', 'Albahaca, parmesano'],
+        preparacion: ['Sofríe cebolla, zanahoria, apio', 'Añade calabacín, ejotes', 'Agrega tomate y caldo', 'Cocina 20 min', 'Añade pasta y frijoles', 'Cocina hasta que la pasta esté lista', 'Sirve con albahaca', 'Añade parmesano rallado'],
+        tiempo: 40, calorias: 280, proteina: 12, porciones: 6
+      },
+      {
+        keywords: ['pesto', 'pasta al pesto'],
+        ingredientes: ['400g de pasta', '100g de albahaca fresca', '50g de piñones', '50g de parmesano', '2 dientes de ajo', '150ml de aceite de oliva'],
+        preparacion: ['Licua albahaca, piñones, ajo', 'Añade parmesano', 'Agrega aceite poco a poco', 'Cocina la pasta al dente', 'Reserva agua de cocción', 'Mezcla pasta con pesto', 'Añade agua si necesita', 'Sirve con más parmesano'],
+        tiempo: 20, calorias: 520, proteina: 16, porciones: 4
+      },
+      {
+        keywords: ['ossobuco', 'osobuco'],
+        ingredientes: ['4 cortes de ossobuco', 'Harina para enharinar', '1 cebolla, 2 zanahorias, 2 apio', '400ml de vino blanco', '400g de tomate', 'Caldo de res', 'Gremolata: perejil, ajo, limón'],
+        preparacion: ['Enharina y dora el ossobuco', 'Retira y sofríe verduras', 'Añade vino y deja reducir', 'Agrega tomate y caldo', 'Regresa la carne', 'Cocina a fuego bajo 2 horas', 'Prepara gremolata picando todo', 'Sirve con gremolata encima'],
+        tiempo: 150, calorias: 480, proteina: 45, porciones: 4
+      },
+      {
+        keywords: ['bruschetta', 'bruscheta'],
+        ingredientes: ['1 baguette', '4 tomates maduros', '1/4 taza de albahaca', '2 dientes de ajo', 'Aceite de oliva extra virgen', 'Sal y pimienta', 'Vinagre balsámico'],
+        preparacion: ['Corta el pan en rebanadas', 'Tuesta ligeramente', 'Frota con ajo', 'Pica tomate y albahaca', 'Mezcla con aceite, sal, pimienta', 'Coloca la mezcla sobre el pan', 'Rocía con balsámico', 'Sirve inmediatamente'],
+        tiempo: 15, calorias: 180, proteina: 5, porciones: 6
+      },
+      {
+        keywords: ['carpaccio', 'carpaccio de res'],
+        ingredientes: ['300g de filete de res', 'Aceite de oliva', 'Jugo de limón', 'Alcaparras', 'Parmesano en láminas', 'Rúcula', 'Sal y pimienta'],
+        preparacion: ['Congela la carne 30 min', 'Corta en láminas muy finas', 'Extiende en plato frío', 'Rocía aceite y limón', 'Sazona con sal y pimienta', 'Añade alcaparras', 'Coloca rúcula y parmesano', 'Sirve frío'],
+        tiempo: 45, calorias: 220, proteina: 25, porciones: 4
+      },
+
+      // ============ COMIDA ASIÁTICA ============
+      {
+        keywords: ['sushi', 'sushi roll', 'maki'],
+        ingredientes: ['300g de arroz para sushi', '4 hojas de nori', '200g de salmón o atún', 'Pepino, aguacate', 'Vinagre de arroz', 'Salsa de soya, wasabi, jengibre'],
+        preparacion: ['Cocina y sazona el arroz', 'Coloca nori en esterilla', 'Extiende arroz en el nori', 'Añade pescado y verduras', 'Enrolla apretando', 'Corta en 8 piezas', 'Sirve con soya y wasabi', 'Acompaña con jengibre'],
+        tiempo: 45, calorias: 320, proteina: 18, porciones: 4
+      },
+      {
+        keywords: ['ramen', 'ramen japones'],
+        ingredientes: ['400g de fideos ramen', '1L de caldo de cerdo o pollo', '200g de chashu (cerdo)', '2 huevos marinados', 'Nori, cebollín, brotes', 'Salsa de soya, mirin'],
+        preparacion: ['Prepara el caldo con huesos', 'Cocina los fideos', 'Marina los huevos en soya', 'Corta el chashu en rebanadas', 'Coloca fideos en bowl', 'Vierte el caldo caliente', 'Añade los toppings', 'Sirve inmediatamente'],
+        tiempo: 60, calorias: 580, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['pad thai', 'padthai'],
+        ingredientes: ['300g de fideos de arroz', '200g de camarones', '2 huevos', '100g de tofu', 'Brotes de soya', 'Cacahuates, limón, cilantro', 'Salsa pad thai'],
+        preparacion: ['Remoja los fideos', 'Saltea camarones y tofu', 'Añade huevo revuelto', 'Agrega fideos y salsa', 'Saltea a fuego alto', 'Añade brotes de soya', 'Sirve con cacahuates', 'Exprime limón y añade cilantro'],
+        tiempo: 25, calorias: 450, proteina: 28, porciones: 4
+      },
+      {
+        keywords: ['curry', 'curry japones', 'kare'],
+        ingredientes: ['500g de carne de res o pollo', '2 papas', '2 zanahorias', '1 cebolla', '1 bloque de curry japonés', 'Arroz blanco'],
+        preparacion: ['Corta carne y verduras', 'Sofríe la cebolla', 'Añade carne y dora', 'Agrega papas y zanahorias', 'Cubre con agua', 'Cocina 20 min', 'Añade el curry y mezcla', 'Sirve sobre arroz'],
+        tiempo: 40, calorias: 520, proteina: 32, porciones: 4
+      },
+      {
+        keywords: ['arroz frito', 'fried rice', 'arroz chino'],
+        ingredientes: ['400g de arroz cocido frío', '2 huevos', '100g de jamón o cerdo', '1/2 taza de chícharos', '2 cebollines', 'Salsa de soya', 'Aceite de sésamo'],
+        preparacion: ['Bate y cocina los huevos', 'Retira y reserva', 'Saltea jamón y verduras', 'Añade el arroz frío', 'Cocina a fuego alto', 'Agrega salsa de soya', 'Incorpora el huevo', 'Añade aceite de sésamo'],
+        tiempo: 15, calorias: 380, proteina: 18, porciones: 4
+      },
+      {
+        keywords: ['teriyaki', 'pollo teriyaki'],
+        ingredientes: ['500g de muslos de pollo', '100ml de salsa de soya', '50ml de mirin', '50ml de sake', '2 cucharadas de azúcar', 'Arroz y verduras para acompañar'],
+        preparacion: ['Mezcla soya, mirin, sake, azúcar', 'Cocina el pollo hasta dorar', 'Añade la salsa teriyaki', 'Cocina hasta que espese', 'Baña el pollo constantemente', 'Corta en trozos', 'Sirve sobre arroz', 'Añade semillas de sésamo'],
+        tiempo: 25, calorias: 420, proteina: 38, porciones: 4
+      },
+      {
+        keywords: ['gyoza', 'dumplings', 'empanaditas chinas'],
+        ingredientes: ['300g de carne de cerdo', '100g de col picada', '2 cebollines', 'Jengibre rallado', 'Pasta para gyoza', 'Salsa de soya y vinagre'],
+        preparacion: ['Mezcla cerdo, col, cebollín, jengibre', 'Coloca relleno en la pasta', 'Dobla y sella los bordes', 'Dora la base en sartén', 'Añade agua y tapa', 'Cocina hasta que el agua se evapore', 'Sirve con salsa de soya y vinagre', 'Añade chile al gusto'],
+        tiempo: 35, calorias: 280, proteina: 18, porciones: 20
+      },
+      {
+        keywords: ['pho', 'sopa pho', 'pho vietnamita'],
+        ingredientes: ['1.5L de caldo de res', '300g de fideos de arroz', '200g de carne de res en láminas', 'Brotes de soya, albahaca thai', 'Limón, jalapeño, cilantro', 'Salsa hoisin, sriracha'],
+        preparacion: ['Prepara caldo con huesos y especias', 'Cuece los fideos', 'Coloca fideos en bowl', 'Añade carne cruda en láminas', 'Vierte caldo hirviendo', 'La carne se cocina con el calor', 'Añade brotes, hierbas, limón', 'Sirve con salsas aparte'],
+        tiempo: 45, calorias: 380, proteina: 28, porciones: 4
+      },
+      {
+        keywords: ['spring rolls', 'rollos primavera', 'rollitos'],
+        ingredientes: ['12 hojas de arroz', '200g de camarones cocidos', 'Fideos de arroz', 'Lechuga, zanahoria, pepino', 'Menta y cilantro', 'Salsa de maní'],
+        preparacion: ['Cocina los fideos', 'Remoja las hojas de arroz', 'Coloca lechuga, fideos, verduras', 'Añade camarones y hierbas', 'Enrolla apretando', 'Dobla los lados', 'Sirve con salsa de maní', 'Come frescos'],
+        tiempo: 30, calorias: 180, proteina: 12, porciones: 12
+      },
+      {
+        keywords: ['bibimbap', 'arroz coreano'],
+        ingredientes: ['400g de arroz', '200g de carne de res', 'Espinaca, zanahoria, calabacín', 'Brotes de soya', 'Huevo frito', 'Gochujang (pasta de chile)', 'Aceite de sésamo'],
+        preparacion: ['Cocina el arroz', 'Saltea cada verdura por separado', 'Cocina la carne marinada', 'Coloca arroz en bowl', 'Arregla verduras y carne encima', 'Corona con huevo frito', 'Añade gochujang', 'Mezcla todo antes de comer'],
+        tiempo: 40, calorias: 520, proteina: 30, porciones: 4
+      },
+      {
+        keywords: ['katsu', 'tonkatsu', 'milanesa japonesa'],
+        ingredientes: ['4 chuletas de cerdo', 'Harina, huevo, panko', 'Aceite para freír', 'Salsa tonkatsu', 'Col rallada', 'Arroz blanco'],
+        preparacion: ['Aplana las chuletas', 'Pasa por harina, huevo, panko', 'Fríe en aceite caliente', 'Cocina hasta dorar', 'Escurre en papel', 'Corta en tiras', 'Sirve sobre arroz', 'Acompaña con col y salsa'],
+        tiempo: 25, calorias: 480, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['dim sum', 'siu mai', 'har gow'],
+        ingredientes: ['Masa para dim sum', '200g de camarón', '200g de cerdo', 'Jengibre, cebollín', 'Salsa de soya', 'Aceite de sésamo'],
+        preparacion: ['Pica camarón y cerdo', 'Mezcla con jengibre y cebollín', 'Sazona con soya y sésamo', 'Rellena la masa', 'Forma los dumplings', 'Cocina al vapor 10 min', 'Sirve con soya', 'Acompaña con té'],
+        tiempo: 45, calorias: 250, proteina: 20, porciones: 20
+      },
+
+      // ============ COMIDA AMERICANA ============
+      {
+        keywords: ['mac and cheese', 'macarrones con queso'],
+        ingredientes: ['400g de macarrones', '400g de queso cheddar', '500ml de leche', '50g de mantequilla', '3 cucharadas de harina', 'Pan molido para gratinar'],
+        preparacion: ['Cocina la pasta al dente', 'Derrite mantequilla, añade harina', 'Agrega leche poco a poco', 'Añade queso hasta derretir', 'Mezcla con la pasta', 'Coloca en refractario', 'Cubre con pan molido', 'Gratina hasta dorar'],
+        tiempo: 30, calorias: 580, proteina: 25, porciones: 6
+      },
+      {
+        keywords: ['hot dog', 'perro caliente', 'hotdog'],
+        ingredientes: ['4 salchichas', '4 panes para hot dog', 'Mostaza, ketchup', 'Cebolla picada', 'Pepinillos', 'Chucrut (opcional)'],
+        preparacion: ['Hierve o asa las salchichas', 'Calienta los panes', 'Coloca salchicha en pan', 'Añade mostaza y ketchup', 'Agrega cebolla y pepinillos', 'Añade chucrut si deseas', 'Sirve calientes', 'Acompaña con papas fritas'],
+        tiempo: 10, calorias: 350, proteina: 14, porciones: 4
+      },
+      {
+        keywords: ['wings', 'alitas', 'buffalo wings'],
+        ingredientes: ['1kg de alitas de pollo', '100g de mantequilla', '150ml de salsa picante', 'Ajo en polvo', 'Salsa ranch o blue cheese', 'Apio en bastones'],
+        preparacion: ['Hornea las alitas a 200°C', 'Voltea a mitad de cocción', 'Cocina hasta crujientes (40 min)', 'Derrite mantequilla con salsa', 'Añade ajo en polvo', 'Mezcla alitas con la salsa', 'Sirve con ranch', 'Acompaña con apio'],
+        tiempo: 50, calorias: 420, proteina: 32, porciones: 4
+      },
+      {
+        keywords: ['ribs', 'costillas bbq', 'costillas a la bbq'],
+        ingredientes: ['1kg de costillas de cerdo', 'Dry rub: paprika, ajo, cebolla', 'Azúcar morena', 'Salsa BBQ', 'Vinagre de manzana'],
+        preparacion: ['Retira la membrana de las costillas', 'Aplica el dry rub generosamente', 'Refrigera toda la noche', 'Hornea a 135°C por 3 horas', 'Envuelve en aluminio a mitad', 'Barniza con salsa BBQ', 'Asa 10 min más', 'Corta y sirve'],
+        tiempo: 200, calorias: 550, proteina: 38, porciones: 4
+      },
+      {
+        keywords: ['pulled pork', 'cerdo deshebrado', 'cerdo desmenuzado'],
+        ingredientes: ['1.5kg de espaldilla de cerdo', 'Dry rub BBQ', '500ml de salsa BBQ', 'Vinagre de manzana', 'Panes para hamburguesa', 'Coleslaw'],
+        preparacion: ['Aplica dry rub a la carne', 'Cocina lento a 120°C por 8 horas', 'O en olla lenta por 10 horas', 'Deshebra con tenedores', 'Mezcla con salsa BBQ', 'Sirve en panes', 'Añade coleslaw encima', 'Disfruta'],
+        tiempo: 480, calorias: 450, proteina: 40, porciones: 8
+      },
+      {
+        keywords: ['philly cheesesteak', 'cheesesteak'],
+        ingredientes: ['500g de carne de res en láminas', '1 cebolla en juliana', '1 pimiento verde', '200g de queso provolone o cheez whiz', '4 panes hoagie', 'Sal y pimienta'],
+        preparacion: ['Saltea cebolla y pimiento', 'Retira y reserva', 'Cocina la carne en láminas', 'Sazona con sal y pimienta', 'Añade las verduras', 'Coloca queso encima', 'Deja derretir', 'Sirve en los panes'],
+        tiempo: 20, calorias: 520, proteina: 35, porciones: 4
+      },
+      {
+        keywords: ['club sandwich', 'sandwich club'],
+        ingredientes: ['3 rebanadas de pan tostado', '100g de pavo o pollo', '3 tiras de tocino', 'Lechuga, tomate', 'Mayonesa', 'Queso americano'],
+        preparacion: ['Tuesta el pan', 'Unta mayonesa', 'Primera capa: pavo y queso', 'Segunda capa de pan', 'Añade tocino, lechuga, tomate', 'Tercera capa de pan', 'Asegura con palillos', 'Corta en triángulos'],
+        tiempo: 15, calorias: 480, proteina: 28, porciones: 1
+      },
+      {
+        keywords: ['blt', 'sandwich blt'],
+        ingredientes: ['2 rebanadas de pan', '4 tiras de tocino', 'Lechuga', 'Tomate en rebanadas', 'Mayonesa'],
+        preparacion: ['Fríe el tocino crujiente', 'Tuesta el pan', 'Unta mayonesa en ambos lados', 'Coloca lechuga', 'Añade tomate', 'Coloca el tocino', 'Cierra el sandwich', 'Corta a la mitad'],
+        tiempo: 10, calorias: 380, proteina: 15, porciones: 1
+      },
+      {
+        keywords: ['grilled cheese', 'queso fundido sandwich'],
+        ingredientes: ['2 rebanadas de pan', '100g de queso cheddar', '30g de mantequilla', 'Opcional: jamón, tomate'],
+        preparacion: ['Unta mantequilla en el pan por fuera', 'Coloca queso entre las rebanadas', 'Calienta sartén a fuego medio', 'Cocina hasta dorar', 'Voltea con cuidado', 'Cocina el otro lado', 'El queso debe derretirse', 'Corta y sirve'],
+        tiempo: 10, calorias: 450, proteina: 18, porciones: 1
+      },
+      {
+        keywords: ['meatloaf', 'pastel de carne'],
+        ingredientes: ['750g de carne molida', '1/2 taza de pan molido', '1 huevo', '1/4 taza de leche', '1 cebolla picada', 'Salsa de tomate para cubrir'],
+        preparacion: ['Mezcla todos los ingredientes', 'Forma un rectángulo', 'Coloca en molde para pan', 'Cubre con salsa de tomate', 'Hornea a 180°C por 1 hora', 'Deja reposar 10 min', 'Rebana y sirve', 'Acompaña con puré de papa'],
+        tiempo: 75, calorias: 380, proteina: 32, porciones: 6
+      },
+      {
+        keywords: ['clam chowder', 'sopa de almejas'],
+        ingredientes: ['500g de almejas', '200g de tocino', '2 papas', '1 cebolla', '500ml de crema', '500ml de caldo', 'Tomillo'],
+        preparacion: ['Cocina el tocino crujiente', 'Sofríe cebolla en la grasa', 'Añade papas y caldo', 'Cocina hasta que ablanden', 'Agrega las almejas', 'Añade crema y tomillo', 'No dejes hervir', 'Sirve con galletas'],
+        tiempo: 35, calorias: 420, proteina: 22, porciones: 4
+      },
+
+      // ============ COMIDA ESPAÑOLA ============
+      {
+        keywords: ['tortilla espanola', 'tortilla de patatas', 'tortilla española'],
+        ingredientes: ['6 huevos', '500g de papas', '1 cebolla', '200ml de aceite de oliva', 'Sal'],
+        preparacion: ['Corta papas en láminas finas', 'Fríe en aceite a fuego medio', 'Añade cebolla a mitad', 'Cocina hasta que estén blandas', 'Escurre y mezcla con huevo batido', 'Cuaja en sartén por ambos lados', 'Voltea con plato', 'Sirve tibia o fría'],
+        tiempo: 40, calorias: 320, proteina: 15, porciones: 6
+      },
+      {
+        keywords: ['gazpacho'],
+        ingredientes: ['1kg de tomates maduros', '1 pepino', '1 pimiento verde', '2 dientes de ajo', '100ml de aceite de oliva', 'Vinagre de jerez', 'Pan del día anterior'],
+        preparacion: ['Pela tomates y pepino', 'Corta todas las verduras', 'Añade ajo, aceite, vinagre', 'Agrega pan remojado', 'Licúa hasta suave', 'Cuela si deseas', 'Refrigera bien frío', 'Sirve con tropezones'],
+        tiempo: 20, calorias: 180, proteina: 4, porciones: 6
+      },
+      {
+        keywords: ['patatas bravas', 'papas bravas'],
+        ingredientes: ['600g de papas', 'Aceite para freír', 'Salsa brava: tomate, pimentón, cayena', 'Alioli: ajo, aceite, huevo'],
+        preparacion: ['Corta papas en cubos', 'Fríe hasta dorar', 'Prepara salsa brava picante', 'Prepara alioli', 'Coloca papas en plato', 'Cubre con salsa brava', 'Añade alioli encima', 'Sirve calientes'],
+        tiempo: 30, calorias: 380, proteina: 6, porciones: 4
+      },
+      {
+        keywords: ['croquetas', 'croqueta', 'croquetas de jamon'],
+        ingredientes: ['100g de jamón serrano', '50g de mantequilla', '50g de harina', '500ml de leche', 'Nuez moscada', 'Huevo y pan molido'],
+        preparacion: ['Derrite mantequilla, añade harina', 'Agrega leche poco a poco', 'Cocina la bechamel espesa', 'Añade jamón picado', 'Enfría varias horas', 'Forma croquetas', 'Pasa por huevo y pan molido', 'Fríe hasta dorar'],
+        tiempo: 60, calorias: 280, proteina: 12, porciones: 20
+      },
+      {
+        keywords: ['pulpo a la gallega', 'pulpo'],
+        ingredientes: ['1kg de pulpo', 'Papas cocidas', 'Pimentón', 'Aceite de oliva', 'Sal gruesa'],
+        preparacion: ['Congela el pulpo antes', 'Hierve agua con cebolla', 'Sumerge pulpo 3 veces', 'Cuece 45 min a fuego bajo', 'Corta en rodajas', 'Coloca sobre papas', 'Añade pimentón y aceite', 'Espolvorea sal gruesa'],
+        tiempo: 60, calorias: 250, proteina: 32, porciones: 4
+      },
+      {
+        keywords: ['fabada', 'fabada asturiana'],
+        ingredientes: ['500g de fabes (alubias)', '200g de chorizo', '200g de morcilla', '200g de tocino', 'Azafrán', 'Laurel'],
+        preparacion: ['Remoja las fabes toda la noche', 'Cuece con laurel', 'Añade el tocino', 'Agrega chorizo y morcilla', 'Añade azafrán', 'Cocina a fuego bajo 2 horas', 'No revuelvas, solo mueve la olla', 'Sirve muy caliente'],
+        tiempo: 150, calorias: 580, proteina: 35, porciones: 6
+      },
+      {
+        keywords: ['gambas al ajillo'],
+        ingredientes: ['500g de gambas', '8 dientes de ajo', '1 chile seco', '150ml de aceite de oliva', 'Perejil', 'Pan para mojar'],
+        preparacion: ['Pela las gambas', 'Lamina el ajo', 'Calienta aceite en cazuela', 'Fríe ajo hasta dorar', 'Añade el chile troceado', 'Agrega las gambas', 'Cocina 3-4 minutos', 'Sirve con perejil y pan'],
+        tiempo: 15, calorias: 320, proteina: 28, porciones: 4
+      },
+      {
+        keywords: ['jamon serrano', 'jamon iberico', 'tabla de jamon'],
+        ingredientes: ['300g de jamón serrano o ibérico', 'Pan con tomate', 'Aceite de oliva', 'Tomate rallado'],
+        preparacion: ['Corta el jamón en lonchas finas', 'Tuesta rebanadas de pan', 'Frota tomate rallado', 'Rocía aceite de oliva', 'Coloca el jamón', 'Sirve a temperatura ambiente', 'Acompaña con aceitunas', 'Disfruta con vino'],
+        tiempo: 10, calorias: 280, proteina: 25, porciones: 4
+      },
+
+      // ============ COMIDA FRANCESA ============
+      {
+        keywords: ['crepes', 'crepa', 'crepas'],
+        ingredientes: ['250g de harina', '500ml de leche', '3 huevos', '50g de mantequilla', '1 cucharada de azúcar', 'Nutella, fruta, crema para rellenar'],
+        preparacion: ['Mezcla harina, huevos, leche', 'Añade mantequilla derretida', 'Deja reposar 30 min', 'Calienta sartén antiadherente', 'Vierte una capa fina', 'Cocina por ambos lados', 'Rellena con lo que desees', 'Dobla y sirve'],
+        tiempo: 30, calorias: 280, proteina: 8, porciones: 10
+      },
+      {
+        keywords: ['quiche', 'quiche lorraine'],
+        ingredientes: ['1 masa para tarta', '200g de tocino', '200g de queso gruyère', '3 huevos', '300ml de crema', 'Nuez moscada'],
+        preparacion: ['Forra molde con la masa', 'Hornea la base 10 min', 'Fríe el tocino', 'Bate huevos con crema', 'Añade nuez moscada', 'Coloca tocino y queso en la base', 'Vierte la mezcla de huevo', 'Hornea a 180°C 35 min'],
+        tiempo: 55, calorias: 420, proteina: 18, porciones: 8
+      },
+      {
+        keywords: ['ratatouille'],
+        ingredientes: ['2 berenjenas', '2 calabacines', '2 tomates', '1 pimiento rojo', '1 cebolla', 'Ajo, hierbas provenzales', 'Aceite de oliva'],
+        preparacion: ['Corta todo en rodajas', 'Sofríe cebolla y pimiento', 'Coloca en refractario', 'Alterna rodajas de verduras', 'Rocía con aceite y hierbas', 'Cubre con aluminio', 'Hornea a 180°C 45 min', 'Destapa los últimos 15 min'],
+        tiempo: 60, calorias: 180, proteina: 4, porciones: 6
+      },
+      {
+        keywords: ['sopa de cebolla', 'french onion soup'],
+        ingredientes: ['4 cebollas grandes', '100g de mantequilla', '1L de caldo de res', '200ml de vino blanco', 'Pan baguette', 'Queso gruyère'],
+        preparacion: ['Corta cebollas en juliana', 'Cocina en mantequilla 40 min', 'Deben caramelizarse', 'Añade vino y deja reducir', 'Agrega caldo y hierve', 'Sirve en bowls aptos para horno', 'Coloca pan y queso', 'Gratina hasta dorar'],
+        tiempo: 60, calorias: 320, proteina: 12, porciones: 4
+      },
+      {
+        keywords: ['croissant', 'croissants', 'cruasan'],
+        ingredientes: ['500g de harina', '10g de sal', '80g de azúcar', '10g de levadura', '300ml de leche', '280g de mantequilla fría', 'Huevo para barnizar'],
+        preparacion: ['Mezcla harina, sal, azúcar, levadura, leche', 'Amasa y refrigera 1 hora', 'Envuelve mantequilla en la masa', 'Haz 3 dobleces con reposo entre cada uno', 'Refrigera entre cada doblez', 'Corta en triángulos', 'Enrolla y da forma', 'Hornea a 200°C 15 min'],
+        tiempo: 240, calorias: 320, proteina: 6, porciones: 12
+      },
+      {
+        keywords: ['coq au vin', 'pollo al vino'],
+        ingredientes: ['1 pollo en piezas', '750ml de vino tinto', '200g de tocino', '200g de champiñones', 'Cebollitas', 'Tomillo, laurel', 'Caldo de pollo'],
+        preparacion: ['Marina el pollo en vino toda la noche', 'Dora las piezas', 'Fríe tocino, champiñones, cebollitas', 'Flamea con brandy', 'Añade el vino del marinado', 'Agrega caldo y hierbas', 'Cocina a fuego bajo 1.5 horas', 'La salsa debe espesar'],
+        tiempo: 120, calorias: 480, proteina: 42, porciones: 6
+      },
+      {
+        keywords: ['crème brûlée', 'creme brulee', 'crema quemada'],
+        ingredientes: ['500ml de crema para batir', '5 yemas de huevo', '100g de azúcar', '1 vaina de vainilla', 'Azúcar para caramelizar'],
+        preparacion: ['Calienta crema con vainilla', 'Bate yemas con azúcar', 'Vierte crema caliente sobre yemas', 'Cuela y vierte en moldes', 'Hornea a baño maría a 150°C 45 min', 'Refrigera varias horas', 'Espolvorea azúcar', 'Quema con soplete'],
+        tiempo: 60, calorias: 380, proteina: 5, porciones: 6
+      },
+
+      // ============ BEBIDAS Y SMOOTHIES ============
+      {
+        keywords: ['margarita', 'coctel margarita'],
+        ingredientes: ['60ml de tequila', '30ml de triple sec', '30ml de jugo de limón', 'Sal para escarchar', 'Hielo'],
+        preparacion: ['Escarcha el vaso con limón y sal', 'Añade hielo a la coctelera', 'Agrega tequila, triple sec, limón', 'Agita vigorosamente', 'Cuela en el vaso', 'Decora con rodaja de limón', 'Sirve inmediatamente', 'Disfruta responsablemente'],
+        tiempo: 5, calorias: 180, proteina: 0, porciones: 1
+      },
+      {
+        keywords: ['mojito'],
+        ingredientes: ['60ml de ron blanco', '30ml de jugo de limón', '2 cucharaditas de azúcar', '6 hojas de menta', 'Agua mineral', 'Hielo'],
+        preparacion: ['Machaca menta con azúcar y limón', 'Añade el ron', 'Agrega hielo', 'Completa con agua mineral', 'Revuelve suavemente', 'Decora con menta', 'Sirve con popote', 'Disfruta'],
+        tiempo: 5, calorias: 150, proteina: 0, porciones: 1
+      },
+      {
+        keywords: ['michelada'],
+        ingredientes: ['1 cerveza', 'Jugo de 2 limones', 'Salsa inglesa', 'Salsa picante', 'Sal y chile para escarchar', 'Hielo'],
+        preparacion: ['Escarcha el tarro con limón y chamoy', 'Añade hielo', 'Agrega salsas y limón', 'Vierte la cerveza fría', 'Revuelve suavemente', 'Puedes añadir clamato', 'Decora con limón', 'Sirve fría'],
+        tiempo: 5, calorias: 180, proteina: 1, porciones: 1
+      },
+      {
+        keywords: ['agua fresca', 'agua de jamaica', 'jamaica'],
+        ingredientes: ['100g de flor de jamaica', '1 taza de azúcar', '2 litros de agua', 'Hielo'],
+        preparacion: ['Hierve 1L de agua', 'Añade la jamaica', 'Deja reposar 20 min', 'Cuela', 'Añade azúcar al gusto', 'Agrega el agua restante', 'Refrigera bien fría', 'Sirve con hielo'],
+        tiempo: 30, calorias: 80, proteina: 0, porciones: 8
+      },
+      {
+        keywords: ['horchata', 'agua de horchata'],
+        ingredientes: ['1 taza de arroz', '1/2 taza de almendras', '1 raja de canela', 'Azúcar al gusto', '2 litros de agua', 'Vainilla'],
+        preparacion: ['Remoja arroz y almendras toda la noche', 'Licua con canela y agua', 'Cuela muy bien', 'Añade azúcar y vainilla', 'Agrega más agua si necesita', 'Refrigera bien fría', 'Revuelve antes de servir', 'Sirve con hielo'],
+        tiempo: 20, calorias: 120, proteina: 2, porciones: 8
+      },
+      {
+        keywords: ['limonada', 'agua de limon'],
+        ingredientes: ['1 taza de jugo de limón', '3/4 taza de azúcar', '6 tazas de agua fría', 'Hielo', 'Menta fresca (opcional)'],
+        preparacion: ['Exprime los limones', 'Disuelve azúcar en 1 taza de agua caliente', 'Mezcla con el jugo de limón', 'Añade el agua fría', 'Prueba y ajusta dulzor', 'Refrigera bien fría', 'Sirve con hielo', 'Decora con menta'],
+        tiempo: 10, calorias: 90, proteina: 0, porciones: 6
+      },
+      {
+        keywords: ['smoothie verde', 'green smoothie', 'jugo verde'],
+        ingredientes: ['1 taza de espinaca', '1 plátano', '1/2 mango', '1 taza de leche de almendras', '1 cucharada de miel', 'Hielo'],
+        preparacion: ['Añade espinaca y leche a licuadora', 'Agrega plátano y mango', 'Añade miel y hielo', 'Licua hasta suave', 'Prueba y ajusta', 'Sirve inmediatamente', 'Decora con semillas', 'Disfruta nutritivo'],
+        tiempo: 5, calorias: 220, proteina: 4, porciones: 1
+      },
+      {
+        keywords: ['chocolate caliente', 'hot chocolate'],
+        ingredientes: ['500ml de leche', '100g de chocolate oscuro', '2 cucharadas de azúcar', '1/2 cucharadita de canela', 'Crema batida', 'Malvaviscos'],
+        preparacion: ['Calienta la leche sin hervir', 'Añade chocolate picado', 'Revuelve hasta derretir', 'Agrega azúcar y canela', 'Bate hasta espumar', 'Sirve en tazas', 'Corona con crema batida', 'Añade malvaviscos'],
+        tiempo: 10, calorias: 280, proteina: 8, porciones: 2
+      },
+      {
+        keywords: ['cafe latte', 'latte', 'cafe con leche'],
+        ingredientes: ['1 shot de espresso', '200ml de leche', 'Azúcar al gusto', 'Canela o cocoa para decorar'],
+        preparacion: ['Prepara el espresso', 'Calienta la leche', 'Espuma la leche', 'Vierte espresso en taza', 'Añade la leche espumada', 'Puedes hacer arte latte', 'Espolvorea canela o cocoa', 'Sirve caliente'],
+        tiempo: 5, calorias: 120, proteina: 6, porciones: 1
+      },
+
+      // ============ SNACKS Y APERITIVOS ============
+      {
+        keywords: ['nachos', 'nachos con queso'],
+        ingredientes: ['200g de totopos', '200g de queso cheddar', '100g de frijoles', 'Jalapeños', 'Crema, guacamole', 'Pico de gallo'],
+        preparacion: ['Coloca totopos en refractario', 'Añade frijoles', 'Cubre con queso rallado', 'Hornea hasta gratinar', 'Añade jalapeños', 'Sirve con crema y guacamole', 'Añade pico de gallo', 'Come calientes'],
+        tiempo: 15, calorias: 450, proteina: 15, porciones: 4
+      },
+      {
+        keywords: ['palomitas', 'popcorn', 'palomitas de maiz'],
+        ingredientes: ['100g de maíz palomero', '3 cucharadas de aceite', 'Sal o mantequilla', 'Opcional: chile, limón, queso'],
+        preparacion: ['Calienta aceite en olla grande', 'Añade 3 granos de maíz', 'Cuando revienten, añade el resto', 'Tapa y agita constantemente', 'Espera a que dejen de reventar', 'Retira del fuego', 'Añade sal o mantequilla', 'Mezcla bien y sirve'],
+        tiempo: 10, calorias: 150, proteina: 3, porciones: 4
+      },
+      {
+        keywords: ['hummus'],
+        ingredientes: ['400g de garbanzos cocidos', '3 cucharadas de tahini', '2 dientes de ajo', 'Jugo de 1 limón', '3 cucharadas de aceite de oliva', 'Comino, pimentón'],
+        preparacion: ['Escurre los garbanzos', 'Licua con tahini, ajo, limón', 'Añade aceite poco a poco', 'Sazona con sal y comino', 'Licua hasta cremoso', 'Sirve en plato', 'Decora con pimentón y aceite', 'Acompaña con pan pita'],
+        tiempo: 10, calorias: 180, proteina: 8, porciones: 6
+      },
+      {
+        keywords: ['papas fritas', 'french fries', 'papas a la francesa'],
+        ingredientes: ['4 papas grandes', 'Aceite para freír', 'Sal', 'Ketchup o mayonesa'],
+        preparacion: ['Pela y corta papas en bastones', 'Remoja en agua fría 30 min', 'Seca muy bien', 'Fríe a 160°C hasta blanquear', 'Retira y deja enfriar', 'Fríe de nuevo a 190°C hasta dorar', 'Escurre y sala inmediatamente', 'Sirve calientes'],
+        tiempo: 45, calorias: 320, proteina: 4, porciones: 4
+      },
+      {
+        keywords: ['empanadas', 'empanada'],
+        ingredientes: ['Masa para empanadas', '300g de carne molida', '1 cebolla', '1 huevo duro', 'Aceitunas', 'Comino, pimentón'],
+        preparacion: ['Sofríe cebolla y carne', 'Sazona con especias', 'Deja enfriar', 'Añade huevo y aceitunas picadas', 'Rellena los discos de masa', 'Cierra y sella con tenedor', 'Hornea a 200°C 20 min', 'O fríe hasta dorar'],
+        tiempo: 45, calorias: 280, proteina: 12, porciones: 12
+      },
+      {
+        keywords: ['aros de cebolla', 'onion rings'],
+        ingredientes: ['2 cebollas grandes', '1 taza de harina', '1 taza de cerveza', '1 huevo', 'Aceite para freír', 'Sal'],
+        preparacion: ['Corta cebollas en aros gruesos', 'Mezcla harina, cerveza, huevo', 'La masa debe ser espesa', 'Calienta aceite a 180°C', 'Pasa aros por la masa', 'Fríe hasta dorar', 'Escurre en papel', 'Sala y sirve calientes'],
+        tiempo: 25, calorias: 250, proteina: 5, porciones: 4
+      },
+
+      // ============ COMIDA SALUDABLE / FITNESS ============
+      {
+        keywords: ['poke bowl', 'poke', 'bowl hawaiano'],
+        ingredientes: ['200g de atún fresco', '200g de arroz de sushi', 'Aguacate', 'Pepino', 'Edamame', 'Salsa de soya', 'Aceite de sésamo'],
+        preparacion: ['Cocina y sazona el arroz', 'Corta el atún en cubos', 'Marina en soya y sésamo', 'Coloca arroz en bowl', 'Añade atún, aguacate, pepino', 'Agrega edamame', 'Decora con sésamo', 'Sirve frío'],
+        tiempo: 25, calorias: 420, proteina: 35, porciones: 2
+      },
+      {
+        keywords: ['ensalada griega', 'greek salad'],
+        ingredientes: ['2 pepinos', '4 tomates', '1 cebolla morada', '200g de queso feta', 'Aceitunas kalamata', 'Aceite de oliva', 'Orégano'],
+        preparacion: ['Corta pepino y tomate en cubos', 'Rebana cebolla en aros finos', 'Combina en ensaladera', 'Añade aceitunas', 'Coloca queso feta encima', 'Rocía aceite generosamente', 'Espolvorea orégano', 'No mezclar, servir así'],
+        tiempo: 15, calorias: 280, proteina: 12, porciones: 4
+      },
+      {
+        keywords: ['buddha bowl', 'bowl saludable'],
+        ingredientes: ['Quinoa cocida', 'Garbanzos asados', 'Aguacate', 'Zanahoria rallada', 'Espinaca', 'Hummus', 'Semillas'],
+        preparacion: ['Cocina la quinoa', 'Asa garbanzos con especias', 'Coloca quinoa en bowl', 'Añade verduras en secciones', 'Agrega aguacate en rebanadas', 'Coloca hummus al lado', 'Espolvorea semillas', 'Sirve con limón'],
+        tiempo: 30, calorias: 380, proteina: 15, porciones: 2
+      },
+      {
+        keywords: ['wrap saludable', 'wrap de pollo'],
+        ingredientes: ['1 tortilla integral grande', '150g de pollo a la plancha', 'Lechuga', 'Tomate', 'Aguacate', 'Yogurt griego', 'Limón'],
+        preparacion: ['Cocina el pollo y rebana', 'Mezcla yogurt con limón', 'Calienta la tortilla', 'Unta el aderezo de yogurt', 'Coloca lechuga y pollo', 'Añade tomate y aguacate', 'Enrolla apretando', 'Corta a la mitad'],
+        tiempo: 15, calorias: 380, proteina: 35, porciones: 1
+      },
+      {
+        keywords: ['salmon al horno', 'salmon con verduras'],
+        ingredientes: ['2 filetes de salmón', 'Brócoli', 'Zanahorias', 'Aceite de oliva', 'Limón', 'Ajo', 'Eneldo'],
+        preparacion: ['Precalienta horno a 200°C', 'Coloca salmón en bandeja', 'Rodea con verduras', 'Rocía aceite y limón', 'Sazona con ajo y eneldo', 'Hornea 15-18 minutos', 'El salmón debe estar rosado', 'Sirve caliente'],
+        tiempo: 25, calorias: 420, proteina: 45, porciones: 2
+      },
+      {
+        keywords: ['zoodles', 'espagueti de calabacin', 'pasta de calabaza'],
+        ingredientes: ['3 calabacines', 'Salsa marinara o pesto', 'Parmesano rallado', 'Aceite de oliva', 'Ajo'],
+        preparacion: ['Corta calabacín en espirales', 'Saltea ajo en aceite', 'Añade los zoodles', 'Cocina 3-4 minutos', 'No sobrecocinar', 'Añade la salsa', 'Sirve con parmesano', 'Opción baja en carbohidratos'],
+        tiempo: 15, calorias: 180, proteina: 8, porciones: 2
+      },
+      {
+        keywords: ['quinoa', 'ensalada de quinoa'],
+        ingredientes: ['200g de quinoa', 'Pepino', 'Tomate cherry', 'Cebolla morada', 'Perejil', 'Limón', 'Aceite de oliva'],
+        preparacion: ['Enjuaga la quinoa', 'Cuece en agua con sal 15 min', 'Deja enfriar', 'Pica las verduras', 'Mezcla todo', 'Aliña con limón y aceite', 'Sazona con sal', 'Sirve fría'],
+        tiempo: 25, calorias: 280, proteina: 10, porciones: 4
       }
     ]
 
