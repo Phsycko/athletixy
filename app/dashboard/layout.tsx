@@ -318,7 +318,7 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-gray-50 dark:bg-zinc-950 min-h-screen transition-colors duration-200">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-white dark:bg-zinc-950 min-h-screen transition-colors duration-200">
         <div className="p-6 lg:p-8">
           {children}
         </div>

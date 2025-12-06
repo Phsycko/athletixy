@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
 
 type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
@@ -16,62 +15,65 @@ export default function LoginPage() {
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const router = useRouter()
 
   // Inicializar usuarios en localStorage si no existen
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const users = localStorage.getItem('athletixy_users')
-      if (!users) {
-        // Usuarios por defecto
-        const defaultUsers = [
-          {
-            email: 'admin@athletixy.com',
-            password: 'admin123',
-            nombre: 'Administrador',
-            tipoUsuario: 'atleta' as UserType,
-            fechaRegistro: new Date().toISOString(),
-            isAdmin: true
-          },
-          {
-            email: 'atleta@athletixy.com',
-            password: 'atleta123',
-            nombre: 'Carlos Martínez',
-            tipoUsuario: 'atleta' as UserType,
-            fechaRegistro: new Date().toISOString()
-          },
-          {
-            email: 'nutriologo@athletixy.com',
-            password: 'nutriologo123',
-            nombre: 'Dra. Patricia Mendoza',
-            tipoUsuario: 'nutriologo' as UserType,
-            fechaRegistro: new Date().toISOString()
-          },
-          {
-            email: 'coach@athletixy.com',
-            password: 'coach123',
-            nombre: 'Miguel Ángel Torres',
-            tipoUsuario: 'coach' as UserType,
-            fechaRegistro: new Date().toISOString()
+    try {
+      if (typeof window !== 'undefined') {
+        const users = localStorage.getItem('athletixy_users')
+        if (!users) {
+          // Usuarios por defecto
+          const defaultUsers = [
+            {
+              email: 'admin@athletixy.com',
+              password: 'admin123',
+              nombre: 'Administrador',
+              tipoUsuario: 'atleta' as UserType,
+              fechaRegistro: new Date().toISOString(),
+              isAdmin: true
+            },
+            {
+              email: 'atleta@athletixy.com',
+              password: 'atleta123',
+              nombre: 'Carlos Martínez',
+              tipoUsuario: 'atleta' as UserType,
+              fechaRegistro: new Date().toISOString()
+            },
+            {
+              email: 'nutriologo@athletixy.com',
+              password: 'nutriologo123',
+              nombre: 'Dra. Patricia Mendoza',
+              tipoUsuario: 'nutriologo' as UserType,
+              fechaRegistro: new Date().toISOString()
+            },
+            {
+              email: 'coach@athletixy.com',
+              password: 'coach123',
+              nombre: 'Miguel Ángel Torres',
+              tipoUsuario: 'coach' as UserType,
+              fechaRegistro: new Date().toISOString()
+            }
+          ]
+          localStorage.setItem('athletixy_users', JSON.stringify(defaultUsers))
+        } else {
+          // Verificar si existe admin, si no agregarlo
+          const existingUsers = JSON.parse(users)
+          const adminExists = existingUsers.some((u: any) => u.email === 'admin@athletixy.com')
+          if (!adminExists) {
+            existingUsers.push({
+              email: 'admin@athletixy.com',
+              password: 'admin123',
+              nombre: 'Administrador',
+              tipoUsuario: 'atleta',
+              fechaRegistro: new Date().toISOString(),
+              isAdmin: true
+            })
+            localStorage.setItem('athletixy_users', JSON.stringify(existingUsers))
           }
-        ]
-        localStorage.setItem('athletixy_users', JSON.stringify(defaultUsers))
-      } else {
-        // Verificar si existe admin, si no agregarlo
-        const existingUsers = JSON.parse(users)
-        const adminExists = existingUsers.some((u: any) => u.email === 'admin@athletixy.com')
-        if (!adminExists) {
-          existingUsers.push({
-            email: 'admin@athletixy.com',
-            password: 'admin123',
-            nombre: 'Administrador',
-            tipoUsuario: 'atleta',
-            fechaRegistro: new Date().toISOString(),
-            isAdmin: true
-          })
-          localStorage.setItem('athletixy_users', JSON.stringify(existingUsers))
         }
       }
+    } catch (error) {
+      console.error('Error inicializando usuarios:', error)
     }
   }, [])
 
@@ -156,79 +158,126 @@ export default function LoginPage() {
       return
     }
 
-    // Normalizar email
-    const emailNormalized = credentials.email.trim().toLowerCase()
-    const passwordNormalized = credentials.password.trim()
+    try {
+      // Normalizar email
+      const emailNormalized = credentials.email.trim().toLowerCase()
+      const passwordNormalized = credentials.password.trim()
 
-    // Obtener usuarios registrados
-    const usersStr = localStorage.getItem('athletixy_users')
-    const users = usersStr ? JSON.parse(usersStr) : []
+      // Obtener usuarios registrados
+      const usersStr = localStorage.getItem('athletixy_users')
+      const users = usersStr ? JSON.parse(usersStr) : []
 
-    // Buscar usuario
-    const user = users.find((u: any) => 
-      u.email.toLowerCase() === emailNormalized && 
-      u.password === passwordNormalized
-    )
-    
-    // Si no encuentra usuario, verificar credenciales hardcodeadas
-    if (!user) {
-      // Admin
-      if (emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
-        localStorage.setItem('athletixy_session', JSON.stringify({
-          email: 'admin@athletixy.com',
-          nombre: 'Administrador',
-          role: 'atleta',
-          loggedIn: true,
-          isAdmin: true
-        }))
-        window.location.href = '/dashboard'
-        return
-      }
-      // Atleta de ejemplo
-      if (emailNormalized === 'atleta@athletixy.com' && passwordNormalized === 'atleta123') {
-        localStorage.setItem('athletixy_session', JSON.stringify({
-          email: 'atleta@athletixy.com',
-          nombre: 'Carlos Martínez',
-          role: 'atleta',
-          loggedIn: true,
-          isAdmin: false
-        }))
-        window.location.href = '/dashboard'
-        return
-      }
-    }
-
-    if (user) {
-      // Guardar sesión
-      localStorage.setItem('athletixy_session', JSON.stringify({
-        email: user.email,
-        nombre: user.nombre,
-        role: user.tipoUsuario,
-        loggedIn: true,
-        isAdmin: user.isAdmin || false
-      }))
-
-      // Redirigir según rol
-      if (typeof window !== 'undefined') {
-        if (user.tipoUsuario === 'nutriologo') {
-          window.location.href = '/dashboard/nutriologo'
-        } else if (user.tipoUsuario === 'coach') {
-          window.location.href = '/dashboard/coach'
-        } else if (user.tipoUsuario === 'gym') {
-          window.location.href = '/dashboard'
-        } else if (user.tipoUsuario === 'vendedor') {
-          window.location.href = '/dashboard/marketplace'
-        } else {
-          window.location.href = '/dashboard'
+      // Buscar usuario
+      const user = users.find((u: any) => 
+        u.email.toLowerCase() === emailNormalized && 
+        u.password === passwordNormalized
+      )
+      
+      // Si no encuentra usuario, verificar credenciales hardcodeadas
+      if (!user) {
+        // Admin
+        if (emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
+          const sessionData = {
+            email: 'admin@athletixy.com',
+            nombre: 'Administrador',
+            role: 'atleta',
+            loggedIn: true,
+            isAdmin: true
+          }
+          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+          setSuccess('Iniciando sesión...')
+          setTimeout(() => {
+            window.location.href = '/dashboard'
+          }, 100)
+          return
+        }
+        // Atleta de ejemplo
+        if (emailNormalized === 'atleta@athletixy.com' && passwordNormalized === 'atleta123') {
+          const sessionData = {
+            email: 'atleta@athletixy.com',
+            nombre: 'Carlos Martínez',
+            role: 'atleta',
+            loggedIn: true,
+            isAdmin: false
+          }
+          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+          setSuccess('Iniciando sesión...')
+          setTimeout(() => {
+            window.location.href = '/dashboard'
+          }, 100)
+          return
+        }
+        // Nutriólogo
+        if (emailNormalized === 'nutriologo@athletixy.com' && passwordNormalized === 'nutriologo123') {
+          const sessionData = {
+            email: 'nutriologo@athletixy.com',
+            nombre: 'Dra. Patricia Mendoza',
+            role: 'nutriologo',
+            loggedIn: true,
+            isAdmin: false
+          }
+          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+          setSuccess('Iniciando sesión...')
+          setTimeout(() => {
+            window.location.href = '/dashboard/nutriologo'
+          }, 100)
+          return
+        }
+        // Coach
+        if (emailNormalized === 'coach@athletixy.com' && passwordNormalized === 'coach123') {
+          const sessionData = {
+            email: 'coach@athletixy.com',
+            nombre: 'Miguel Ángel Torres',
+            role: 'coach',
+            loggedIn: true,
+            isAdmin: false
+          }
+          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+          setSuccess('Iniciando sesión...')
+          setTimeout(() => {
+            window.location.href = '/dashboard/coach'
+          }, 100)
+          return
         }
       }
-    } else {
-      setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
+
+      if (user) {
+        // Guardar sesión
+        const sessionData = {
+          email: user.email,
+          nombre: user.nombre,
+          role: user.tipoUsuario,
+          loggedIn: true,
+          isAdmin: user.isAdmin || false
+        }
+        localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+        setSuccess('Iniciando sesión...')
+
+        // Redirigir según rol
+        setTimeout(() => {
+          if (user.tipoUsuario === 'nutriologo') {
+            window.location.href = '/dashboard/nutriologo'
+          } else if (user.tipoUsuario === 'coach') {
+            window.location.href = '/dashboard/coach'
+          } else if (user.tipoUsuario === 'gym') {
+            window.location.href = '/dashboard'
+          } else if (user.tipoUsuario === 'vendedor') {
+            window.location.href = '/dashboard/marketplace'
+          } else {
+            window.location.href = '/dashboard'
+          }
+        }, 100)
+      } else {
+        setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
+      }
+    } catch (error) {
+      console.error('Error en login:', error)
+      setError('Ocurrió un error al iniciar sesión. Por favor intenta de nuevo.')
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8" style={{ minHeight: '100vh' }}>
       <div className="w-full max-w-md">
         {/* Logo y título */}
         <div className="text-center mb-10">
@@ -279,7 +328,15 @@ export default function LoginPage() {
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
 
-          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (isLogin) {
+              handleLogin(e)
+            } else {
+              handleRegister(e)
+            }
+          }} className="space-y-6">
             {!isLogin && (
               <div>
                 <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
@@ -427,7 +484,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
+              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               {isLogin ? (
                 <>
