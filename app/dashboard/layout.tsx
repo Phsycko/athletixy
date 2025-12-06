@@ -56,9 +56,7 @@ export default function DashboardLayout({
       
       // Verificar si es admin y establecer estado
       const isAdmin = sessionData.isAdmin || false
-      if (isAdmin) {
-        setIsAdmin(true)
-      }
+      setIsAdminState(isAdmin)
       
       // Redirigir según rol si está en una ruta no permitida (admin tiene acceso a todo)
       const role = sessionData.role
@@ -118,15 +116,16 @@ export default function DashboardLayout({
   ]
 
   // Filtrar menú según rol (admin ve todo)
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdminState, setIsAdminState] = useState(false)
   
+  // Verificar admin en el mismo useEffect donde se carga la sesión
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
         const session = localStorage.getItem('athletixy_session')
         if (session) {
           const sessionData = JSON.parse(session)
-          setIsAdmin(sessionData.isAdmin || false)
+          setIsAdminState(sessionData.isAdmin || false)
         }
       } catch (e) {
         console.error('Error checking admin status:', e)
@@ -134,7 +133,7 @@ export default function DashboardLayout({
     }
   }, [])
   
-  const menuItems = isAdmin 
+  const menuItems = isAdminState 
     ? allMenuItems 
     : allMenuItems.filter(item => item.roles.includes(userRole))
 
