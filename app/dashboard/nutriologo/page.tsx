@@ -597,7 +597,6 @@ export default function NutriologoPage() {
       {/* Navegación de Vistas */}
       <div className="flex gap-2 border-b-2 border-gray-200">
         {[
-          { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
           { id: 'panel', label: 'Panel Nutriólogo', icon: Apple },
           { id: 'pacientes', label: 'Pacientes', icon: Users },
           { id: 'asignaciones', label: 'Asignaciones', icon: Target },
