@@ -72,6 +72,17 @@ export default function NutriologoPage() {
   const [busquedaPaciente, setBusquedaPaciente] = useState('')
   const [modalAsignarPlan, setModalAsignarPlan] = useState(false)
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
+  const [modalMensajes, setModalMensajes] = useState(false)
+  const [pacienteMensaje, setPacienteMensaje] = useState<Paciente | null>(null)
+  const [mensajeTexto, setMensajeTexto] = useState('')
+  const [mensajes, setMensajes] = useState<Array<{
+    id: string
+    pacienteId: string
+    pacienteNombre: string
+    mensaje: string
+    fecha: string
+    enviadoPor: 'nutriologo' | 'paciente'
+  }>>([])
   
   // Estados para calendario
   const [mesActual, setMesActual] = useState(new Date())
@@ -1163,7 +1174,20 @@ export default function NutriologoPage() {
                   >
                     Asignar Plan
                   </button>
-                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                  <button 
+                    onClick={() => {
+                      setPacienteMensaje(paciente)
+                      setModalMensajes(true)
+                      // Cargar mensajes del paciente
+                      const mensajesGuardados = localStorage.getItem(`athletixy_mensajes_${paciente.id}`)
+                      if (mensajesGuardados) {
+                        setMensajes(JSON.parse(mensajesGuardados))
+                      } else {
+                        setMensajes([])
+                      }
+                    }}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+                  >
                     <MessageCircle className="w-4 h-4" />
                   </button>
                 </div>
@@ -1921,6 +1945,120 @@ export default function NutriologoPage() {
                   className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
                 >
                   Asignar Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Mensajes */}
+      {modalMensajes && pacienteMensaje && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b-2 border-gray-200">
+              <div>
+                <h3 className="text-xl font-bold text-black">Mensajes con {pacienteMensaje.nombre}</h3>
+                <p className="text-gray-600 text-sm mt-1">{pacienteMensaje.email}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setModalMensajes(false)
+                  setPacienteMensaje(null)
+                  setMensajeTexto('')
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {mensajes.length === 0 ? (
+                <div className="text-center py-12">
+                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600">No hay mensajes aún</p>
+                  <p className="text-gray-500 text-sm mt-2">Inicia la conversación enviando un mensaje</p>
+                </div>
+              ) : (
+                mensajes.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.enviadoPor === 'nutriologo' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[70%] rounded-lg p-4 ${
+                        msg.enviadoPor === 'nutriologo'
+                          ? 'bg-black text-white'
+                          : 'bg-gray-100 text-black'
+                      }`}
+                    >
+                      <p className="text-sm">{msg.mensaje}</p>
+                      <p
+                        className={`text-xs mt-2 ${
+                          msg.enviadoPor === 'nutriologo' ? 'text-gray-300' : 'text-gray-500'
+                        }`}
+                      >
+                        {new Date(msg.fecha).toLocaleString('es-ES', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-6 border-t-2 border-gray-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={mensajeTexto}
+                  onChange={(e) => setMensajeTexto(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && mensajeTexto.trim()) {
+                      const nuevoMensaje = {
+                        id: Date.now().toString(),
+                        pacienteId: pacienteMensaje.id,
+                        pacienteNombre: pacienteMensaje.nombre,
+                        mensaje: mensajeTexto.trim(),
+                        fecha: new Date().toISOString(),
+                        enviadoPor: 'nutriologo' as const
+                      }
+                      const nuevosMensajes = [...mensajes, nuevoMensaje]
+                      setMensajes(nuevosMensajes)
+                      localStorage.setItem(`athletixy_mensajes_${pacienteMensaje.id}`, JSON.stringify(nuevosMensajes))
+                      setMensajeTexto('')
+                    }
+                  }}
+                  placeholder="Escribe un mensaje..."
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
+                />
+                <button
+                  onClick={() => {
+                    if (mensajeTexto.trim()) {
+                      const nuevoMensaje = {
+                        id: Date.now().toString(),
+                        pacienteId: pacienteMensaje.id,
+                        pacienteNombre: pacienteMensaje.nombre,
+                        mensaje: mensajeTexto.trim(),
+                        fecha: new Date().toISOString(),
+                        enviadoPor: 'nutriologo' as const
+                      }
+                      const nuevosMensajes = [...mensajes, nuevoMensaje]
+                      setMensajes(nuevosMensajes)
+                      localStorage.setItem(`athletixy_mensajes_${pacienteMensaje.id}`, JSON.stringify(nuevosMensajes))
+                      setMensajeTexto('')
+                    }
+                  }}
+                  className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center gap-2"
+                >
+                  <Send className="w-5 h-5" />
+                  Enviar
                 </button>
               </div>
             </div>
