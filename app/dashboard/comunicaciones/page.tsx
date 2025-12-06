@@ -49,10 +49,31 @@ export default function ComunicacionesPage() {
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
   const [busqueda, setBusqueda] = useState('')
+  const [contactoDirecto, setContactoDirecto] = useState('')
   const [tipoComunicacion, setTipoComunicacion] = useState<'email' | 'whatsapp' | 'mensaje'>('email')
   const [asunto, setAsunto] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [enviando, setEnviando] = useState(false)
+  
+  // Validar si es email válido
+  const esEmailValido = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+  
+  // Validar si es teléfono válido
+  const esTelefonoValido = (telefono: string): boolean => {
+    const telefonoRegex = /^[\d\s\-\+\(\)]+$/
+    const numeros = telefono.replace(/[^\d]/g, '')
+    return telefonoRegex.test(telefono) && numeros.length >= 10
+  }
+  
+  // Detectar tipo de contacto
+  const detectarTipoContacto = (contacto: string): 'email' | 'telefono' | null => {
+    if (esEmailValido(contacto)) return 'email'
+    if (esTelefonoValido(contacto)) return 'telefono'
+    return null
+  }
   const [historial, setHistorial] = useState<Comunicacion[]>([])
 
   useEffect(() => {
@@ -69,6 +90,15 @@ export default function ComunicacionesPage() {
     p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
     p.email.toLowerCase().includes(busqueda.toLowerCase())
   )
+  
+  // Crear contacto temporal si se escribe email o teléfono
+  const contactoValido = contactoDirecto.trim() && detectarTipoContacto(contactoDirecto.trim())
+  const contactoDirectoObj = contactoValido ? {
+    id: 'directo_' + Date.now(),
+    nombre: contactoDirecto.trim(),
+    email: contactoValido === 'email' ? contactoDirecto.trim() : '',
+    telefono: contactoValido === 'telefono' ? contactoDirecto.trim() : undefined
+  } : null
 
   const cargarHistorial = (pacienteId: string) => {
     const historialCompleto: Comunicacion[] = []
@@ -140,9 +170,9 @@ export default function ComunicacionesPage() {
   const handleEnviarWhatsApp = () => {
     if (!pacienteSeleccionado || !mensaje) return
     
-    const telefono = pacienteSeleccionado.telefono || ''
-    if (!telefono) {
-      alert('El paciente no tiene número de teléfono registrado')
+    const telefono = pacienteSeleccionado.telefono || contactoDirecto.trim()
+    if (!telefono || !esTelefonoValido(telefono)) {
+      alert('Por favor ingresa un número de teléfono válido')
       return
     }
     
@@ -228,24 +258,92 @@ export default function ComunicacionesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Lista de Pacientes */}
         <div className="lg:col-span-1 bg-white border-2 border-gray-200 rounded-xl p-6">
-          <div className="mb-4">
+          <div className="mb-4 space-y-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Buscar paciente..."
                 value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={(e) => {
+                  setBusqueda(e.target.value)
+                  setContactoDirecto('')
+                }}
                 className="w-full pl-10 pr-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
               />
             </div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="O escribe email o teléfono directamente..."
+                value={contactoDirecto}
+                onChange={(e) => {
+                  setContactoDirecto(e.target.value)
+                  setBusqueda('')
+                  const tipo = detectarTipoContacto(e.target.value)
+                  if (tipo === 'email') {
+                    setTipoComunicacion('email')
+                  } else if (tipo === 'telefono') {
+                    setTipoComunicacion('whatsapp')
+                  }
+                }}
+                className={`w-full pl-10 pr-4 py-2 border-2 rounded-lg focus:outline-none transition ${
+                  contactoValido
+                    ? 'border-black bg-gray-50'
+                    : contactoDirecto && !contactoValido
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 focus:border-black'
+                }`}
+              />
+            </div>
+            {contactoDirecto && !contactoValido && (
+              <p className="text-xs text-red-600">Ingresa un email o teléfono válido</p>
+            )}
+            {contactoValido && (
+              <p className="text-xs text-gray-600">
+                {contactoValido === 'email' ? '✓ Email válido' : '✓ Teléfono válido'}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
-            {pacientesFiltrados.length === 0 ? (
+            {/* Contacto directo si es válido */}
+            {contactoDirectoObj && (
+              <button
+                onClick={() => {
+                  setPacienteSeleccionado(contactoDirectoObj)
+                  setHistorial([])
+                }}
+                className={`w-full text-left p-4 rounded-lg border-2 transition ${
+                  pacienteSeleccionado?.id === contactoDirectoObj.id
+                    ? 'border-black bg-gray-50'
+                    : 'border-green-300 bg-green-50 hover:border-green-400'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                    {contactoValido === 'email' ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-black">{contactoDirectoObj.nombre}</p>
+                    {contactoDirectoObj.email && (
+                      <p className="text-sm text-gray-600">{contactoDirectoObj.email}</p>
+                    )}
+                    {contactoDirectoObj.telefono && (
+                      <p className="text-xs text-gray-500 mt-1">{contactoDirectoObj.telefono}</p>
+                    )}
+                    <p className="text-xs text-green-600 mt-1 font-medium">Nuevo contacto</p>
+                  </div>
+                </div>
+              </button>
+            )}
+            
+            {pacientesFiltrados.length === 0 && !contactoDirectoObj ? (
               <div className="text-center py-8">
                 <User className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-600">No se encontraron pacientes</p>
+                <p className="text-xs text-gray-500 mt-2">Escribe un email o teléfono arriba para comenzar</p>
               </div>
             ) : (
               pacientesFiltrados.map((paciente) => (
@@ -281,7 +379,7 @@ export default function ComunicacionesPage() {
 
         {/* Panel de Comunicación */}
         <div className="lg:col-span-2 bg-white border-2 border-gray-200 rounded-xl p-6">
-          {!pacienteSeleccionado ? (
+          {!pacienteSeleccionado && !contactoDirectoObj ? (
             <div className="text-center py-16">
               <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 text-lg mb-2">Selecciona un paciente</p>
@@ -306,6 +404,7 @@ export default function ComunicacionesPage() {
                 <button
                   onClick={() => {
                     setPacienteSeleccionado(null)
+                    setContactoDirecto('')
                     setAsunto('')
                     setMensaje('')
                     setHistorial([])
@@ -315,6 +414,15 @@ export default function ComunicacionesPage() {
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
+
+              {/* Mostrar si es contacto directo */}
+              {pacienteSeleccionado?.id.startsWith('directo_') && (
+                <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-green-800">
+                    <strong>Contacto directo:</strong> Este contacto no está en tu lista de pacientes. Los mensajes se guardarán en el historial.
+                  </p>
+                </div>
+              )}
 
               {/* Historial de Comunicaciones */}
               {historial.length > 0 && (
@@ -449,14 +557,21 @@ export default function ComunicacionesPage() {
                 {tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && (
                   <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
                     <p className="text-sm text-yellow-800">
-                      ⚠️ Este paciente no tiene número de teléfono registrado. Por favor, agrega un número de teléfono para enviar mensajes de WhatsApp.
+                      ⚠️ {pacienteSeleccionado.id.startsWith('directo_') 
+                        ? 'Escribe un número de teléfono válido en el campo de búsqueda para usar WhatsApp.'
+                        : 'Este paciente no tiene número de teléfono registrado. Por favor, agrega un número de teléfono para enviar mensajes de WhatsApp.'}
                     </p>
                   </div>
                 )}
 
                 <button
                   onClick={handleEnviar}
-                  disabled={enviando || !mensaje || (tipoComunicacion === 'email' && !asunto) || (tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono)}
+                  disabled={
+                    enviando || 
+                    !mensaje || 
+                    (tipoComunicacion === 'email' && !asunto) || 
+                    (tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && !contactoDirecto.trim())
+                  }
                   className="w-full px-6 py-3 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition font-semibold flex items-center justify-center gap-2"
                 >
                   {enviando ? (
