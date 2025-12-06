@@ -587,18 +587,18 @@ export default function NutriologoPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-black mb-2">Panel del Nutriólogo</h1>
-          <p className="text-gray-600">Gestión de pacientes y planes nutricionales</p>
+          <h1 className="text-2xl font-bold text-black dark:text-zinc-100 dark:text-zinc-100 mb-2">Panel del Nutriólogo</h1>
+          <p className="text-gray-600 dark:text-zinc-400 dark:text-zinc-400">Gestión de pacientes y planes nutricionales</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="bg-white border-2 border-gray-200 rounded-lg px-4 py-2">
+          <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-lg px-4 py-2">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">PM</span>
+              <div className="w-10 h-10 bg-black dark:bg-zinc-100 dark:bg-zinc-100 rounded-full flex items-center justify-center">
+                <span className="text-white dark:text-zinc-900 dark:text-zinc-900 font-bold text-sm">PM</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-black">{nutriologo.nombre}</p>
-                <p className="text-xs text-gray-600">{nutriologo.especialidad}</p>
+                <p className="text-sm font-semibold text-black dark:text-zinc-100 dark:text-zinc-100">{nutriologo.nombre}</p>
+                <p className="text-xs text-gray-600 dark:text-zinc-400 dark:text-zinc-400">{nutriologo.especialidad}</p>
               </div>
             </div>
           </div>
@@ -606,7 +606,7 @@ export default function NutriologoPage() {
       </div>
 
       {/* Navegación de Vistas */}
-      <div className="flex gap-2 border-b-2 border-gray-200">
+      <div className="flex gap-2 border-b-2 border-gray-200 dark:border-zinc-800">
         {[
           { id: 'panel', label: 'Panel Nutriólogo', icon: Apple },
           { id: 'pacientes', label: 'Pacientes', icon: Users },
@@ -620,8 +620,8 @@ export default function NutriologoPage() {
               onClick={() => setVistaActiva(vista.id as any)}
               className={`flex items-center gap-2 px-6 py-3 font-medium transition border-b-2 -mb-[2px] ${
                 vistaActiva === vista.id
-                  ? 'border-black text-black'
-                  : 'border-transparent text-gray-600 hover:text-black'
+                  ? 'border-black dark:border-zinc-100 text-black dark:text-zinc-100 dark:text-zinc-100'
+                  : 'border-transparent text-gray-600 dark:text-zinc-400 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 dark:text-zinc-100 dark:hover:text-zinc-100'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -636,44 +636,44 @@ export default function NutriologoPage() {
         <div className="space-y-8">
           {/* Estadísticas */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-black" />
+                <div className="bg-gray-100 dark:bg-zinc-800 p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-black dark:text-zinc-100 dark:text-zinc-100" />
                 </div>
               </div>
-              <p className="text-gray-600 text-sm mb-1">Total Pacientes</p>
-              <p className="text-3xl font-bold text-black">{estadisticas.totalPacientes}</p>
+              <p className="text-gray-600 dark:text-zinc-400 dark:text-zinc-400 text-sm mb-1">Total Pacientes</p>
+              <p className="text-3xl font-bold text-black dark:text-zinc-100 dark:text-zinc-100">{estadisticas.totalPacientes}</p>
             </div>
 
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <UserCheck className="w-6 h-6 text-black" />
+                <div className="bg-gray-100 dark:bg-zinc-800 p-3 rounded-lg">
+                  <UserCheck className="w-6 h-6 text-black dark:text-zinc-100 dark:text-zinc-100" />
                 </div>
               </div>
-              <p className="text-gray-600 text-sm mb-1">Pacientes Activos</p>
-              <p className="text-3xl font-bold text-black">{estadisticas.pacientesActivos}</p>
+              <p className="text-gray-600 dark:text-zinc-400 dark:text-zinc-400 text-sm mb-1">Pacientes Activos</p>
+              <p className="text-3xl font-bold text-black dark:text-zinc-100 dark:text-zinc-100">{estadisticas.pacientesActivos}</p>
             </div>
 
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <UserPlus className="w-6 h-6 text-black" />
+                <div className="bg-gray-100 dark:bg-zinc-800 p-3 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-black dark:text-zinc-100 dark:text-zinc-100" />
                 </div>
               </div>
-              <p className="text-gray-600 text-sm mb-1">De la App</p>
-              <p className="text-3xl font-bold text-black">{estadisticas.pacientesApp}</p>
+              <p className="text-gray-600 dark:text-zinc-400 dark:text-zinc-400 text-sm mb-1">De la App</p>
+              <p className="text-3xl font-bold text-black dark:text-zinc-100 dark:text-zinc-100">{estadisticas.pacientesApp}</p>
             </div>
 
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <Target className="w-6 h-6 text-black" />
+                <div className="bg-gray-100 dark:bg-zinc-800 p-3 rounded-lg">
+                  <Target className="w-6 h-6 text-black dark:text-zinc-100 dark:text-zinc-100" />
                 </div>
               </div>
-              <p className="text-gray-600 text-sm mb-1">Planes Activos</p>
-              <p className="text-3xl font-bold text-black">{estadisticas.planesActivos}</p>
+              <p className="text-gray-600 dark:text-zinc-400 dark:text-zinc-400 text-sm mb-1">Planes Activos</p>
+              <p className="text-3xl font-bold text-black dark:text-zinc-100 dark:text-zinc-100">{estadisticas.planesActivos}</p>
             </div>
           </div>
 
@@ -687,13 +687,13 @@ export default function NutriologoPage() {
                   if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
                 }, 100)
               }}
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+              className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-black dark:hover:border-zinc-100 hover:shadow-lg transition text-left"
             >
-              <div className="bg-black p-3 rounded-lg w-fit mb-4">
-                <Calendar className="w-6 h-6 text-white" />
+              <div className="bg-black dark:bg-zinc-100 dark:bg-zinc-100 p-3 rounded-lg w-fit mb-4">
+                <Calendar className="w-6 h-6 text-white dark:text-zinc-900 dark:text-zinc-900" />
               </div>
-              <h3 className="font-semibold text-black mb-2">Agendar Cita</h3>
-              <p className="text-sm text-gray-600">Programar nueva consulta</p>
+              <h3 className="font-semibold text-black dark:text-zinc-100 dark:text-zinc-100 mb-2">Agendar Cita</h3>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 dark:text-zinc-400">Programar nueva consulta</p>
             </button>
 
             <button
@@ -704,13 +704,13 @@ export default function NutriologoPage() {
                   if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
                 }, 100)
               }}
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+              className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-black dark:hover:border-zinc-100 hover:shadow-lg transition text-left"
             >
-              <div className="bg-black p-3 rounded-lg w-fit mb-4">
-                <UserPlus className="w-6 h-6 text-white" />
+              <div className="bg-black dark:bg-zinc-100 dark:bg-zinc-100 p-3 rounded-lg w-fit mb-4">
+                <UserPlus className="w-6 h-6 text-white dark:text-zinc-900 dark:text-zinc-900" />
               </div>
-              <h3 className="font-semibold text-black mb-2">Registrar Paciente</h3>
-              <p className="text-sm text-gray-600">Agregar nuevo paciente</p>
+              <h3 className="font-semibold text-black dark:text-zinc-100 dark:text-zinc-100 mb-2">Registrar Paciente</h3>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 dark:text-zinc-400">Agregar nuevo paciente</p>
             </button>
 
             <button
@@ -721,33 +721,33 @@ export default function NutriologoPage() {
                   if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
                 }, 100)
               }}
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+              className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-black dark:hover:border-zinc-100 hover:shadow-lg transition text-left"
             >
-              <div className="bg-black p-3 rounded-lg w-fit mb-4">
-                <Target className="w-6 h-6 text-white" />
+              <div className="bg-black dark:bg-zinc-100 dark:bg-zinc-100 p-3 rounded-lg w-fit mb-4">
+                <Target className="w-6 h-6 text-white dark:text-zinc-900 dark:text-zinc-900" />
               </div>
-              <h3 className="font-semibold text-black mb-2">Asignar Dieta</h3>
-              <p className="text-sm text-gray-600">Crear plan nutricional</p>
+              <h3 className="font-semibold text-black dark:text-zinc-100 dark:text-zinc-100 mb-2">Asignar Dieta</h3>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 dark:text-zinc-400">Crear plan nutricional</p>
             </button>
 
             <button
               onClick={() => setVistaActiva('calendario')}
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+              className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-black dark:hover:border-zinc-100 hover:shadow-lg transition text-left"
             >
-              <div className="bg-black p-3 rounded-lg w-fit mb-4">
-                <Calendar className="w-6 h-6 text-white" />
+              <div className="bg-black dark:bg-zinc-100 dark:bg-zinc-100 p-3 rounded-lg w-fit mb-4">
+                <Calendar className="w-6 h-6 text-white dark:text-zinc-900 dark:text-zinc-900" />
               </div>
-              <h3 className="font-semibold text-black mb-2">Ver Calendario</h3>
-              <p className="text-sm text-gray-600">Gestionar consultas</p>
+              <h3 className="font-semibold text-black dark:text-zinc-100 dark:text-zinc-100 mb-2">Ver Calendario</h3>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 dark:text-zinc-400">Gestionar consultas</p>
             </button>
           </div>
 
           {/* Consultas Próximas y Resumen */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Consultas Próximas */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-black">Próximas Consultas</h2>
+                <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Próximas Consultas</h2>
                 <button
                   onClick={() => {
                     setVistaActiva('calendario')
@@ -755,7 +755,7 @@ export default function NutriologoPage() {
                       setModalConsulta(true)
                     }, 300)
                   }}
-                  className="text-sm text-gray-600 hover:text-black flex items-center gap-1 transition"
+                  className="text-sm text-gray-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 dark:text-zinc-100 flex items-center gap-1 transition"
                 >
                   Ver todas <ChevronRight className="w-4 h-4" />
                 </button>
@@ -765,12 +765,12 @@ export default function NutriologoPage() {
                   consultasProximas.slice(0, 3).map((consulta) => (
                     <div
                       key={consulta.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-gray-200 dark:border-zinc-700 hover:border-black dark:hover:border-zinc-100 transition cursor-pointer"
                       onClick={() => setVistaActiva('calendario')}
                     >
                       <div>
-                        <p className="font-semibold text-black">{consulta.pacienteNombre}</p>
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                        <p className="font-semibold text-black dark:text-zinc-100">{consulta.pacienteNombre}</p>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400 mt-1">
                           <Calendar className="w-4 h-4" />
                           <span>{consulta.fecha}</span>
                           <span>•</span>
@@ -779,24 +779,24 @@ export default function NutriologoPage() {
                           <span>•</span>
                           <span className={`px-2 py-0.5 rounded text-xs ${
                             consulta.tipo === 'virtual' 
-                              ? 'bg-gray-200 text-gray-700' 
-                              : 'bg-gray-100 text-gray-700'
+                              ? 'bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-zinc-300' 
+                              : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300'
                           }`}>
                             {consulta.tipo === 'virtual' ? 'Virtual' : 'Presencial'}
                           </span>
                         </div>
                       </div>
                       {consulta.tipo === 'virtual' ? (
-                        <Video className="w-5 h-5 text-gray-600" />
+                        <Video className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
                       ) : (
-                        <Users className="w-5 h-5 text-gray-400" />
+                        <Users className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                       )}
                     </div>
                   ))
                 ) : (
                   <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-600 mb-2">No hay consultas programadas</p>
+                    <Calendar className="w-12 h-12 text-gray-300 dark:text-zinc-700 mx-auto mb-3" />
+                    <p className="text-gray-600 dark:text-zinc-400 mb-2">No hay consultas programadas</p>
                     <button
                       onClick={() => {
                         setVistaActiva('calendario')
@@ -804,7 +804,7 @@ export default function NutriologoPage() {
                           setModalConsulta(true)
                         }, 300)
                       }}
-                      className="mt-4 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                      className="mt-4 px-4 py-2 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition text-sm font-medium"
                     >
                       Agendar Primera Consulta
                     </button>
@@ -814,71 +814,71 @@ export default function NutriologoPage() {
             </div>
 
             {/* Resumen de Pacientes */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-black">Distribución de Pacientes</h2>
+                <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Distribución de Pacientes</h2>
                 <button
                   onClick={() => setVistaActiva('pacientes')}
-                  className="text-sm text-gray-600 hover:text-black flex items-center gap-1 transition"
+                  className="text-sm text-gray-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 dark:text-zinc-100 flex items-center gap-1 transition"
                 >
                   Ver todos <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div 
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-gray-200 dark:border-zinc-700 hover:border-black dark:hover:border-zinc-100 transition cursor-pointer"
                   onClick={() => setVistaActiva('pacientes')}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-white p-2 rounded-lg border border-gray-200">
-                      <UserCheck className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200 dark:border-zinc-700">
+                      <UserCheck className="w-5 h-5 text-black dark:text-zinc-100" />
                     </div>
                     <div>
-                      <p className="font-semibold text-black">Pacientes Existentes</p>
-                      <p className="text-sm text-gray-600">Pacientes previos a la app</p>
+                      <p className="font-semibold text-black dark:text-zinc-100">Pacientes Existentes</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">Pacientes previos a la app</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-black">{estadisticas.pacientesExistentes}</span>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <span className="text-2xl font-bold text-black dark:text-zinc-100">{estadisticas.pacientesExistentes}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                   </div>
                 </div>
 
                 <div 
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-gray-200 dark:border-zinc-700 hover:border-black dark:hover:border-zinc-100 transition cursor-pointer"
                   onClick={() => setVistaActiva('pacientes')}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-white p-2 rounded-lg border border-gray-200">
-                      <UserPlus className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200 dark:border-zinc-700">
+                      <UserPlus className="w-5 h-5 text-black dark:text-zinc-100" />
                     </div>
                     <div>
-                      <p className="font-semibold text-black">Pacientes de la App</p>
-                      <p className="text-sm text-gray-600">Contratados mediante Athletixy</p>
+                      <p className="font-semibold text-black dark:text-zinc-100">Pacientes de la App</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">Contratados mediante Athletixy</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-black">{estadisticas.pacientesApp}</span>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <span className="text-2xl font-bold text-black dark:text-zinc-100">{estadisticas.pacientesApp}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                   </div>
                 </div>
 
                 <div 
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-gray-200 dark:border-zinc-700 hover:border-black dark:hover:border-zinc-100 transition cursor-pointer"
                   onClick={() => setVistaActiva('calendario')}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-white p-2 rounded-lg border border-gray-200">
-                      <Activity className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200 dark:border-zinc-700">
+                      <Activity className="w-5 h-5 text-black dark:text-zinc-100" />
                     </div>
                     <div>
-                      <p className="font-semibold text-black">Consultas Este Mes</p>
-                      <p className="text-sm text-gray-600">Total de consultas realizadas</p>
+                      <p className="font-semibold text-black dark:text-zinc-100">Consultas Este Mes</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">Total de consultas realizadas</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-black">{estadisticas.consultasEsteMes}</span>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <span className="text-2xl font-bold text-black dark:text-zinc-100">{estadisticas.consultasEsteMes}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                   </div>
                 </div>
               </div>
@@ -892,21 +892,21 @@ export default function NutriologoPage() {
         <div className="space-y-8">
           {/* Header */}
           <div>
-            <h2 className="text-2xl font-bold text-black mb-2">Panel Nutriólogo</h2>
-            <p className="text-gray-600">Funciones específicas de gestión</p>
+            <h2 className="text-2xl font-bold text-black dark:text-zinc-100 mb-2">Panel Nutriólogo</h2>
+            <p className="text-gray-600 dark:text-zinc-400">Funciones específicas de gestión</p>
           </div>
 
           {/* Funciones Principales */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Agendar Cita */}
-            <div id="agendar-cita" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div id="agendar-cita" className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <Calendar className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <Calendar className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Agendar Cita</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Agendar Cita</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Programa una nueva consulta con un paciente</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Programa una nueva consulta con un paciente</p>
               <button
                 onClick={() => {
                   setVistaActiva('calendario')
@@ -914,92 +914,92 @@ export default function NutriologoPage() {
                     setModalConsulta(true)
                   }, 300)
                 }}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Agendar Consulta
               </button>
             </div>
 
             {/* Registrar Paciente */}
-            <div id="registrar-paciente" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div id="registrar-paciente" className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <UserPlus className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Registrar Paciente</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Registrar Paciente</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Agrega un nuevo paciente al sistema</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Agrega un nuevo paciente al sistema</p>
               <button
                 onClick={() => setModalNuevoPaciente(true)}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Nuevo Paciente
               </button>
             </div>
 
             {/* Asignar Dieta */}
-            <div id="asignar-dieta" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div id="asignar-dieta" className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <Target className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <Target className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Asignar Dieta</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Asignar Dieta</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Crea y asigna un plan nutricional</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Crea y asigna un plan nutricional</p>
               <button
                 onClick={() => setVistaActiva('asignaciones')}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Asignar Plan
               </button>
             </div>
 
             {/* Ver Pacientes */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Ver Pacientes</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Ver Pacientes</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Gestiona tu lista de pacientes</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Gestiona tu lista de pacientes</p>
               <button
                 onClick={() => setVistaActiva('pacientes')}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Ver Lista
               </button>
             </div>
 
             {/* Ver Calendario */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <Calendar className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <Calendar className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Ver Calendario</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Ver Calendario</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Gestiona todas tus consultas</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Gestiona todas tus consultas</p>
               <button
                 onClick={() => setVistaActiva('calendario')}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Abrir Calendario
               </button>
             </div>
 
             {/* Ver Asignaciones */}
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-black p-3 rounded-lg">
-                  <FileText className="w-6 h-6 text-white" />
+                <div className="bg-black dark:bg-zinc-100 p-3 rounded-lg">
+                  <FileText className="w-6 h-6 text-white dark:text-zinc-900" />
                 </div>
-                <h3 className="text-lg font-semibold text-black">Ver Asignaciones</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-zinc-100">Ver Asignaciones</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">Revisa planes nutricionales asignados</p>
+              <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Revisa planes nutricionales asignados</p>
               <button
                 onClick={() => setVistaActiva('asignaciones')}
-                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="w-full px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Ver Planes
               </button>
@@ -1008,50 +1008,50 @@ export default function NutriologoPage() {
 
           {/* Resumen Rápido */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Resumen Rápido</h3>
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-black dark:text-zinc-100 mb-4">Resumen Rápido</h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Total Pacientes</span>
-                  <span className="text-xl font-bold text-black">{estadisticas.totalPacientes}</span>
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+                  <span className="text-gray-700 dark:text-zinc-300">Total Pacientes</span>
+                  <span className="text-xl font-bold text-black dark:text-zinc-100">{estadisticas.totalPacientes}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Consultas Programadas</span>
-                  <span className="text-xl font-bold text-black">{consultasProximas.length}</span>
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+                  <span className="text-gray-700 dark:text-zinc-300">Consultas Programadas</span>
+                  <span className="text-xl font-bold text-black dark:text-zinc-100">{consultasProximas.length}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Planes Activos</span>
-                  <span className="text-xl font-bold text-black">{estadisticas.planesActivos}</span>
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+                  <span className="text-gray-700 dark:text-zinc-300">Planes Activos</span>
+                  <span className="text-xl font-bold text-black dark:text-zinc-100">{estadisticas.planesActivos}</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Accesos Rápidos</h3>
+            <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-black dark:text-zinc-100 mb-4">Accesos Rápidos</h3>
               <div className="space-y-3">
                 <button
                   onClick={() => {
                     setVistaActiva('calendario')
                     setModalBloquearFecha(true)
                   }}
-                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition text-left"
                 >
-                  <span className="text-gray-700">Bloquear Fecha</span>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700 dark:text-zinc-300">Bloquear Fecha</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                 </button>
                 <button
                   onClick={() => setVistaActiva('pacientes')}
-                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition text-left"
                 >
-                  <span className="text-gray-700">Buscar Paciente</span>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700 dark:text-zinc-300">Buscar Paciente</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                 </button>
                 <button
                   onClick={() => setVistaActiva('asignaciones')}
-                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition text-left"
                 >
-                  <span className="text-gray-700">Gestionar Planes</span>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700 dark:text-zinc-300">Gestionar Planes</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-zinc-500" />
                 </button>
               </div>
             </div>
@@ -1064,16 +1064,16 @@ export default function NutriologoPage() {
       {vistaActiva === 'pacientes' && (
         <div className="space-y-6">
           {/* Filtros y Búsqueda */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+          <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
                 <input
                   type="text"
                   placeholder="Buscar paciente por nombre o email..."
                   value={busquedaPaciente}
                   onChange={(e) => setBusquedaPaciente(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 />
               </div>
               <div className="flex gap-2">
@@ -1081,8 +1081,8 @@ export default function NutriologoPage() {
                   onClick={() => setFiltroPacientes('todos')}
                   className={`px-4 py-3 rounded-lg font-medium transition ${
                     filtroPacientes === 'todos'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900'
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700'
                   }`}
                 >
                   Todos
@@ -1091,8 +1091,8 @@ export default function NutriologoPage() {
                   onClick={() => setFiltroPacientes('existentes')}
                   className={`px-4 py-3 rounded-lg font-medium transition ${
                     filtroPacientes === 'existentes'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900'
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700'
                   }`}
                 >
                   Existentes
@@ -1101,8 +1101,8 @@ export default function NutriologoPage() {
                   onClick={() => setFiltroPacientes('app')}
                   className={`px-4 py-3 rounded-lg font-medium transition ${
                     filtroPacientes === 'app'
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900'
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700'
                   }`}
                 >
                   De la App
@@ -1116,24 +1116,24 @@ export default function NutriologoPage() {
             {pacientesFiltrados.map((paciente) => (
               <div
                 key={paciente.id}
-                className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
+                className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:shadow-lg transition"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">
+                    <div className="w-12 h-12 bg-black dark:bg-zinc-100 rounded-full flex items-center justify-center">
+                      <span className="text-white dark:text-zinc-900 font-bold">
                         {paciente.nombre.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
                     <div>
-                      <p className="font-semibold text-black">{paciente.nombre}</p>
-                      <p className="text-xs text-gray-600">{paciente.email}</p>
+                      <p className="font-semibold text-black dark:text-zinc-100">{paciente.nombre}</p>
+                      <p className="text-xs text-gray-600 dark:text-zinc-400">{paciente.email}</p>
                     </div>
                   </div>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     paciente.tipo === 'app'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300'
                   }`}>
                     {paciente.tipo === 'app' ? 'App' : 'Existente'}
                   </span>
@@ -1141,17 +1141,17 @@ export default function NutriologoPage() {
 
                 <div className="space-y-2 mb-4 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Plan:</span>
-                    <span className="font-semibold text-black">{paciente.planActivo}</span>
+                    <span className="text-gray-600 dark:text-zinc-400">Plan:</span>
+                    <span className="font-semibold text-black dark:text-zinc-100">{paciente.planActivo}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Última consulta:</span>
-                    <span className="text-black">{paciente.ultimaConsulta}</span>
+                    <span className="text-gray-600 dark:text-zinc-400">Última consulta:</span>
+                    <span className="text-black dark:text-zinc-100">{paciente.ultimaConsulta}</span>
                   </div>
                   {paciente.proximaConsulta && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Próxima:</span>
-                      <span className="text-black font-semibold">{paciente.proximaConsulta}</span>
+                      <span className="text-gray-600 dark:text-zinc-400">Próxima:</span>
+                      <span className="text-black dark:text-zinc-100 font-semibold">{paciente.proximaConsulta}</span>
                     </div>
                   )}
                 </div>
@@ -1160,7 +1160,7 @@ export default function NutriologoPage() {
                   {paciente.objetivos.map((obj, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                      className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 text-xs rounded"
                     >
                       {obj}
                     </span>
@@ -1170,7 +1170,7 @@ export default function NutriologoPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => abrirModalAsignar(paciente)}
-                    className="flex-1 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                    className="flex-1 px-4 py-2 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition text-sm font-medium"
                   >
                     Asignar Plan
                   </button>
@@ -1186,7 +1186,7 @@ export default function NutriologoPage() {
                         setMensajes([])
                       }
                     }}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+                    className="px-4 py-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg transition"
                   >
                     <MessageCircle className="w-4 h-4" />
                   </button>
@@ -1196,9 +1196,9 @@ export default function NutriologoPage() {
           </div>
 
           {pacientesFiltrados.length === 0 && (
-            <div className="text-center py-12 bg-white border-2 border-gray-200 rounded-xl">
-              <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No se encontraron pacientes</p>
+            <div className="text-center py-12 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl">
+              <Users className="w-16 h-16 text-gray-400 dark:text-zinc-500 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-zinc-400">No se encontraron pacientes</p>
             </div>
           )}
         </div>
@@ -1208,10 +1208,10 @@ export default function NutriologoPage() {
       {vistaActiva === 'asignaciones' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-black">Planes Nutricionales Asignados</h2>
+            <h2 className="text-xl font-semibold text-black dark:text-zinc-100">Planes Nutricionales Asignados</h2>
             <button
               onClick={() => setVistaActiva('pacientes')}
-              className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
             >
               <Plus className="w-4 h-4" />
               Asignar Nuevo Plan
@@ -1225,19 +1225,19 @@ export default function NutriologoPage() {
                 return (
                   <div
                     key={plan.id}
-                    className="bg-white border-2 border-gray-200 rounded-xl p-6"
+                    className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold text-black mb-1">{plan.nombre}</h3>
-                        <p className="text-sm text-gray-600">{paciente?.nombre}</p>
+                        <h3 className="font-semibold text-black dark:text-zinc-100 mb-1">{plan.nombre}</h3>
+                        <p className="text-sm text-gray-600 dark:text-zinc-400">{paciente?.nombre}</p>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         plan.estado === 'activo'
-                          ? 'bg-green-100 text-green-700'
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                           : plan.estado === 'completado'
-                          ? 'bg-gray-100 text-gray-700'
-                          : 'bg-yellow-100 text-yellow-700'
+                          ? 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300'
+                          : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
                       }`}>
                         {plan.estado}
                       </span>
@@ -1245,29 +1245,29 @@ export default function NutriologoPage() {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-xs text-gray-600 mb-1">Calorías</p>
-                        <p className="text-lg font-bold text-black">{plan.calorias} kcal</p>
+                        <p className="text-xs text-gray-600 dark:text-zinc-400 mb-1">Calorías</p>
+                        <p className="text-lg font-bold text-black dark:text-zinc-100">{plan.calorias} kcal</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600 mb-1">Período</p>
-                        <p className="text-sm text-black">{plan.fechaInicio} - {plan.fechaFin}</p>
+                        <p className="text-xs text-gray-600 dark:text-zinc-400 mb-1">Período</p>
+                        <p className="text-sm text-black dark:text-zinc-100">{plan.fechaInicio} - {plan.fechaFin}</p>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                      <p className="text-xs text-gray-600 mb-2">Macronutrientes</p>
+                    <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 mb-4">
+                      <p className="text-xs text-gray-600 dark:text-zinc-400 mb-2">Macronutrientes</p>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-700">Proteínas:</span>
-                          <span className="font-semibold text-black">{plan.macros.proteinas}g</span>
+                          <span className="text-gray-700 dark:text-zinc-300">Proteínas:</span>
+                          <span className="font-semibold text-black dark:text-zinc-100">{plan.macros.proteinas}g</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-700">Carbohidratos:</span>
-                          <span className="font-semibold text-black">{plan.macros.carbohidratos}g</span>
+                          <span className="text-gray-700 dark:text-zinc-300">Carbohidratos:</span>
+                          <span className="font-semibold text-black dark:text-zinc-100">{plan.macros.carbohidratos}g</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-700">Grasas:</span>
-                          <span className="font-semibold text-black">{plan.macros.grasas}g</span>
+                          <span className="text-gray-700 dark:text-zinc-300">Grasas:</span>
+                          <span className="font-semibold text-black dark:text-zinc-100">{plan.macros.grasas}g</span>
                         </div>
                       </div>
                     </div>
@@ -1277,7 +1277,7 @@ export default function NutriologoPage() {
                         {plan.objetivos.map((obj, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                            className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 text-xs rounded"
                           >
                             {obj}
                           </span>
@@ -1286,10 +1286,10 @@ export default function NutriologoPage() {
                     )}
 
                     <div className="flex gap-2">
-                      <button className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium">
+                      <button className="flex-1 px-4 py-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg transition text-sm font-medium">
                         Editar
                       </button>
-                      <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                      <button className="px-4 py-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg transition">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -1298,12 +1298,12 @@ export default function NutriologoPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white border-2 border-gray-200 rounded-xl">
-              <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">No hay planes asignados</p>
+            <div className="text-center py-12 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl">
+              <Target className="w-16 h-16 text-gray-400 dark:text-zinc-500 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-zinc-400 mb-4">No hay planes asignados</p>
               <button
                 onClick={() => setVistaActiva('pacientes')}
-                className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                className="px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
               >
                 Asignar Primer Plan
               </button>
@@ -1316,22 +1316,22 @@ export default function NutriologoPage() {
       {vistaActiva === 'calendario' && (
         <div className="space-y-6">
           {/* Header del Calendario */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+          <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-black mb-2">Calendario de Consultas</h2>
-                <p className="text-gray-600 text-sm">Gestiona tus consultas y bloquea fechas no disponibles</p>
+                <h2 className="text-xl font-semibold text-black dark:text-zinc-100 mb-2">Calendario de Consultas</h2>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">Gestiona tus consultas y bloquea fechas no disponibles</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setModalBloquearFecha(true)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm font-medium"
+                  className="px-4 py-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg transition text-sm font-medium"
                 >
                   Bloquear Fecha
                 </button>
                 <button
                   onClick={() => abrirModalConsulta()}
-                  className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                  className="px-4 py-2 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition text-sm font-medium"
                 >
                   <Plus className="w-4 h-4 inline mr-2" />
                   Nueva Consulta
@@ -1343,18 +1343,18 @@ export default function NutriologoPage() {
             <div className="flex items-center justify-between mb-6">
               <button
                 onClick={() => cambiarMes('anterior')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
               </button>
-              <h3 className="text-lg font-bold text-black capitalize">
+              <h3 className="text-lg font-bold text-black dark:text-zinc-100 capitalize">
                 {mesActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
               </h3>
               <button
                 onClick={() => cambiarMes('siguiente')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+                <ChevronRight className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
@@ -1362,7 +1362,7 @@ export default function NutriologoPage() {
             <div className="grid grid-cols-7 gap-2">
               {/* Días de la semana */}
               {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((dia) => (
-                <div key={dia} className="text-center font-semibold text-gray-700 py-2 text-sm">
+                <div key={dia} className="text-center font-semibold text-gray-700 dark:text-zinc-300 py-2 text-sm">
                   {dia}
                 </div>
               ))}
@@ -1388,16 +1388,16 @@ export default function NutriologoPage() {
                     }}
                     className={`aspect-square border-2 rounded-lg p-2 cursor-pointer transition ${
                       bloqueada
-                        ? 'bg-red-50 border-red-300 cursor-not-allowed'
+                        ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700 cursor-not-allowed'
                         : esHoy
-                        ? 'bg-black text-white border-black'
+                        ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900 border-black dark:border-zinc-100'
                         : tieneConsultas
-                        ? 'bg-green-50 border-green-300 hover:border-green-500'
-                        : 'bg-white border-gray-200 hover:border-gray-400'
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700 hover:border-green-500 dark:hover:border-green-500'
+                        : 'bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700 hover:border-gray-400 dark:hover:border-zinc-600'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-sm font-semibold ${esHoy ? 'text-white' : 'text-black'}`}>
+                      <span className={`text-sm font-semibold ${esHoy ? 'text-white dark:text-zinc-900' : 'text-black dark:text-zinc-100'}`}>
                         {dia.getDate()}
                       </span>
                       {bloqueada && (
@@ -1410,7 +1410,7 @@ export default function NutriologoPage() {
                           <div
                             key={consulta.id}
                             className={`text-xs px-1 py-0.5 rounded ${
-                              esHoy ? 'bg-white/20 text-white' : 'bg-green-200 text-green-800'
+                              esHoy ? 'bg-white/20 dark:bg-zinc-900/30 text-white dark:text-zinc-900' : 'bg-green-200 dark:bg-green-800/50 text-green-800 dark:text-green-300'
                             }`}
                             title={`${consulta.pacienteNombre} - ${consulta.hora}`}
                           >
@@ -1418,7 +1418,7 @@ export default function NutriologoPage() {
                           </div>
                         ))}
                         {consultasDelDia.length > 2 && (
-                          <div className={`text-xs ${esHoy ? 'text-white/80' : 'text-gray-600'}`}>
+                          <div className={`text-xs ${esHoy ? 'text-white dark:text-zinc-900/80' : 'text-gray-600 dark:text-zinc-400'}`}>
                             +{consultasDelDia.length - 2} más
                           </div>
                         )}
@@ -1432,27 +1432,27 @@ export default function NutriologoPage() {
             {/* Leyenda */}
             <div className="mt-6 flex flex-wrap gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-black rounded"></div>
-                <span className="text-gray-600">Hoy</span>
+                <div className="w-4 h-4 bg-black dark:bg-zinc-100 rounded"></div>
+                <span className="text-gray-600 dark:text-zinc-400">Hoy</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-50 border-2 border-green-300 rounded"></div>
-                <span className="text-gray-600">Con consultas</span>
+                <div className="w-4 h-4 bg-green-50 dark:bg-green-900/30 border-2 border-green-300 dark:border-green-700 rounded"></div>
+                <span className="text-gray-600 dark:text-zinc-400">Con consultas</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-50 border-2 border-red-300 rounded"></div>
-                <span className="text-gray-600">Bloqueada</span>
+                <div className="w-4 h-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 rounded"></div>
+                <span className="text-gray-600 dark:text-zinc-400">Bloqueada</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-white border-2 border-gray-200 rounded"></div>
-                <span className="text-gray-600">Disponible</span>
+                <div className="w-4 h-4 bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded"></div>
+                <span className="text-gray-600 dark:text-zinc-400">Disponible</span>
               </div>
             </div>
           </div>
 
           {/* Lista de Consultas del Mes */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-black mb-4">Consultas de {mesActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</h3>
+          <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-black dark:text-zinc-100 mb-4">Consultas de {mesActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</h3>
             <div className="space-y-3">
               {consultas
                 .filter(c => {
@@ -1469,15 +1469,15 @@ export default function NutriologoPage() {
                 .map((consulta) => (
                   <div
                     key={consulta.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-gray-200 dark:border-zinc-700"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="bg-black p-2 rounded-lg">
-                        <Calendar className="w-5 h-5 text-white" />
+                      <div className="bg-black dark:bg-zinc-100 p-2 rounded-lg">
+                        <Calendar className="w-5 h-5 text-white dark:text-zinc-900" />
                       </div>
                       <div>
-                        <p className="font-semibold text-black">{consulta.pacienteNombre}</p>
-                        <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                        <p className="font-semibold text-black dark:text-zinc-100">{consulta.pacienteNombre}</p>
+                        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-zinc-400 mt-1">
                           <span>{consulta.fecha}</span>
                           <span>•</span>
                           <span>{consulta.hora}</span>
@@ -1485,7 +1485,7 @@ export default function NutriologoPage() {
                           <span className={`px-2 py-0.5 rounded ${
                             consulta.tipo === 'virtual' 
                               ? 'bg-blue-100 text-blue-700' 
-                              : 'bg-gray-100 text-gray-700'
+                              : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300'
                           }`}>
                             {consulta.tipo === 'virtual' ? 'Virtual' : 'Presencial'}
                           </span>
@@ -1500,7 +1500,7 @@ export default function NutriologoPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => eliminarConsulta(consulta.id)}
-                        className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition"
+                        className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg transition"
                         title="Eliminar consulta"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1514,7 +1514,7 @@ export default function NutriologoPage() {
                        fechaConsulta.getFullYear() === mesActual.getFullYear() &&
                        c.estado === 'programada'
               }).length === 0 && (
-                <p className="text-center text-gray-600 py-8">No hay consultas programadas este mes</p>
+                <p className="text-center text-gray-600 dark:text-zinc-400 py-8">No hay consultas programadas este mes</p>
               )}
             </div>
           </div>
@@ -1523,12 +1523,12 @@ export default function NutriologoPage() {
 
       {/* Modal Nueva Consulta */}
       {modalConsulta && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+        <div className="fixed inset-0 bg-black/50 dark:bg-zinc-900/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border-2 border-gray-200 dark:border-zinc-800">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-bold text-black">Nueva Consulta</h3>
-                <p className="text-gray-600 text-sm mt-1">
+                <h3 className="text-xl font-bold text-black dark:text-zinc-100">Nueva Consulta</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm mt-1">
                   {fechaSeleccionada ? `Fecha: ${fechaSeleccionada.toLocaleDateString('es-ES')}` : 'Programar consulta'}
                 </p>
               </div>
@@ -1537,19 +1537,19 @@ export default function NutriologoPage() {
                   setModalConsulta(false)
                   setFechaSeleccionada(null)
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Paciente *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300">Paciente *</label>
                   <button
                     onClick={() => setModalNuevoPaciente(true)}
-                    className="flex items-center gap-1 text-sm text-black hover:text-gray-700 font-medium"
+                    className="flex items-center gap-1 text-sm text-black dark:text-zinc-100 hover:text-gray-700 dark:text-zinc-300 font-medium"
                   >
                     <UserPlus className="w-4 h-4" />
                     Agregar Paciente
@@ -1558,7 +1558,7 @@ export default function NutriologoPage() {
                 <select
                   value={nuevaConsulta.pacienteId}
                   onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, pacienteId: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 >
                   <option value="">Seleccionar paciente</option>
                   {(pacientes || []).map((paciente) => (
@@ -1571,44 +1571,44 @@ export default function NutriologoPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Fecha *</label>
                   <input
                     type="date"
                     value={nuevaConsulta.fecha}
                     onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, fecha: e.target.value })}
                     min={formatearFecha(new Date())}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Hora *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Hora *</label>
                   <input
                     type="time"
                     value={nuevaConsulta.hora}
                     onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, hora: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Consulta</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Tipo de Consulta</label>
                   <select
                     value={nuevaConsulta.tipo}
                     onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, tipo: e.target.value as 'presencial' | 'virtual' })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   >
                     <option value="presencial">Presencial</option>
                     <option value="virtual">Virtual</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Duración (minutos)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Duración (minutos)</label>
                   <select
                     value={nuevaConsulta.duracion}
                     onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, duracion: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   >
                     <option value="30">30 min</option>
                     <option value="45">45 min</option>
@@ -1619,29 +1619,29 @@ export default function NutriologoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Notas (Opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Notas (Opcional)</label>
                 <textarea
                   value={nuevaConsulta.notas}
                   onChange={(e) => setNuevaConsulta({ ...nuevaConsulta, notas: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   placeholder="Notas adicionales sobre la consulta..."
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200 dark:border-zinc-700">
                 <button
                   onClick={() => {
                     setModalConsulta(false)
                     setFechaSeleccionada(null)
                   }}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={guardarConsulta}
-                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                  className="flex-1 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
                 >
                   Programar Consulta
                 </button>
@@ -1653,10 +1653,10 @@ export default function NutriologoPage() {
 
       {/* Modal Nuevo Paciente */}
       {modalNuevoPaciente && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black dark:bg-zinc-100/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-black">Agregar Nuevo Paciente</h3>
+              <h3 className="text-xl font-bold text-black dark:text-zinc-100">Agregar Nuevo Paciente</h3>
               <button
                 onClick={() => {
                   setModalNuevoPaciente(false)
@@ -1667,59 +1667,59 @@ export default function NutriologoPage() {
                     tipo: 'app'
                   })
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Nombre Completo *</label>
                 <input
                   type="text"
                   value={nuevoPaciente.nombre}
                   onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, nombre: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   placeholder="Ej: Juan Pérez"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Email *</label>
                 <input
                   type="email"
                   value={nuevoPaciente.email}
                   onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, email: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   placeholder="ejemplo@email.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono (Opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Teléfono (Opcional)</label>
                 <input
                   type="tel"
                   value={nuevoPaciente.telefono}
                   onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, telefono: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   placeholder="+52 555 123 4567"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Paciente</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Tipo de Paciente</label>
                 <select
                   value={nuevoPaciente.tipo}
                   onChange={(e) => setNuevoPaciente({ ...nuevoPaciente, tipo: e.target.value as 'existente' | 'app' })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 >
                   <option value="app">Nuevo de la App</option>
                   <option value="existente">Paciente Existente</option>
                 </select>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200 dark:border-zinc-700">
                 <button
                   onClick={() => {
                     setModalNuevoPaciente(false)
@@ -1730,13 +1730,13 @@ export default function NutriologoPage() {
                       tipo: 'app'
                     })
                   }}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={crearNuevoPaciente}
-                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                  className="flex-1 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
                 >
                   Crear Paciente
                 </button>
@@ -1748,21 +1748,21 @@ export default function NutriologoPage() {
 
       {/* Modal Bloquear Fecha */}
       {modalBloquearFecha && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black dark:bg-zinc-100/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-black">Bloquear Fecha</h3>
+              <h3 className="text-xl font-bold text-black dark:text-zinc-100">Bloquear Fecha</h3>
               <button
                 onClick={() => setModalBloquearFecha(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Fecha</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Seleccionar Fecha</label>
                 <input
                   type="date"
                   value={fechaSeleccionada ? formatearFecha(fechaSeleccionada) : ''}
@@ -1772,22 +1772,22 @@ export default function NutriologoPage() {
                     }
                   }}
                   min={formatearFecha(new Date())}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 />
               </div>
 
               {fechaSeleccionada && estaBloqueada(fechaSeleccionada) && (
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-800">
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300">
                     Esta fecha ya está bloqueada. ¿Deseas desbloquearla?
                   </p>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200 dark:border-zinc-700">
                 <button
                   onClick={() => setModalBloquearFecha(false)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition font-medium"
                 >
                   Cancelar
                 </button>
@@ -1804,8 +1804,8 @@ export default function NutriologoPage() {
                     }}
                     className={`flex-1 px-6 py-3 rounded-lg transition font-medium ${
                       estaBloqueada(fechaSeleccionada)
-                        ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                        : 'bg-black hover:bg-gray-800 text-white'
+                        ? 'bg-yellow-600 dark:bg-yellow-700 hover:bg-yellow-700 dark:hover:bg-yellow-800 text-white dark:text-zinc-100'
+                        : 'bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900'
                     }`}
                   >
                     {estaBloqueada(fechaSeleccionada) ? 'Desbloquear' : 'Bloquear'}
@@ -1819,102 +1819,102 @@ export default function NutriologoPage() {
 
       {/* Modal Asignar Plan */}
       {modalAsignarPlan && pacienteSeleccionado && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+        <div className="fixed inset-0 bg-black/50 dark:bg-zinc-900/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border-2 border-gray-200 dark:border-zinc-800">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-bold text-black">Asignar Plan Nutricional</h3>
-                <p className="text-gray-600 text-sm mt-1">Paciente: {pacienteSeleccionado.nombre}</p>
+                <h3 className="text-xl font-bold text-black dark:text-zinc-100">Asignar Plan Nutricional</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm mt-1">Paciente: {pacienteSeleccionado.nombre}</p>
               </div>
               <button
                 onClick={() => setModalAsignarPlan(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Plan</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Nombre del Plan</label>
                 <input
                   type="text"
                   value={nuevoPlan.nombre}
                   onChange={(e) => setNuevoPlan({ ...nuevoPlan, nombre: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Fecha Inicio</label>
                   <input
                     type="date"
                     value={nuevoPlan.fechaInicio}
                     onChange={(e) => setNuevoPlan({ ...nuevoPlan, fechaInicio: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Fin</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Fecha Fin</label>
                   <input
                     type="date"
                     value={nuevoPlan.fechaFin}
                     onChange={(e) => setNuevoPlan({ ...nuevoPlan, fechaFin: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Calorías Diarias</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">Calorías Diarias</label>
                 <input
                   type="number"
                   value={nuevoPlan.calorias}
                   onChange={(e) => setNuevoPlan({ ...nuevoPlan, calorias: e.target.value })}
                   placeholder="Ej: 2500"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Macronutrientes (gramos)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">Macronutrientes (gramos)</label>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Proteínas</label>
+                    <label className="block text-xs text-gray-600 dark:text-zinc-400 mb-1">Proteínas</label>
                     <input
                       type="number"
                       value={nuevoPlan.proteinas}
                       onChange={(e) => setNuevoPlan({ ...nuevoPlan, proteinas: e.target.value })}
                       placeholder="g"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Carbohidratos</label>
+                    <label className="block text-xs text-gray-600 dark:text-zinc-400 mb-1">Carbohidratos</label>
                     <input
                       type="number"
                       value={nuevoPlan.carbohidratos}
                       onChange={(e) => setNuevoPlan({ ...nuevoPlan, carbohidratos: e.target.value })}
                       placeholder="g"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Grasas</label>
+                    <label className="block text-xs text-gray-600 dark:text-zinc-400 mb-1">Grasas</label>
                     <input
                       type="number"
                       value={nuevoPlan.grasas}
                       onChange={(e) => setNuevoPlan({ ...nuevoPlan, grasas: e.target.value })}
                       placeholder="g"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
                     />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Objetivos del Plan</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">Objetivos del Plan</label>
                 <div className="grid grid-cols-2 gap-2">
                   {['Pérdida de grasa', 'Ganancia muscular', 'Mantenimiento', 'Rendimiento deportivo', 'Aumento de peso', 'Definición'].map((obj) => (
                     <button
@@ -1923,8 +1923,8 @@ export default function NutriologoPage() {
                       onClick={() => toggleObjetivo(obj)}
                       className={`py-2 px-3 rounded-lg border-2 font-medium transition text-sm text-left ${
                         nuevoPlan.objetivos.includes(obj)
-                          ? 'border-black bg-gray-100 text-black'
-                          : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                          ? 'border-black bg-gray-100 dark:bg-zinc-800 text-black dark:text-zinc-100'
+                          : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:border-gray-300'
                       }`}
                     >
                       {obj}
@@ -1933,16 +1933,16 @@ export default function NutriologoPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
+              <div className="flex gap-3 pt-4 border-t-2 border-gray-200 dark:border-zinc-700">
                 <button
                   onClick={() => setModalAsignarPlan(false)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={guardarPlan}
-                  className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+                  className="flex-1 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
                 >
                   Asignar Plan
                 </button>
@@ -1954,12 +1954,12 @@ export default function NutriologoPage() {
 
       {/* Modal Mensajes */}
       {modalMensajes && pacienteMensaje && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black dark:bg-zinc-100/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b-2 border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b-2 border-gray-200 dark:border-zinc-700">
               <div>
-                <h3 className="text-xl font-bold text-black">Mensajes con {pacienteMensaje.nombre}</h3>
-                <p className="text-gray-600 text-sm mt-1">{pacienteMensaje.email}</p>
+                <h3 className="text-xl font-bold text-black dark:text-zinc-100">Mensajes con {pacienteMensaje.nombre}</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm mt-1">{pacienteMensaje.email}</p>
               </div>
               <button
                 onClick={() => {
@@ -1967,17 +1967,17 @@ export default function NutriologoPage() {
                   setPacienteMensaje(null)
                   setMensajeTexto('')
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {mensajes.length === 0 ? (
                 <div className="text-center py-12">
-                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">No hay mensajes aún</p>
+                  <MessageCircle className="w-16 h-16 text-gray-300 dark:text-zinc-700 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-zinc-400">No hay mensajes aún</p>
                   <p className="text-gray-500 text-sm mt-2">Inicia la conversación enviando un mensaje</p>
                 </div>
               ) : (
@@ -1989,14 +1989,14 @@ export default function NutriologoPage() {
                     <div
                       className={`max-w-[70%] rounded-lg p-4 ${
                         msg.enviadoPor === 'nutriologo'
-                          ? 'bg-black text-white'
-                          : 'bg-gray-100 text-black'
+                          ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900'
+                          : 'bg-gray-100 dark:bg-zinc-800 text-black dark:text-zinc-100'
                       }`}
                     >
                       <p className="text-sm">{msg.mensaje}</p>
                       <p
                         className={`text-xs mt-2 ${
-                          msg.enviadoPor === 'nutriologo' ? 'text-gray-300' : 'text-gray-500'
+                          msg.enviadoPor === 'nutriologo' ? 'text-gray-300 dark:text-zinc-700' : 'text-gray-500'
                         }`}
                       >
                         {new Date(msg.fecha).toLocaleString('es-ES', {
@@ -2013,7 +2013,7 @@ export default function NutriologoPage() {
               )}
             </div>
 
-            <div className="p-6 border-t-2 border-gray-200">
+            <div className="p-6 border-t-2 border-gray-200 dark:border-zinc-700">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -2055,7 +2055,7 @@ export default function NutriologoPage() {
                       setMensajeTexto('')
                     }
                   }}
-                  className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center gap-2"
+                  className="px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium flex items-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   Enviar
