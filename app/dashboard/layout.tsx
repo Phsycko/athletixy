@@ -32,41 +32,14 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState('')
-  
-  // Inicializar estado desde localStorage si está disponible (solo en cliente)
-  const getInitialRole = (): 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' => {
-    if (typeof window === 'undefined') return 'atleta'
-    try {
-      const session = localStorage.getItem('athletixy_session')
-      if (session) {
-        const sessionData = JSON.parse(session)
-        return sessionData.role || 'atleta'
-      }
-    } catch (e) {
-      // Ignorar errores
-    }
-    return 'atleta'
-  }
-  
-  const getInitialAdminState = (): boolean => {
-    if (typeof window === 'undefined') return false
-    try {
-      const session = localStorage.getItem('athletixy_session')
-      if (session) {
-        const sessionData = JSON.parse(session)
-        return sessionData.isAdmin || false
-      }
-    } catch (e) {
-      // Ignorar errores
-    }
-    return false
-  }
-  
-  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>(getInitialRole())
-  const [isAdminState, setIsAdminState] = useState(getInitialAdminState())
+  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
+  const [isAdminState, setIsAdminState] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+
+    setMounted(true)
 
     try {
       // Verificar autenticación
