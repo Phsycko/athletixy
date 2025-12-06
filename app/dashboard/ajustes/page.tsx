@@ -7,9 +7,21 @@ export default function AjustesPage() {
   const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme')
-    const isDark = savedTheme === 'dark' || document.documentElement.classList.contains('dark')
-    setDarkMode(isDark)
+    const updateDarkMode = () => {
+      const savedTheme = localStorage.getItem('theme')
+      const isDark = savedTheme === 'dark' || document.documentElement.classList.contains('dark')
+      setDarkMode(isDark)
+    }
+
+    // Cargar estado inicial
+    updateDarkMode()
+
+    // Escuchar cambios de tema desde otros componentes
+    window.addEventListener('themechange', updateDarkMode)
+
+    return () => {
+      window.removeEventListener('themechange', updateDarkMode)
+    }
   }, [])
 
   const toggleDarkMode = () => {
@@ -22,6 +34,8 @@ export default function AjustesPage() {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('theme', 'light')
     }
+    // Disparar evento personalizado para que otros componentes se actualicen
+    window.dispatchEvent(new Event('themechange'))
   }
 
   return (
