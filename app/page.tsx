@@ -34,10 +34,24 @@ export default function LoginPage() {
             isAdmin: true
           },
           {
+            email: 'atleta@athletixy.com',
+            password: 'atleta123',
+            nombre: 'Carlos Martínez',
+            tipoUsuario: 'atleta' as UserType,
+            fechaRegistro: new Date().toISOString()
+          },
+          {
             email: 'nutriologo@athletixy.com',
             password: 'nutriologo123',
             nombre: 'Dra. Patricia Mendoza',
             tipoUsuario: 'nutriologo' as UserType,
+            fechaRegistro: new Date().toISOString()
+          },
+          {
+            email: 'coach@athletixy.com',
+            password: 'coach123',
+            nombre: 'Miguel Ángel Torres',
+            tipoUsuario: 'coach' as UserType,
             fechaRegistro: new Date().toISOString()
           }
         ]
