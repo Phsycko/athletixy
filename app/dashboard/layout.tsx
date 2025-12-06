@@ -144,15 +144,15 @@ export default function DashboardLayout({
     : allMenuItems.filter(item => item.roles.includes(userRole))
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-white dark:bg-zinc-900 flex transition-colors duration-200">
       {/* Sidebar Desktop */}
-      <aside className="hidden lg:flex flex-col w-64 bg-white dark:bg-gray-900 border-r-2 border-gray-200 dark:border-gray-800 fixed h-screen">
-        <div className="p-6 border-b-2 border-gray-200 dark:border-gray-800">
+      <aside className="hidden lg:flex flex-col w-64 bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 fixed h-screen transition-colors duration-200">
+        <div className="p-6 border-b border-gray-200 dark:border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="bg-black dark:bg-white p-2 rounded-lg">
-              <Dumbbell className="w-6 h-6 text-white dark:text-black" />
+            <div className="bg-black dark:bg-zinc-100 p-2 rounded-lg">
+              <Dumbbell className="w-6 h-6 text-white dark:text-zinc-900" />
             </div>
-            <span className="text-xl font-bold text-black dark:text-white">Athletixy</span>
+            <span className="text-xl font-bold text-black dark:text-zinc-100">Athletixy</span>
           </div>
         </div>
 
@@ -165,10 +165,10 @@ export default function DashboardLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 ${
                     isActive
-                      ? 'bg-black dark:bg-white text-white dark:text-black font-semibold'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
+                      ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold'
+                      : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-zinc-100'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -179,14 +179,14 @@ export default function DashboardLayout({
           </div>
         </nav>
 
-        <div className="p-4 border-t-2 border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
+        <div className="p-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
           <div className="flex items-center gap-3 mb-3 px-2">
-            <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white dark:text-black" />
+            <div className="w-10 h-10 bg-black dark:bg-zinc-100 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-white dark:text-zinc-900" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-black dark:text-white truncate">{userEmail}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">
+              <p className="text-sm font-semibold text-black dark:text-zinc-100 truncate">{userEmail}</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-500 capitalize">
                 {userRole === 'nutriologo' ? 'Nutriólogo' : 
                  userRole === 'coach' ? 'Coach' : 
                  userRole === 'gym' ? 'Gym' : 
@@ -197,7 +197,7 @@ export default function DashboardLayout({
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition font-medium"
+            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition font-medium"
           >
             <LogOut className="w-4 h-4" />
             Cerrar Sesión
@@ -206,17 +206,17 @@ export default function DashboardLayout({
       </aside>
 
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b-2 border-gray-200 dark:border-gray-800 z-40 px-4 py-3 shadow-sm">
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 z-40 px-4 py-3 transition-colors duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-black dark:bg-white p-2 rounded-lg">
-              <Dumbbell className="w-5 h-5 text-white dark:text-black" />
+            <div className="bg-black dark:bg-zinc-100 p-2 rounded-lg">
+              <Dumbbell className="w-5 h-5 text-white dark:text-zinc-900" />
             </div>
-            <span className="text-lg font-bold text-black dark:text-white">Athletixy</span>
+            <span className="text-lg font-bold text-black dark:text-zinc-100">Athletixy</span>
           </div>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+            className="p-2 text-gray-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -225,7 +225,7 @@ export default function DashboardLayout({
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 bg-white dark:bg-gray-900 z-30 pt-16 overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 bg-white dark:bg-zinc-900 z-30 pt-16 overflow-y-auto transition-colors duration-200">
           <nav className="p-4">
             <div className="space-y-1">
               {menuItems.map((item) => {
@@ -236,10 +236,10 @@ export default function DashboardLayout({
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 ${
                       isActive
-                        ? 'bg-black dark:bg-white text-white dark:text-black font-semibold'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
+                        ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold'
+                        : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-zinc-100'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -248,10 +248,10 @@ export default function DashboardLayout({
                 )
               })}
             </div>
-            <div className="mt-6 pt-6 border-t-2 border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-zinc-800">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition font-medium"
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition font-medium"
               >
                 <LogOut className="w-4 h-4" />
                 Cerrar Sesión
@@ -262,7 +262,7 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-gray-50 dark:bg-gray-950 min-h-screen">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-gray-50 dark:bg-zinc-950 min-h-screen transition-colors duration-200">
         <div className="p-6 lg:p-8">
           {children}
         </div>

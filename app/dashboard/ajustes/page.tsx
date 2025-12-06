@@ -1,18 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, Lock, Bell, Globe, Shield, CreditCard, Moon, Sun } from 'lucide-react'
+import { User, Lock, Bell, Globe, Shield, Moon, Sun } from 'lucide-react'
 
 export default function AjustesPage() {
   const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
-    // Cargar preferencia de localStorage
     const savedTheme = localStorage.getItem('theme')
-    if (savedTheme === 'dark') {
-      setDarkMode(true)
-      document.documentElement.classList.add('dark')
-    }
+    const isDark = savedTheme === 'dark' || document.documentElement.classList.contains('dark')
+    setDarkMode(isDark)
   }, [])
 
   const toggleDarkMode = () => {
@@ -28,106 +25,157 @@ export default function AjustesPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-black dark:text-white mb-2">Ajustes</h1>
-        <p className="text-gray-600 dark:text-gray-400">Configura tu cuenta y preferencias</p>
+        <h1 className="text-2xl font-bold text-black dark:text-zinc-100 mb-1">Ajustes</h1>
+        <p className="text-gray-500 dark:text-zinc-500">Configura tu cuenta y preferencias</p>
+      </div>
+
+      {/* Apariencia - Primero para acceso rápido */}
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          {darkMode ? <Moon className="w-5 h-5 text-zinc-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Apariencia</h2>
+        </div>
+        <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-200 ${
+              darkMode ? 'bg-zinc-700' : 'bg-amber-100'
+            }`}>
+              {darkMode ? (
+                <Moon className="w-6 h-6 text-zinc-300" />
+              ) : (
+                <Sun className="w-6 h-6 text-amber-600" />
+              )}
+            </div>
+            <div>
+              <span className="text-black dark:text-zinc-100 font-medium block">
+                Modo {darkMode ? 'Nocturno' : 'Diurno'}
+              </span>
+              <p className="text-sm text-gray-500 dark:text-zinc-500">
+                {darkMode ? 'Colores suaves para proteger tu vista' : 'Interfaz clara y brillante'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={toggleDarkMode}
+            className={`relative w-16 h-9 rounded-full transition-all duration-300 ${
+              darkMode 
+                ? 'bg-zinc-700 hover:bg-zinc-600' 
+                : 'bg-gray-300 hover:bg-gray-400'
+            }`}
+          >
+            <div
+              className={`absolute top-1.5 w-6 h-6 rounded-full shadow-sm transition-all duration-300 flex items-center justify-center ${
+                darkMode 
+                  ? 'translate-x-8 bg-zinc-100' 
+                  : 'translate-x-1.5 bg-white'
+              }`}
+            >
+              {darkMode ? (
+                <Moon className="w-3.5 h-3.5 text-zinc-700" />
+              ) : (
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+              )}
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Perfil Personal */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Perfil Personal</h2>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          <User className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Perfil Personal</h2>
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nombre</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Nombre</label>
               <input
                 type="text"
                 defaultValue="Alex Hernández"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Email</label>
               <input
                 type="email"
                 defaultValue="alex@athletixy.com"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Edad</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Edad</label>
               <input
                 type="number"
                 defaultValue="28"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Género</label>
-              <select className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400">
+              <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Género</label>
+              <select className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200">
                 <option>Masculino</option>
                 <option>Femenino</option>
                 <option>Otro</option>
               </select>
             </div>
           </div>
-          <button className="px-6 py-3 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black rounded-lg transition font-medium">
+          <button className="px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition-colors duration-200 font-medium">
             Guardar Cambios
           </button>
         </div>
       </div>
 
       {/* Seguridad */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Lock className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Seguridad</h2>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          <Lock className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Seguridad</h2>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contraseña Actual</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Contraseña Actual</label>
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nueva Contraseña</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Nueva Contraseña</label>
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirmar Contraseña</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Confirmar Contraseña</label>
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200"
             />
           </div>
-          <button className="px-6 py-3 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black rounded-lg transition font-medium">
+          <button className="px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition-colors duration-200 font-medium">
             Actualizar Contraseña
           </button>
         </div>
       </div>
 
       {/* Notificaciones */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Preferencias de Notificaciones</h2>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          <Bell className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Notificaciones</h2>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[
             { label: 'Recordatorios de entrenamiento', checked: true },
             { label: 'Notificaciones de progreso', checked: true },
@@ -135,11 +183,11 @@ export default function AjustesPage() {
             { label: 'Actualizaciones de la comunidad', checked: false },
             { label: 'Ofertas del marketplace', checked: false },
           ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700">
-              <span className="text-gray-700 dark:text-gray-200">{item.label}</span>
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+              <span className="text-gray-700 dark:text-zinc-300">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-400 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black dark:peer-checked:bg-white"></div>
+                <div className="w-11 h-6 bg-gray-300 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black dark:peer-checked:bg-zinc-100 after:dark:peer-checked:bg-zinc-900"></div>
               </label>
             </div>
           ))}
@@ -147,31 +195,31 @@ export default function AjustesPage() {
       </div>
 
       {/* Preferencias */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Globe className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Preferencias</h2>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          <Globe className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Preferencias</h2>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Idioma</label>
-            <select className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Idioma</label>
+            <select className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200">
               <option>Español</option>
               <option>English</option>
               <option>Português</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Zona Horaria</label>
-            <select className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Zona Horaria</label>
+            <select className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200">
               <option>GMT-6 (Ciudad de México)</option>
               <option>GMT-5 (New York)</option>
               <option>GMT+1 (Madrid)</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidades</label>
-            <select className="w-full px-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Unidades</label>
+            <select className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-zinc-600 transition-colors duration-200">
               <option>Métricas (kg, cm)</option>
               <option>Imperiales (lb, in)</option>
             </select>
@@ -179,64 +227,23 @@ export default function AjustesPage() {
         </div>
       </div>
 
-      {/* Apariencia */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Apariencia</h2>
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3">
-              {darkMode ? (
-                <Moon className="w-5 h-5 text-blue-500" />
-              ) : (
-                <Sun className="w-5 h-5 text-yellow-500" />
-              )}
-              <div>
-                <span className="text-gray-700 dark:text-gray-200 font-medium">Modo {darkMode ? 'Oscuro' : 'Claro'}</span>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Cambia la apariencia de la aplicación</p>
-              </div>
-            </div>
-            <button
-              onClick={toggleDarkMode}
-              className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
-                darkMode ? 'bg-blue-600' : 'bg-gray-300'
-              }`}
-            >
-              <div
-                className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 flex items-center justify-center ${
-                  darkMode ? 'translate-x-7' : 'translate-x-1'
-                }`}
-              >
-                {darkMode ? (
-                  <Moon className="w-3 h-3 text-blue-600" />
-                ) : (
-                  <Sun className="w-3 h-3 text-yellow-500" />
-                )}
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Privacidad */}
-      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h2 className="text-lg font-semibold text-black dark:text-white">Privacidad</h2>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+        <div className="flex items-center gap-3 mb-5">
+          <Shield className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Privacidad</h2>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[
             { label: 'Perfil público', checked: true },
             { label: 'Mostrar progreso en comunidad', checked: false },
             { label: 'Permitir mensajes directos', checked: true },
           ].map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700">
-              <span className="text-gray-700 dark:text-gray-200">{item.label}</span>
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+              <span className="text-gray-700 dark:text-zinc-300">{item.label}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" defaultChecked={item.checked} className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-400 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black dark:peer-checked:bg-white"></div>
+                <div className="w-11 h-6 bg-gray-300 dark:bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black dark:peer-checked:bg-zinc-100 after:dark:peer-checked:bg-zinc-900"></div>
               </label>
             </div>
           ))}
@@ -245,4 +252,3 @@ export default function AjustesPage() {
     </div>
   )
 }
-
