@@ -124,6 +124,15 @@ export default function DashboardLayout({
     ? allMenuItems 
     : allMenuItems.filter(item => item.roles.includes(userRole))
 
+  // Evitar hidratación hasta que esté montado
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-gray-600">Cargando...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar Desktop */}
