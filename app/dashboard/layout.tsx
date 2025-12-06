@@ -100,7 +100,7 @@ export default function DashboardLayout({
 
   // Menú completo
   const allMenuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'coach', 'gym', 'vendedor'] },
     { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas', roles: ['atleta'] },
     { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas', roles: ['atleta'] },
     { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta', 'gym'] },
