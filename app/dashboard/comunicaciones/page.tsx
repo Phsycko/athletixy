@@ -10,6 +10,41 @@ type Paciente = {
   telefono?: string
 }
 
+type MensajeInterno = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  mensaje: string
+  fecha: string
+  tipo: 'mensaje'
+  enviadoPor: 'nutriologo' | 'paciente'
+}
+
+type Email = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  pacienteEmail: string
+  asunto: string
+  mensaje: string
+  fecha: string
+  tipo: 'email'
+  estado: string
+}
+
+type WhatsApp = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  pacienteTelefono: string
+  mensaje: string
+  fecha: string
+  tipo: 'whatsapp'
+  estado: string
+}
+
+type Comunicacion = MensajeInterno | Email | WhatsApp
+
 export default function ComunicacionesPage() {
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
@@ -18,6 +53,7 @@ export default function ComunicacionesPage() {
   const [asunto, setAsunto] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [historial, setHistorial] = useState<Comunicacion[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -33,6 +69,37 @@ export default function ComunicacionesPage() {
     p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
     p.email.toLowerCase().includes(busqueda.toLowerCase())
   )
+
+  const cargarHistorial = (pacienteId: string) => {
+    const historialCompleto: Comunicacion[] = []
+
+    // Cargar mensajes internos
+    const mensajesGuardados = localStorage.getItem(`athletixy_mensajes_${pacienteId}`)
+    if (mensajesGuardados) {
+      const mensajes = JSON.parse(mensajesGuardados)
+      historialCompleto.push(...mensajes)
+    }
+
+    // Cargar emails
+    const emailsGuardados = localStorage.getItem('athletixy_emails_nutriologo')
+    if (emailsGuardados) {
+      const emails = JSON.parse(emailsGuardados)
+      const emailsPaciente = emails.filter((e: Email) => e.pacienteId === pacienteId)
+      historialCompleto.push(...emailsPaciente)
+    }
+
+    // Cargar WhatsApps
+    const whatsappsGuardados = localStorage.getItem('athletixy_whatsapps_nutriologo')
+    if (whatsappsGuardados) {
+      const whatsapps = JSON.parse(whatsappsGuardados)
+      const whatsappsPaciente = whatsapps.filter((w: WhatsApp) => w.pacienteId === pacienteId)
+      historialCompleto.push(...whatsappsPaciente)
+    }
+
+    // Ordenar por fecha (más reciente primero)
+    historialCompleto.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+    setHistorial(historialCompleto)
+  }
 
   const handleEnviarEmail = () => {
     if (!pacienteSeleccionado || !asunto || !mensaje) return
@@ -57,6 +124,9 @@ export default function ComunicacionesPage() {
       const emails = JSON.parse(emailsGuardados)
       emails.push(emailData)
       localStorage.setItem('athletixy_emails_nutriologo', JSON.stringify(emails))
+      
+      // Actualizar historial
+      cargarHistorial(pacienteSeleccionado.id)
       
       // En producción, aquí se haría la llamada a la API de email
       alert(`Email enviado a ${pacienteSeleccionado.email}`)
@@ -101,6 +171,9 @@ export default function ComunicacionesPage() {
     whatsapps.push(whatsappData)
     localStorage.setItem('athletixy_whatsapps_nutriologo', JSON.stringify(whatsapps))
     
+    // Actualizar historial
+    cargarHistorial(pacienteSeleccionado.id)
+    
     setMensaje('')
   }
 
@@ -124,6 +197,9 @@ export default function ComunicacionesPage() {
       const mensajes = JSON.parse(mensajesGuardados)
       mensajes.push(mensajeData)
       localStorage.setItem(`athletixy_mensajes_${pacienteSeleccionado.id}`, JSON.stringify(mensajes))
+      
+      // Actualizar historial
+      cargarHistorial(pacienteSeleccionado.id)
       
       alert(`Mensaje enviado a ${pacienteSeleccionado.nombre}`)
       
@@ -175,7 +251,10 @@ export default function ComunicacionesPage() {
               pacientesFiltrados.map((paciente) => (
                 <button
                   key={paciente.id}
-                  onClick={() => setPacienteSeleccionado(paciente)}
+                  onClick={() => {
+                    setPacienteSeleccionado(paciente)
+                    cargarHistorial(paciente.id)
+                  }}
                   className={`w-full text-left p-4 rounded-lg border-2 transition ${
                     pacienteSeleccionado?.id === paciente.id
                       ? 'border-black bg-gray-50'
@@ -229,12 +308,63 @@ export default function ComunicacionesPage() {
                     setPacienteSeleccionado(null)
                     setAsunto('')
                     setMensaje('')
+                    setHistorial([])
                   }}
                   className="p-2 hover:bg-gray-100 rounded-lg transition"
                 >
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
+
+              {/* Historial de Comunicaciones */}
+              {historial.length > 0 && (
+                <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 max-h-[300px] overflow-y-auto">
+                  <h3 className="font-semibold text-black mb-4">Historial de Comunicaciones</h3>
+                  <div className="space-y-3">
+                    {historial.map((com) => (
+                      <div
+                        key={com.id}
+                        className="bg-white border-2 border-gray-200 rounded-lg p-4"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            {com.tipo === 'email' && <Mail className="w-4 h-4 text-gray-600" />}
+                            {com.tipo === 'whatsapp' && <Phone className="w-4 h-4 text-gray-600" />}
+                            {com.tipo === 'mensaje' && <MessageCircle className="w-4 h-4 text-gray-600" />}
+                            <span className="text-xs font-semibold text-gray-700 uppercase">
+                              {com.tipo === 'email' ? 'Email' : com.tipo === 'whatsapp' ? 'WhatsApp' : 'Mensaje Interno'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {new Date(com.fecha).toLocaleString('es-ES', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                        {com.tipo === 'email' && 'asunto' in com && (
+                          <p className="font-semibold text-black text-sm mb-2">{com.asunto}</p>
+                        )}
+                        <p className="text-sm text-gray-700">{com.mensaje}</p>
+                        {com.tipo === 'email' && 'pacienteEmail' in com && (
+                          <p className="text-xs text-gray-500 mt-2">Para: {com.pacienteEmail}</p>
+                        )}
+                        {com.tipo === 'whatsapp' && 'pacienteTelefono' in com && (
+                          <p className="text-xs text-gray-500 mt-2">A: {com.pacienteTelefono}</p>
+                        )}
+                        {com.tipo === 'mensaje' && 'enviadoPor' in com && (
+                          <p className="text-xs text-gray-500 mt-2">
+                            {com.enviadoPor === 'nutriologo' ? 'Enviado por ti' : 'Enviado por paciente'}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Selector de Tipo de Comunicación */}
               <div>
