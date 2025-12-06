@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock, Trash2 } from 'lucide-react'
+import { ChefHat, Clock, Flame, Users, Search, Plus, ArrowRight, X, Check, Dumbbell, ShoppingCart, Sparkles, Crown, Lock, Trash2, AlertCircle } from 'lucide-react'
 
 type Receta = {
   nombre: string
@@ -32,6 +32,8 @@ export default function RecetasPage() {
   const [generandoRecetaIA, setGenerandoRecetaIA] = useState(false)
   const [categoriaActiva, setCategoriaActiva] = useState('Todas')
   const [busqueda, setBusqueda] = useState('')
+  const [alertMessage, setAlertMessage] = useState('')
+  const [showAlert, setShowAlert] = useState(false)
   
   const recetasIniciales: Receta[] = [
     {
@@ -186,17 +188,22 @@ export default function RecetasPage() {
     setNuevaReceta({ ...nuevaReceta, preparacion: nuevosPasos })
   }
 
+  const mostrarAlerta = (mensaje: string) => {
+    setAlertMessage(mensaje)
+    setShowAlert(true)
+  }
+
   const guardarReceta = () => {
     if (!nuevaReceta.nombre.trim()) {
-      alert('Por favor ingresa el nombre de la receta')
+      mostrarAlerta('Por favor ingresa el nombre de la receta')
       return
     }
     if (nuevaReceta.ingredientes.filter(i => i.trim()).length === 0) {
-      alert('Por favor agrega al menos un ingrediente')
+      mostrarAlerta('Por favor agrega al menos un ingrediente')
       return
     }
     if (nuevaReceta.preparacion.filter(p => p.trim()).length === 0) {
-      alert('Por favor agrega al menos un paso de preparación')
+      mostrarAlerta('Por favor agrega al menos un paso de preparación')
       return
     }
 
@@ -212,7 +219,7 @@ export default function RecetasPage() {
 
   const generarRecetaConIA = async () => {
     if (!nuevaReceta.nombre.trim()) {
-      alert('Por favor escribe el nombre de la receta primero')
+      mostrarAlerta('Por favor escribe el nombre de la receta primero')
       return
     }
 
@@ -1743,6 +1750,33 @@ export default function RecetasPage() {
                 <Plus className="w-5 h-5" />
                 Guardar Receta
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Alerta Estilizado */}
+      {showAlert && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border-2 border-gray-200 animate-in fade-in zoom-in duration-200">
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-black mb-2">Atención</h3>
+                  <p className="text-gray-700 leading-relaxed">{alertMessage}</p>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowAlert(false)}
+                  className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  Aceptar
+                </button>
+              </div>
             </div>
           </div>
         </div>
