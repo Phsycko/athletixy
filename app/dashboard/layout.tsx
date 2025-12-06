@@ -20,7 +20,9 @@ import {
   LogOut,
   Menu,
   X,
-  Apple
+  Apple,
+  Mail,
+  Phone
 } from 'lucide-react'
 
 export default function DashboardLayout({
@@ -111,6 +113,7 @@ export default function DashboardLayout({
     { href: '/dashboard/progreso', icon: TrendingUp, label: 'Progreso', roles: ['atleta'] },
     { href: '/dashboard/recetas', icon: Book, label: 'Recetas', roles: ['atleta'] },
     { href: '/dashboard/nutriologo', icon: Apple, label: 'Panel Nutriólogo', roles: ['nutriologo'] },
+    { href: '/dashboard/comunicaciones', icon: MessageSquare, label: 'Comunicaciones', roles: ['nutriologo'] },
     { href: '/dashboard/coach', icon: User, label: 'Panel Coach', roles: ['coach'] },
     { href: '/dashboard/comunidad', icon: MessageSquare, label: 'Comunidad', roles: ['atleta'] },
     { href: '/dashboard/marketplace', icon: ShoppingBag, label: 'Marketplace', roles: ['atleta', 'vendedor'] },
