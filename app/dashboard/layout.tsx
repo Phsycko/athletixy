@@ -32,7 +32,38 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState('')
-  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
+  
+  // Inicializar estado desde localStorage si está disponible (solo en cliente)
+  const getInitialRole = (): 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' => {
+    if (typeof window === 'undefined') return 'atleta'
+    try {
+      const session = localStorage.getItem('athletixy_session')
+      if (session) {
+        const sessionData = JSON.parse(session)
+        return sessionData.role || 'atleta'
+      }
+    } catch (e) {
+      // Ignorar errores
+    }
+    return 'atleta'
+  }
+  
+  const getInitialAdminState = (): boolean => {
+    if (typeof window === 'undefined') return false
+    try {
+      const session = localStorage.getItem('athletixy_session')
+      if (session) {
+        const sessionData = JSON.parse(session)
+        return sessionData.isAdmin || false
+      }
+    } catch (e) {
+      // Ignorar errores
+    }
+    return false
+  }
+  
+  const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>(getInitialRole())
+  const [isAdminState, setIsAdminState] = useState(getInitialAdminState())
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -116,23 +147,6 @@ export default function DashboardLayout({
   ]
 
   // Filtrar menú según rol (admin ve todo)
-  const [isAdminState, setIsAdminState] = useState(false)
-  
-  // Verificar admin en el mismo useEffect donde se carga la sesión
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const session = localStorage.getItem('athletixy_session')
-        if (session) {
-          const sessionData = JSON.parse(session)
-          setIsAdminState(sessionData.isAdmin || false)
-        }
-      } catch (e) {
-        console.error('Error checking admin status:', e)
-      }
-    }
-  }, [])
-  
   const menuItems = isAdminState 
     ? allMenuItems 
     : allMenuItems.filter(item => item.roles.includes(userRole))
