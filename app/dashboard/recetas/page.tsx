@@ -30,6 +30,8 @@ export default function RecetasPage() {
   const [mostrarLista, setMostrarLista] = useState(false)
   const [modalNuevaReceta, setModalNuevaReceta] = useState(false)
   const [generandoRecetaIA, setGenerandoRecetaIA] = useState(false)
+  const [categoriaActiva, setCategoriaActiva] = useState('Todas')
+  const [busqueda, setBusqueda] = useState('')
   
   const recetasIniciales: Receta[] = [
     {
@@ -1179,6 +1181,14 @@ export default function RecetasPage() {
 
   const categorias = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Snacks', 'Post-Entreno']
 
+  // Filtrar recetas por categoría y búsqueda
+  const recetasFiltradas = recetas.filter(receta => {
+    const coincideCategoria = categoriaActiva === 'Todas' || receta.categoria === categoriaActiva
+    const coincideBusqueda = receta.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+                             receta.ingredientes.some(ing => ing.toLowerCase().includes(busqueda.toLowerCase()))
+    return coincideCategoria && coincideBusqueda
+  })
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -1204,6 +1214,8 @@ export default function RecetasPage() {
             <input
               type="text"
               placeholder="Buscar recetas..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
             />
           </div>
@@ -1212,9 +1224,10 @@ export default function RecetasPage() {
           {categorias.map((cat, index) => (
             <button
               key={index}
+              onClick={() => setCategoriaActiva(cat)}
               className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
-                index === 0
-                  ? 'bg-white text-black'
+                categoriaActiva === cat
+                  ? 'bg-black text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-black'
               }`}
             >
@@ -1226,7 +1239,7 @@ export default function RecetasPage() {
 
       {/* Grid de Recetas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recetas.map((receta, index) => (
+        {recetasFiltradas.map((receta, index) => (
           <div
             key={index}
             className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-600 transition-all hover:shadow-xl group"
