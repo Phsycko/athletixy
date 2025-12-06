@@ -19,18 +19,23 @@ export default function DashboardPage() {
           const sessionData = JSON.parse(session)
           const role = sessionData.role
 
-          // Redirigir según el rol
-          if (role === 'nutriologo') {
-            window.location.href = '/dashboard/nutriologo'
-            return
-          } else if (role === 'coach') {
-            window.location.href = '/dashboard/coach'
-            return
-          } else if (role === 'vendedor') {
-            window.location.href = '/dashboard/marketplace'
-            return
+          // Verificar si es admin (admin no se redirige)
+          const isAdmin = sessionData.isAdmin || false
+          
+          // Redirigir según el rol (admin tiene acceso a todo)
+          if (!isAdmin) {
+            if (role === 'nutriologo') {
+              window.location.href = '/dashboard/nutriologo'
+              return
+            } else if (role === 'coach') {
+              window.location.href = '/dashboard/coach'
+              return
+            } else if (role === 'vendedor') {
+              window.location.href = '/dashboard/marketplace'
+              return
+            }
           }
-          // Si es atleta o gym, mostrar el dashboard normal
+          // Si es atleta, gym o admin, mostrar el dashboard normal
         } catch (error) {
           console.error('Error parsing session:', error)
         }

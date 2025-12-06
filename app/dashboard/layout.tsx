@@ -54,9 +54,14 @@ export default function DashboardLayout({
       setUserEmail(sessionData.email || '')
       setUserRole(sessionData.role || 'atleta')
       
+      // Verificar si es admin y establecer estado
+      const isAdmin = sessionData.isAdmin || false
+      if (isAdmin) {
+        setIsAdmin(true)
+      }
+      
       // Redirigir según rol si está en una ruta no permitida (admin tiene acceso a todo)
       const role = sessionData.role
-      const isAdmin = sessionData.isAdmin || false
       
       // Admin tiene acceso completo, no redirigir
       if (!isAdmin) {
