@@ -33,6 +33,7 @@ export default function DashboardLayout({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
+  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -138,6 +139,22 @@ export default function DashboardLayout({
       }
     }
   }, [])
+
+  // Calcular notificaciones no leídas
+  useEffect(() => {
+    const notificaciones = [
+      { leido: false },
+      { leido: false },
+      { leido: true },
+      { leido: true },
+      { leido: true },
+      { leido: true },
+      { leido: true },
+      { leido: true },
+    ]
+    const noLeidas = notificaciones.filter(n => !n.leido).length
+    setNotificacionesNoLeidas(noLeidas)
+  }, [])
   
   const menuItems = isAdminState 
     ? allMenuItems 
@@ -161,11 +178,12 @@ export default function DashboardLayout({
             {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
+              const tieneNotificaciones = item.href === '/dashboard/notificaciones' && notificacionesNoLeidas > 0
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 relative ${
                     isActive
                       ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold'
                       : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-zinc-100'
@@ -173,6 +191,15 @@ export default function DashboardLayout({
                 >
                   <Icon className="w-5 h-5" />
                   <span className="text-sm font-medium">{item.label}</span>
+                  {tieneNotificaciones && (
+                    <span className={`ml-auto px-2 py-0.5 text-xs font-bold rounded-full ${
+                      isActive 
+                        ? 'bg-white dark:bg-zinc-900 text-black dark:text-white' 
+                        : 'bg-red-500 text-white'
+                    }`}>
+                      {notificacionesNoLeidas}
+                    </span>
+                  )}
                 </Link>
               )
             })}
@@ -231,12 +258,13 @@ export default function DashboardLayout({
               {menuItems.map((item) => {
                 const Icon = item.icon
                 const isActive = pathname === item.href
+                const tieneNotificaciones = item.href === '/dashboard/notificaciones' && notificacionesNoLeidas > 0
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-150 relative ${
                       isActive
                         ? 'bg-black dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold'
                         : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-zinc-100'
@@ -244,6 +272,15 @@ export default function DashboardLayout({
                   >
                     <Icon className="w-5 h-5" />
                     <span className="text-sm font-medium">{item.label}</span>
+                    {tieneNotificaciones && (
+                      <span className={`ml-auto px-2 py-0.5 text-xs font-bold rounded-full ${
+                        isActive 
+                          ? 'bg-white dark:bg-zinc-900 text-black dark:text-white' 
+                          : 'bg-red-500 text-white'
+                      }`}>
+                        {notificacionesNoLeidas}
+                      </span>
+                    )}
                   </Link>
                 )
               })}
