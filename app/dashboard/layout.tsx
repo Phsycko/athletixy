@@ -70,7 +70,7 @@ export default function DashboardLayout({
       // Admin tiene acceso completo, no redirigir
       if (!isAdmin) {
         if (role === 'nutriologo') {
-          const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/comunicaciones', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
           if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
             window.location.href = '/dashboard/nutriologo'
           }
