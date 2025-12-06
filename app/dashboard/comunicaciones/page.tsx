@@ -100,6 +100,14 @@ export default function ComunicacionesPage() {
     telefono: contactoValido === 'telefono' ? contactoDirecto.trim() : undefined
   } : null
 
+  // Auto-seleccionar contacto directo cuando es válido
+  useEffect(() => {
+    if (contactoDirectoObj && (!pacienteSeleccionado || pacienteSeleccionado.id !== contactoDirectoObj.id)) {
+      setPacienteSeleccionado(contactoDirectoObj)
+      setHistorial([])
+    }
+  }, [contactoDirectoObj])
+
   const cargarHistorial = (pacienteId: string) => {
     const historialCompleto: Comunicacion[] = []
 
@@ -388,14 +396,19 @@ export default function ComunicacionesPage() {
           ) : (
             <div className="space-y-6">
               {/* Header del Paciente */}
+              {pacienteSeleccionado && (
               <div className="flex items-center justify-between pb-4 border-b-2 border-gray-200">
                 <div className="flex items-center gap-3">
                   <div className="bg-black text-white w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg">
-                    {pacienteSeleccionado.nombre.charAt(0).toUpperCase()}
+                    {pacienteSeleccionado.nombre && pacienteSeleccionado.nombre.length > 0 
+                      ? pacienteSeleccionado.nombre.charAt(0).toUpperCase()
+                      : contactoValido === 'email' ? <Mail className="w-6 h-6" /> : <Phone className="w-6 h-6" />}
                   </div>
                   <div>
-                    <p className="font-bold text-black text-lg">{pacienteSeleccionado.nombre}</p>
-                    <p className="text-sm text-gray-600">{pacienteSeleccionado.email}</p>
+                    <p className="font-bold text-black text-lg">{pacienteSeleccionado.nombre || contactoDirecto.trim()}</p>
+                    {pacienteSeleccionado.email && (
+                      <p className="text-sm text-gray-600">{pacienteSeleccionado.email}</p>
+                    )}
                     {pacienteSeleccionado.telefono && (
                       <p className="text-xs text-gray-500">{pacienteSeleccionado.telefono}</p>
                     )}
@@ -414,6 +427,7 @@ export default function ComunicacionesPage() {
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
+              )}
 
               {/* Mostrar si es contacto directo */}
               {pacienteSeleccionado?.id.startsWith('directo_') && (
