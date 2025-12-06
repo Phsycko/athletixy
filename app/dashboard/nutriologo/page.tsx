@@ -26,7 +26,8 @@ import {
   Target,
   Activity,
   Award,
-  ChevronLeft
+  ChevronLeft,
+  Apple
 } from 'lucide-react'
 
 type Paciente = {
