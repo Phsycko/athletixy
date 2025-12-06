@@ -26,7 +26,8 @@ import {
   Target,
   Activity,
   Award,
-  ChevronLeft
+  ChevronLeft,
+  Apple
 } from 'lucide-react'
 
 type Paciente = {
@@ -66,11 +67,22 @@ type PlanNutricional = {
 }
 
 export default function NutriologoPage() {
-  const [vistaActiva, setVistaActiva] = useState<'dashboard' | 'pacientes' | 'asignaciones' | 'calendario'>('dashboard')
+  const [vistaActiva, setVistaActiva] = useState<'dashboard' | 'panel' | 'pacientes' | 'asignaciones' | 'calendario'>('panel')
   const [filtroPacientes, setFiltroPacientes] = useState<'todos' | 'existentes' | 'app'>('todos')
   const [busquedaPaciente, setBusquedaPaciente] = useState('')
   const [modalAsignarPlan, setModalAsignarPlan] = useState(false)
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
+  const [modalMensajes, setModalMensajes] = useState(false)
+  const [pacienteMensaje, setPacienteMensaje] = useState<Paciente | null>(null)
+  const [mensajeTexto, setMensajeTexto] = useState('')
+  const [mensajes, setMensajes] = useState<Array<{
+    id: string
+    pacienteId: string
+    pacienteNombre: string
+    mensaje: string
+    fecha: string
+    enviadoPor: 'nutriologo' | 'paciente'
+  }>>([])
   
   // Estados para calendario
   const [mesActual, setMesActual] = useState(new Date())
@@ -188,13 +200,14 @@ export default function NutriologoPage() {
   const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
 
   // Estadísticas - calculadas de forma segura
+  const pacientesArray = pacientes || []
   const estadisticas = {
-    totalPacientes: pacientes?.length || 0,
-    pacientesActivos: pacientes?.filter(p => p?.estado === 'activo').length || 0,
-    pacientesApp: pacientes?.filter(p => p?.tipo === 'app').length || 0,
-    pacientesExistentes: pacientes?.filter(p => p?.tipo === 'existente').length || 0,
+    totalPacientes: pacientesArray.length,
+    pacientesActivos: pacientesArray.filter(p => p?.estado === 'activo').length,
+    pacientesApp: pacientesArray.filter(p => p?.tipo === 'app').length,
+    pacientesExistentes: pacientesArray.filter(p => p?.tipo === 'existente').length,
     consultasEsteMes: 24,
-    planesActivos: planesNutricionales?.filter(p => p?.estado === 'activo').length || 0
+    planesActivos: (planesNutricionales || []).filter(p => p?.estado === 'activo').length
   }
 
   // Cargar datos del localStorage
@@ -595,7 +608,7 @@ export default function NutriologoPage() {
       {/* Navegación de Vistas */}
       <div className="flex gap-2 border-b-2 border-gray-200">
         {[
-          { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+          { id: 'panel', label: 'Panel Nutriólogo', icon: Apple },
           { id: 'pacientes', label: 'Pacientes', icon: Users },
           { id: 'asignaciones', label: 'Asignaciones', icon: Target },
           { id: 'calendario', label: 'Calendario', icon: Calendar }
@@ -664,17 +677,96 @@ export default function NutriologoPage() {
             </div>
           </div>
 
+          {/* Accesos Directos */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <button
+              onClick={() => {
+                setVistaActiva('panel')
+                setTimeout(() => {
+                  const elemento = document.getElementById('agendar-cita')
+                  if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+              }}
+              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+            >
+              <div className="bg-black p-3 rounded-lg w-fit mb-4">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-black mb-2">Agendar Cita</h3>
+              <p className="text-sm text-gray-600">Programar nueva consulta</p>
+            </button>
+
+            <button
+              onClick={() => {
+                setVistaActiva('panel')
+                setTimeout(() => {
+                  const elemento = document.getElementById('registrar-paciente')
+                  if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+              }}
+              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+            >
+              <div className="bg-black p-3 rounded-lg w-fit mb-4">
+                <UserPlus className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-black mb-2">Registrar Paciente</h3>
+              <p className="text-sm text-gray-600">Agregar nuevo paciente</p>
+            </button>
+
+            <button
+              onClick={() => {
+                setVistaActiva('panel')
+                setTimeout(() => {
+                  const elemento = document.getElementById('asignar-dieta')
+                  if (elemento) elemento.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+              }}
+              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+            >
+              <div className="bg-black p-3 rounded-lg w-fit mb-4">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-black mb-2">Asignar Dieta</h3>
+              <p className="text-sm text-gray-600">Crear plan nutricional</p>
+            </button>
+
+            <button
+              onClick={() => setVistaActiva('calendario')}
+              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-black hover:shadow-lg transition text-left"
+            >
+              <div className="bg-black p-3 rounded-lg w-fit mb-4">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-black mb-2">Ver Calendario</h3>
+              <p className="text-sm text-gray-600">Gestionar consultas</p>
+            </button>
+          </div>
+
           {/* Consultas Próximas y Resumen */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Consultas Próximas */}
             <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-black mb-6">Próximas Consultas</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-black">Próximas Consultas</h2>
+                <button
+                  onClick={() => {
+                    setVistaActiva('calendario')
+                    setTimeout(() => {
+                      setModalConsulta(true)
+                    }, 300)
+                  }}
+                  className="text-sm text-gray-600 hover:text-black flex items-center gap-1 transition"
+                >
+                  Ver todas <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
               <div className="space-y-4">
                 {consultasProximas.length > 0 ? (
-                  consultasProximas.map((consulta) => (
+                  consultasProximas.slice(0, 3).map((consulta) => (
                     <div
                       key={consulta.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                      onClick={() => setVistaActiva('calendario')}
                     >
                       <div>
                         <p className="font-semibold text-black">{consulta.pacienteNombre}</p>
@@ -687,7 +779,7 @@ export default function NutriologoPage() {
                           <span>•</span>
                           <span className={`px-2 py-0.5 rounded text-xs ${
                             consulta.tipo === 'virtual' 
-                              ? 'bg-blue-100 text-blue-700' 
+                              ? 'bg-gray-200 text-gray-700' 
                               : 'bg-gray-100 text-gray-700'
                           }`}>
                             {consulta.tipo === 'virtual' ? 'Virtual' : 'Presencial'}
@@ -695,59 +787,278 @@ export default function NutriologoPage() {
                         </div>
                       </div>
                       {consulta.tipo === 'virtual' ? (
-                        <Video className="w-5 h-5 text-blue-500" />
+                        <Video className="w-5 h-5 text-gray-600" />
                       ) : (
                         <Users className="w-5 h-5 text-gray-400" />
                       )}
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-600 text-center py-8">No hay consultas programadas</p>
+                  <div className="text-center py-8">
+                    <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-2">No hay consultas programadas</p>
+                    <button
+                      onClick={() => {
+                        setVistaActiva('calendario')
+                        setTimeout(() => {
+                          setModalConsulta(true)
+                        }, 300)
+                      }}
+                      className="mt-4 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                    >
+                      Agendar Primera Consulta
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Resumen de Pacientes */}
             <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-black mb-6">Distribución de Pacientes</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-black">Distribución de Pacientes</h2>
+                <button
+                  onClick={() => setVistaActiva('pacientes')}
+                  className="text-sm text-gray-600 hover:text-black flex items-center gap-1 transition"
+                >
+                  Ver todos <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div 
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  onClick={() => setVistaActiva('pacientes')}
+                >
                   <div className="flex items-center gap-3">
-                    <UserCheck className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200">
+                      <UserCheck className="w-5 h-5 text-black" />
+                    </div>
                     <div>
                       <p className="font-semibold text-black">Pacientes Existentes</p>
                       <p className="text-sm text-gray-600">Pacientes previos a la app</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-black">{estadisticas.pacientesExistentes}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-black">{estadisticas.pacientesExistentes}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div 
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  onClick={() => setVistaActiva('pacientes')}
+                >
                   <div className="flex items-center gap-3">
-                    <UserPlus className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200">
+                      <UserPlus className="w-5 h-5 text-black" />
+                    </div>
                     <div>
                       <p className="font-semibold text-black">Pacientes de la App</p>
                       <p className="text-sm text-gray-600">Contratados mediante Athletixy</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-black">{estadisticas.pacientesApp}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-black">{estadisticas.pacientesApp}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div 
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-black transition cursor-pointer"
+                  onClick={() => setVistaActiva('calendario')}
+                >
                   <div className="flex items-center gap-3">
-                    <Activity className="w-5 h-5 text-black" />
+                    <div className="bg-white p-2 rounded-lg border border-gray-200">
+                      <Activity className="w-5 h-5 text-black" />
+                    </div>
                     <div>
                       <p className="font-semibold text-black">Consultas Este Mes</p>
                       <p className="text-sm text-gray-600">Total de consultas realizadas</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-black">{estadisticas.consultasEsteMes}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-black">{estadisticas.consultasEsteMes}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Vista Panel Nutriólogo - Funciones Específicas */}
+      {vistaActiva === 'panel' && (
+        <div className="space-y-8">
+          {/* Header */}
+          <div>
+            <h2 className="text-2xl font-bold text-black mb-2">Panel Nutriólogo</h2>
+            <p className="text-gray-600">Funciones específicas de gestión</p>
+          </div>
+
+          {/* Funciones Principales */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Agendar Cita */}
+            <div id="agendar-cita" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Agendar Cita</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Programa una nueva consulta con un paciente</p>
+              <button
+                onClick={() => {
+                  setVistaActiva('calendario')
+                  setTimeout(() => {
+                    setModalConsulta(true)
+                  }, 300)
+                }}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Agendar Consulta
+              </button>
+            </div>
+
+            {/* Registrar Paciente */}
+            <div id="registrar-paciente" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <UserPlus className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Registrar Paciente</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Agrega un nuevo paciente al sistema</p>
+              <button
+                onClick={() => setModalNuevoPaciente(true)}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Nuevo Paciente
+              </button>
+            </div>
+
+            {/* Asignar Dieta */}
+            <div id="asignar-dieta" className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Asignar Dieta</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Crea y asigna un plan nutricional</p>
+              <button
+                onClick={() => setVistaActiva('asignaciones')}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Asignar Plan
+              </button>
+            </div>
+
+            {/* Ver Pacientes */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Ver Pacientes</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Gestiona tu lista de pacientes</p>
+              <button
+                onClick={() => setVistaActiva('pacientes')}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Ver Lista
+              </button>
+            </div>
+
+            {/* Ver Calendario */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Ver Calendario</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Gestiona todas tus consultas</p>
+              <button
+                onClick={() => setVistaActiva('calendario')}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Abrir Calendario
+              </button>
+            </div>
+
+            {/* Ver Asignaciones */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-black p-3 rounded-lg">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-black">Ver Asignaciones</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Revisa planes nutricionales asignados</p>
+              <button
+                onClick={() => setVistaActiva('asignaciones')}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
+              >
+                Ver Planes
+              </button>
+            </div>
+          </div>
+
+          {/* Resumen Rápido */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-black mb-4">Resumen Rápido</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Total Pacientes</span>
+                  <span className="text-xl font-bold text-black">{estadisticas.totalPacientes}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Consultas Programadas</span>
+                  <span className="text-xl font-bold text-black">{consultasProximas.length}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Planes Activos</span>
+                  <span className="text-xl font-bold text-black">{estadisticas.planesActivos}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-black mb-4">Accesos Rápidos</h3>
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setVistaActiva('calendario')
+                    setModalBloquearFecha(true)
+                  }}
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                >
+                  <span className="text-gray-700">Bloquear Fecha</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+                <button
+                  onClick={() => setVistaActiva('pacientes')}
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                >
+                  <span className="text-gray-700">Buscar Paciente</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+                <button
+                  onClick={() => setVistaActiva('asignaciones')}
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition text-left"
+                >
+                  <span className="text-gray-700">Gestionar Planes</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Vista Pacientes */}
       {vistaActiva === 'pacientes' && (
@@ -863,7 +1174,20 @@ export default function NutriologoPage() {
                   >
                     Asignar Plan
                   </button>
-                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                  <button 
+                    onClick={() => {
+                      setPacienteMensaje(paciente)
+                      setModalMensajes(true)
+                      // Cargar mensajes del paciente
+                      const mensajesGuardados = localStorage.getItem(`athletixy_mensajes_${paciente.id}`)
+                      if (mensajesGuardados) {
+                        setMensajes(JSON.parse(mensajesGuardados))
+                      } else {
+                        setMensajes([])
+                      }
+                    }}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+                  >
                     <MessageCircle className="w-4 h-4" />
                   </button>
                 </div>
@@ -1621,6 +1945,120 @@ export default function NutriologoPage() {
                   className="flex-1 px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium"
                 >
                   Asignar Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Mensajes */}
+      {modalMensajes && pacienteMensaje && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b-2 border-gray-200">
+              <div>
+                <h3 className="text-xl font-bold text-black">Mensajes con {pacienteMensaje.nombre}</h3>
+                <p className="text-gray-600 text-sm mt-1">{pacienteMensaje.email}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setModalMensajes(false)
+                  setPacienteMensaje(null)
+                  setMensajeTexto('')
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {mensajes.length === 0 ? (
+                <div className="text-center py-12">
+                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600">No hay mensajes aún</p>
+                  <p className="text-gray-500 text-sm mt-2">Inicia la conversación enviando un mensaje</p>
+                </div>
+              ) : (
+                mensajes.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.enviadoPor === 'nutriologo' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[70%] rounded-lg p-4 ${
+                        msg.enviadoPor === 'nutriologo'
+                          ? 'bg-black text-white'
+                          : 'bg-gray-100 text-black'
+                      }`}
+                    >
+                      <p className="text-sm">{msg.mensaje}</p>
+                      <p
+                        className={`text-xs mt-2 ${
+                          msg.enviadoPor === 'nutriologo' ? 'text-gray-300' : 'text-gray-500'
+                        }`}
+                      >
+                        {new Date(msg.fecha).toLocaleString('es-ES', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-6 border-t-2 border-gray-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={mensajeTexto}
+                  onChange={(e) => setMensajeTexto(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && mensajeTexto.trim()) {
+                      const nuevoMensaje = {
+                        id: Date.now().toString(),
+                        pacienteId: pacienteMensaje.id,
+                        pacienteNombre: pacienteMensaje.nombre,
+                        mensaje: mensajeTexto.trim(),
+                        fecha: new Date().toISOString(),
+                        enviadoPor: 'nutriologo' as const
+                      }
+                      const nuevosMensajes = [...mensajes, nuevoMensaje]
+                      setMensajes(nuevosMensajes)
+                      localStorage.setItem(`athletixy_mensajes_${pacienteMensaje.id}`, JSON.stringify(nuevosMensajes))
+                      setMensajeTexto('')
+                    }
+                  }}
+                  placeholder="Escribe un mensaje..."
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
+                />
+                <button
+                  onClick={() => {
+                    if (mensajeTexto.trim()) {
+                      const nuevoMensaje = {
+                        id: Date.now().toString(),
+                        pacienteId: pacienteMensaje.id,
+                        pacienteNombre: pacienteMensaje.nombre,
+                        mensaje: mensajeTexto.trim(),
+                        fecha: new Date().toISOString(),
+                        enviadoPor: 'nutriologo' as const
+                      }
+                      const nuevosMensajes = [...mensajes, nuevoMensaje]
+                      setMensajes(nuevosMensajes)
+                      localStorage.setItem(`athletixy_mensajes_${pacienteMensaje.id}`, JSON.stringify(nuevosMensajes))
+                      setMensajeTexto('')
+                    }
+                  }}
+                  className="px-6 py-3 bg-black hover:bg-gray-800 text-white rounded-lg transition font-medium flex items-center gap-2"
+                >
+                  <Send className="w-5 h-5" />
+                  Enviar
                 </button>
               </div>
             </div>

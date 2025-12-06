@@ -1,0 +1,611 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Mail, Phone, MessageCircle, Send, Search, User, X, Paperclip } from 'lucide-react'
+
+type Paciente = {
+  id: string
+  nombre: string
+  email: string
+  telefono?: string
+}
+
+type MensajeInterno = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  mensaje: string
+  fecha: string
+  tipo: 'mensaje'
+  enviadoPor: 'nutriologo' | 'paciente'
+}
+
+type Email = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  pacienteEmail: string
+  asunto: string
+  mensaje: string
+  fecha: string
+  tipo: 'email'
+  estado: string
+}
+
+type WhatsApp = {
+  id: string
+  pacienteId: string
+  pacienteNombre: string
+  pacienteTelefono: string
+  mensaje: string
+  fecha: string
+  tipo: 'whatsapp'
+  estado: string
+}
+
+type Comunicacion = MensajeInterno | Email | WhatsApp
+
+export default function ComunicacionesPage() {
+  const [pacientes, setPacientes] = useState<Paciente[]>([])
+  const [pacienteSeleccionado, setPacienteSeleccionado] = useState<Paciente | null>(null)
+  const [busqueda, setBusqueda] = useState('')
+  const [contactoDirecto, setContactoDirecto] = useState('')
+  const [tipoComunicacion, setTipoComunicacion] = useState<'email' | 'whatsapp' | 'mensaje'>('email')
+  const [asunto, setAsunto] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  
+  // Validar si es email válido
+  const esEmailValido = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+  
+  // Validar si es teléfono válido
+  const esTelefonoValido = (telefono: string): boolean => {
+    const telefonoRegex = /^[\d\s\-\+\(\)]+$/
+    const numeros = telefono.replace(/[^\d]/g, '')
+    return telefonoRegex.test(telefono) && numeros.length >= 10
+  }
+  
+  // Detectar tipo de contacto
+  const detectarTipoContacto = (contacto: string): 'email' | 'telefono' | null => {
+    if (esEmailValido(contacto)) return 'email'
+    if (esTelefonoValido(contacto)) return 'telefono'
+    return null
+  }
+  const [historial, setHistorial] = useState<Comunicacion[]>([])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pacientesGuardados = localStorage.getItem('athletixy_pacientes_nutriologo')
+      if (pacientesGuardados) {
+        const pacientesData = JSON.parse(pacientesGuardados)
+        setPacientes(pacientesData)
+      }
+    }
+  }, [])
+
+  const pacientesFiltrados = pacientes.filter(p =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+    p.email.toLowerCase().includes(busqueda.toLowerCase())
+  )
+  
+  // Crear contacto temporal si se escribe email o teléfono
+  const contactoValido = contactoDirecto.trim() && detectarTipoContacto(contactoDirecto.trim())
+  const contactoDirectoObj = contactoValido ? {
+    id: 'directo_' + Date.now(),
+    nombre: contactoDirecto.trim(),
+    email: contactoValido === 'email' ? contactoDirecto.trim() : '',
+    telefono: contactoValido === 'telefono' ? contactoDirecto.trim() : undefined
+  } : null
+
+  // Auto-seleccionar contacto directo cuando es válido
+  useEffect(() => {
+    if (contactoDirectoObj && (!pacienteSeleccionado || pacienteSeleccionado.id !== contactoDirectoObj.id)) {
+      setPacienteSeleccionado(contactoDirectoObj)
+      setHistorial([])
+    }
+  }, [contactoDirectoObj])
+
+  const cargarHistorial = (pacienteId: string) => {
+    const historialCompleto: Comunicacion[] = []
+
+    // Cargar mensajes internos
+    const mensajesGuardados = localStorage.getItem(`athletixy_mensajes_${pacienteId}`)
+    if (mensajesGuardados) {
+      const mensajes = JSON.parse(mensajesGuardados)
+      historialCompleto.push(...mensajes)
+    }
+
+    // Cargar emails
+    const emailsGuardados = localStorage.getItem('athletixy_emails_nutriologo')
+    if (emailsGuardados) {
+      const emails = JSON.parse(emailsGuardados)
+      const emailsPaciente = emails.filter((e: Email) => e.pacienteId === pacienteId)
+      historialCompleto.push(...emailsPaciente)
+    }
+
+    // Cargar WhatsApps
+    const whatsappsGuardados = localStorage.getItem('athletixy_whatsapps_nutriologo')
+    if (whatsappsGuardados) {
+      const whatsapps = JSON.parse(whatsappsGuardados)
+      const whatsappsPaciente = whatsapps.filter((w: WhatsApp) => w.pacienteId === pacienteId)
+      historialCompleto.push(...whatsappsPaciente)
+    }
+
+    // Ordenar por fecha (más reciente primero)
+    historialCompleto.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+    setHistorial(historialCompleto)
+  }
+
+  const handleEnviarEmail = () => {
+    if (!pacienteSeleccionado || !asunto || !mensaje) return
+    
+    setEnviando(true)
+    
+    // Simular envío de email
+    setTimeout(() => {
+      const emailData = {
+        id: Date.now().toString(),
+        pacienteId: pacienteSeleccionado.id,
+        pacienteNombre: pacienteSeleccionado.nombre,
+        pacienteEmail: pacienteSeleccionado.email,
+        asunto,
+        mensaje,
+        fecha: new Date().toISOString(),
+        tipo: 'email',
+        estado: 'enviado'
+      }
+      
+      const emailsGuardados = localStorage.getItem('athletixy_emails_nutriologo') || '[]'
+      const emails = JSON.parse(emailsGuardados)
+      emails.push(emailData)
+      localStorage.setItem('athletixy_emails_nutriologo', JSON.stringify(emails))
+      
+      // Actualizar historial
+      cargarHistorial(pacienteSeleccionado.id)
+      
+      // En producción, aquí se haría la llamada a la API de email
+      alert(`Email enviado a ${pacienteSeleccionado.email}`)
+      
+      setAsunto('')
+      setMensaje('')
+      setEnviando(false)
+    }, 1000)
+  }
+
+  const handleEnviarWhatsApp = () => {
+    if (!pacienteSeleccionado || !mensaje) return
+    
+    const telefono = pacienteSeleccionado.telefono || contactoDirecto.trim()
+    if (!telefono || !esTelefonoValido(telefono)) {
+      alert('Por favor ingresa un número de teléfono válido')
+      return
+    }
+    
+    // Formatear número (eliminar caracteres especiales)
+    const numeroLimpio = telefono.replace(/[^0-9]/g, '')
+    
+    // Abrir WhatsApp Web con el mensaje prellenado
+    const mensajeCodificado = encodeURIComponent(mensaje)
+    const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${mensajeCodificado}`
+    window.open(urlWhatsApp, '_blank')
+    
+    // Guardar registro del mensaje
+    const whatsappData = {
+      id: Date.now().toString(),
+      pacienteId: pacienteSeleccionado.id,
+      pacienteNombre: pacienteSeleccionado.nombre,
+      pacienteTelefono: telefono,
+      mensaje,
+      fecha: new Date().toISOString(),
+      tipo: 'whatsapp',
+      estado: 'enviado'
+    }
+    
+    const whatsappsGuardados = localStorage.getItem('athletixy_whatsapps_nutriologo') || '[]'
+    const whatsapps = JSON.parse(whatsappsGuardados)
+    whatsapps.push(whatsappData)
+    localStorage.setItem('athletixy_whatsapps_nutriologo', JSON.stringify(whatsapps))
+    
+    // Actualizar historial
+    cargarHistorial(pacienteSeleccionado.id)
+    
+    setMensaje('')
+  }
+
+  const handleEnviarMensaje = () => {
+    if (!pacienteSeleccionado || !mensaje) return
+    
+    setEnviando(true)
+    
+    setTimeout(() => {
+      const mensajeData = {
+        id: Date.now().toString(),
+        pacienteId: pacienteSeleccionado.id,
+        pacienteNombre: pacienteSeleccionado.nombre,
+        mensaje,
+        fecha: new Date().toISOString(),
+        tipo: 'mensaje',
+        enviadoPor: 'nutriologo' as const
+      }
+      
+      const mensajesGuardados = localStorage.getItem(`athletixy_mensajes_${pacienteSeleccionado.id}`) || '[]'
+      const mensajes = JSON.parse(mensajesGuardados)
+      mensajes.push(mensajeData)
+      localStorage.setItem(`athletixy_mensajes_${pacienteSeleccionado.id}`, JSON.stringify(mensajes))
+      
+      // Actualizar historial
+      cargarHistorial(pacienteSeleccionado.id)
+      
+      alert(`Mensaje enviado a ${pacienteSeleccionado.nombre}`)
+      
+      setMensaje('')
+      setEnviando(false)
+    }, 500)
+  }
+
+  const handleEnviar = () => {
+    if (tipoComunicacion === 'email') {
+      handleEnviarEmail()
+    } else if (tipoComunicacion === 'whatsapp') {
+      handleEnviarWhatsApp()
+    } else {
+      handleEnviarMensaje()
+    }
+  }
+
+  return (
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-black mb-2">Comunicaciones</h1>
+        <p className="text-gray-600">Envía correos, mensajes de WhatsApp y mensajes internos a tus pacientes</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Lista de Pacientes */}
+        <div className="lg:col-span-1 bg-white border-2 border-gray-200 rounded-xl p-6">
+          <div className="mb-4 space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Buscar paciente..."
+                value={busqueda}
+                onChange={(e) => {
+                  setBusqueda(e.target.value)
+                  setContactoDirecto('')
+                }}
+                className="w-full pl-10 pr-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
+              />
+            </div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="O escribe email o teléfono directamente..."
+                value={contactoDirecto}
+                onChange={(e) => {
+                  setContactoDirecto(e.target.value)
+                  setBusqueda('')
+                  const tipo = detectarTipoContacto(e.target.value)
+                  if (tipo === 'email') {
+                    setTipoComunicacion('email')
+                  } else if (tipo === 'telefono') {
+                    setTipoComunicacion('whatsapp')
+                  }
+                }}
+                className={`w-full pl-10 pr-4 py-2 border-2 rounded-lg focus:outline-none transition ${
+                  contactoValido
+                    ? 'border-black bg-gray-50'
+                    : contactoDirecto && !contactoValido
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 focus:border-black'
+                }`}
+              />
+            </div>
+            {contactoDirecto && !contactoValido && (
+              <p className="text-xs text-red-600">Ingresa un email o teléfono válido</p>
+            )}
+            {contactoValido && (
+              <p className="text-xs text-gray-600">
+                {contactoValido === 'email' ? '✓ Email válido' : '✓ Teléfono válido'}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2 max-h-[600px] overflow-y-auto">
+            {/* Contacto directo si es válido */}
+            {contactoDirectoObj && (
+              <button
+                onClick={() => {
+                  setPacienteSeleccionado(contactoDirectoObj)
+                  setHistorial([])
+                }}
+                className={`w-full text-left p-4 rounded-lg border-2 transition ${
+                  pacienteSeleccionado?.id === contactoDirectoObj.id
+                    ? 'border-black bg-gray-50'
+                    : 'border-green-300 bg-green-50 hover:border-green-400'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                    {contactoValido === 'email' ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-black">{contactoDirectoObj.nombre}</p>
+                    {contactoDirectoObj.email && (
+                      <p className="text-sm text-gray-600">{contactoDirectoObj.email}</p>
+                    )}
+                    {contactoDirectoObj.telefono && (
+                      <p className="text-xs text-gray-500 mt-1">{contactoDirectoObj.telefono}</p>
+                    )}
+                    <p className="text-xs text-green-600 mt-1 font-medium">Nuevo contacto</p>
+                  </div>
+                </div>
+              </button>
+            )}
+            
+            {pacientesFiltrados.length === 0 && !contactoDirectoObj ? (
+              <div className="text-center py-8">
+                <User className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-600">No se encontraron pacientes</p>
+                <p className="text-xs text-gray-500 mt-2">Escribe un email o teléfono arriba para comenzar</p>
+              </div>
+            ) : (
+              pacientesFiltrados.map((paciente) => (
+                <button
+                  key={paciente.id}
+                  onClick={() => {
+                    setPacienteSeleccionado(paciente)
+                    cargarHistorial(paciente.id)
+                  }}
+                  className={`w-full text-left p-4 rounded-lg border-2 transition ${
+                    pacienteSeleccionado?.id === paciente.id
+                      ? 'border-black bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
+                      {paciente.nombre.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-black">{paciente.nombre}</p>
+                      <p className="text-sm text-gray-600">{paciente.email}</p>
+                      {paciente.telefono && (
+                        <p className="text-xs text-gray-500 mt-1">{paciente.telefono}</p>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Panel de Comunicación */}
+        <div className="lg:col-span-2 bg-white border-2 border-gray-200 rounded-xl p-6">
+          {!pacienteSeleccionado && !contactoDirectoObj ? (
+            <div className="text-center py-16">
+              <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 text-lg mb-2">Selecciona un paciente</p>
+              <p className="text-gray-500 text-sm">Elige un paciente de la lista para comenzar a comunicarte</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Header del Paciente */}
+              {pacienteSeleccionado && (
+              <div className="flex items-center justify-between pb-4 border-b-2 border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="bg-black text-white w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg">
+                    {pacienteSeleccionado.nombre && pacienteSeleccionado.nombre.length > 0 
+                      ? pacienteSeleccionado.nombre.charAt(0).toUpperCase()
+                      : contactoValido === 'email' ? <Mail className="w-6 h-6" /> : <Phone className="w-6 h-6" />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-black text-lg">{pacienteSeleccionado.nombre || contactoDirecto.trim()}</p>
+                    {pacienteSeleccionado.email && (
+                      <p className="text-sm text-gray-600">{pacienteSeleccionado.email}</p>
+                    )}
+                    {pacienteSeleccionado.telefono && (
+                      <p className="text-xs text-gray-500">{pacienteSeleccionado.telefono}</p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setPacienteSeleccionado(null)
+                    setContactoDirecto('')
+                    setAsunto('')
+                    setMensaje('')
+                    setHistorial([])
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+              )}
+
+              {/* Mostrar si es contacto directo */}
+              {pacienteSeleccionado?.id.startsWith('directo_') && (
+                <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-green-800">
+                    <strong>Contacto directo:</strong> Este contacto no está en tu lista de pacientes. Los mensajes se guardarán en el historial.
+                  </p>
+                </div>
+              )}
+
+              {/* Historial de Comunicaciones */}
+              {historial.length > 0 && (
+                <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 max-h-[300px] overflow-y-auto">
+                  <h3 className="font-semibold text-black mb-4">Historial de Comunicaciones</h3>
+                  <div className="space-y-3">
+                    {historial.map((com) => (
+                      <div
+                        key={com.id}
+                        className="bg-white border-2 border-gray-200 rounded-lg p-4"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            {com.tipo === 'email' && <Mail className="w-4 h-4 text-gray-600" />}
+                            {com.tipo === 'whatsapp' && <Phone className="w-4 h-4 text-gray-600" />}
+                            {com.tipo === 'mensaje' && <MessageCircle className="w-4 h-4 text-gray-600" />}
+                            <span className="text-xs font-semibold text-gray-700 uppercase">
+                              {com.tipo === 'email' ? 'Email' : com.tipo === 'whatsapp' ? 'WhatsApp' : 'Mensaje Interno'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {new Date(com.fecha).toLocaleString('es-ES', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                        {com.tipo === 'email' && 'asunto' in com && (
+                          <p className="font-semibold text-black text-sm mb-2">{com.asunto}</p>
+                        )}
+                        <p className="text-sm text-gray-700">{com.mensaje}</p>
+                        {com.tipo === 'email' && 'pacienteEmail' in com && (
+                          <p className="text-xs text-gray-500 mt-2">Para: {com.pacienteEmail}</p>
+                        )}
+                        {com.tipo === 'whatsapp' && 'pacienteTelefono' in com && (
+                          <p className="text-xs text-gray-500 mt-2">A: {com.pacienteTelefono}</p>
+                        )}
+                        {com.tipo === 'mensaje' && 'enviadoPor' in com && (
+                          <p className="text-xs text-gray-500 mt-2">
+                            {com.enviadoPor === 'nutriologo' ? 'Enviado por ti' : 'Enviado por paciente'}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Selector de Tipo de Comunicación */}
+              <div>
+                <label className="block text-sm font-semibold text-black mb-3">Tipo de Comunicación</label>
+                <div className="grid grid-cols-3 gap-3">
+                  <button
+                    onClick={() => setTipoComunicacion('email')}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      tipoComunicacion === 'email'
+                        ? 'border-black bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Mail className={`w-6 h-6 ${tipoComunicacion === 'email' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-semibold text-sm ${tipoComunicacion === 'email' ? 'text-black' : 'text-gray-600'}`}>
+                      Email
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setTipoComunicacion('whatsapp')}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      tipoComunicacion === 'whatsapp'
+                        ? 'border-black bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Phone className={`w-6 h-6 ${tipoComunicacion === 'whatsapp' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-semibold text-sm ${tipoComunicacion === 'whatsapp' ? 'text-black' : 'text-gray-600'}`}>
+                      WhatsApp
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setTipoComunicacion('mensaje')}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      tipoComunicacion === 'mensaje'
+                        ? 'border-black bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <MessageCircle className={`w-6 h-6 ${tipoComunicacion === 'mensaje' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-semibold text-sm ${tipoComunicacion === 'mensaje' ? 'text-black' : 'text-gray-600'}`}>
+                      Mensaje Interno
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Formulario de Comunicación */}
+              <div className="space-y-4">
+                {tipoComunicacion === 'email' && (
+                  <div>
+                    <label className="block text-sm font-semibold text-black mb-2">Asunto</label>
+                    <input
+                      type="text"
+                      value={asunto}
+                      onChange={(e) => setAsunto(e.target.value)}
+                      placeholder="Asunto del correo..."
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-2">
+                    {tipoComunicacion === 'email' ? 'Mensaje' : tipoComunicacion === 'whatsapp' ? 'Mensaje de WhatsApp' : 'Mensaje Interno'}
+                  </label>
+                  <textarea
+                    value={mensaje}
+                    onChange={(e) => setMensaje(e.target.value)}
+                    placeholder={
+                      tipoComunicacion === 'email'
+                        ? 'Escribe tu mensaje aquí...'
+                        : tipoComunicacion === 'whatsapp'
+                        ? 'Escribe el mensaje para WhatsApp...'
+                        : 'Escribe tu mensaje interno...'
+                    }
+                    rows={8}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition resize-none"
+                  />
+                </div>
+
+                {tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && (
+                  <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ {pacienteSeleccionado.id.startsWith('directo_') 
+                        ? 'Escribe un número de teléfono válido en el campo de búsqueda para usar WhatsApp.'
+                        : 'Este paciente no tiene número de teléfono registrado. Por favor, agrega un número de teléfono para enviar mensajes de WhatsApp.'}
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleEnviar}
+                  disabled={
+                    enviando || 
+                    !mensaje || 
+                    (tipoComunicacion === 'email' && !asunto) || 
+                    (tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && !contactoDirecto.trim())
+                  }
+                  className="w-full px-6 py-3 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition font-semibold flex items-center justify-center gap-2"
+                >
+                  {enviando ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      {tipoComunicacion === 'email' ? 'Enviar Email' : tipoComunicacion === 'whatsapp' ? 'Abrir WhatsApp' : 'Enviar Mensaje'}
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
