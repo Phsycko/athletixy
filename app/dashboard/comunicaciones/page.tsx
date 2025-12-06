@@ -568,7 +568,7 @@ export default function ComunicacionesPage() {
                   />
                 </div>
 
-                {tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && (
+                {tipoComunicacion === 'whatsapp' && pacienteSeleccionado && !pacienteSeleccionado.telefono && (
                   <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
                     <p className="text-sm text-yellow-800">
                       ⚠️ {pacienteSeleccionado.id.startsWith('directo_') 
@@ -584,7 +584,7 @@ export default function ComunicacionesPage() {
                     enviando || 
                     !mensaje || 
                     (tipoComunicacion === 'email' && !asunto) || 
-                    (tipoComunicacion === 'whatsapp' && !pacienteSeleccionado.telefono && !contactoDirecto.trim())
+                    (tipoComunicacion === 'whatsapp' && pacienteSeleccionado && !pacienteSeleccionado.telefono && !contactoDirecto.trim())
                   }
                   className="w-full px-6 py-3 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition font-semibold flex items-center justify-center gap-2"
                 >
