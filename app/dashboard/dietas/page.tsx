@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, ChefHat, Plus, X, Sparkles, Edit, Trash2, ChevronLeft, ChevronRight, AlertCircle, CheckCircle, Info } from 'lucide-react'
 
 type Comida = {
   nombre: string
@@ -11,12 +11,20 @@ type Comida = {
   grasas: number
 }
 
+type ComidaExtra = {
+  id: string
+  tipo: string
+  hora: string
+  comida: Comida
+}
+
 type DiaPlan = {
   dia: string
   fecha: Date
   desayuno: Comida
   almuerzo: Comida
   cena: Comida
+  comidasExtras?: ComidaExtra[]
 }
 
 export default function DietasPage() {
@@ -48,7 +56,8 @@ export default function DietasPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [porcionModalOpen, setPorcionModalOpen] = useState(false)
   const [calculandoMacros, setCalculandoMacros] = useState(false)
-  const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena'>('desayuno')
+  const [tipoComidaActual, setTipoComidaActual] = useState<'desayuno' | 'almuerzo' | 'cena' | 'extra'>('desayuno')
+  const [comidaExtraActualId, setComidaExtraActualId] = useState<string | null>(null)
   const [porcionInfo, setPorcionInfo] = useState({ cantidad: '', unidad: 'gramos' })
   const [ingredientesDetectados, setIngredientesDetectados] = useState<Array<{nombre: string, cantidad: string, unidad: string}>>([])
   const [esComidaCompuesta, setEsComidaCompuesta] = useState(false)
@@ -95,6 +104,106 @@ export default function DietasPage() {
   const [confirmDeleteRangoOpen, setConfirmDeleteRangoOpen] = useState(false)
   const [editarDatosModalOpen, setEditarDatosModalOpen] = useState(false)
   const [esPremium] = useState(true) // true = Premium, false = Básico
+  const [toast, setToast] = useState<{show: boolean, message: string, type: 'error' | 'success' | 'info'}>({show: false, message: '', type: 'info'})
+
+  const showToast = (message: string, type: 'error' | 'success' | 'info' = 'info') => {
+    setToast({show: true, message, type})
+    setTimeout(() => setToast({show: false, message: '', type: 'info'}), 4000)
+  }
+  const [comidasExtras, setComidasExtras] = useState<ComidaExtra[]>([])
+  
+  const tiposComidaDisponibles = [
+    { tipo: 'Snack Mañana', hora: '10:00 AM' },
+    { tipo: 'Snack Tarde', hora: '5:00 PM' },
+    { tipo: 'Pre-Entreno', hora: '6:00 PM' },
+    { tipo: 'Post-Entreno', hora: '8:00 PM' },
+    { tipo: 'Colación', hora: '11:00 AM' },
+    { tipo: 'Merienda', hora: '4:00 PM' },
+  ]
+
+  // Lista de palabras prohibidas (groserías y términos inapropiados)
+  const palabrasProhibidas = [
+    'mierda', 'caca', 'popo', 'culo', 'verga', 'pene', 'pito', 'chingada', 'pendejo', 'pendeja',
+    'cabron', 'cabrón', 'puta', 'puto', 'joder', 'coño', 'carajo', 'maldito', 'maldita',
+    'idiota', 'estupido', 'estúpido', 'imbecil', 'imbécil', 'basura', 'porqueria', 'porquería',
+    'shit', 'fuck', 'ass', 'dick', 'cock', 'pussy', 'bitch', 'damn', 'crap', 'bastard',
+    'veneno', 'droga', 'cocaina', 'heroina', 'marihuana', 'crack', 'metanfetamina',
+    'tierra', 'piedra', 'cemento', 'plastico', 'plástico', 'metal', 'vidrio', 'papel',
+    'jabon', 'jabón', 'detergente', 'cloro', 'lejia', 'lejía', 'gasolina', 'aceite motor'
+  ]
+
+  // Lista de palabras clave de alimentos válidos
+  const alimentosValidos = [
+    // Proteínas
+    'pollo', 'pechuga', 'carne', 'res', 'cerdo', 'pescado', 'salmon', 'salmón', 'atun', 'atún',
+    'huevo', 'huevos', 'clara', 'claras', 'jamon', 'jamón', 'pavo', 'camarón', 'camaron',
+    'camarones', 'langosta', 'pulpo', 'mariscos', 'sardina', 'tilapia', 'merluza', 'bacalao',
+    'bistec', 'filete', 'lomo', 'costilla', 'tocino', 'salchicha', 'chorizo', 'proteina', 'proteína',
+    // Carbohidratos
+    'arroz', 'pasta', 'spaguetti', 'spaghetti', 'espagueti', 'fideo', 'fideos', 'pan', 'tortilla',
+    'avena', 'cereal', 'quinoa', 'quinua', 'papa', 'papas', 'patata', 'batata', 'camote',
+    'frijol', 'frijoles', 'lenteja', 'lentejas', 'garbanzo', 'maiz', 'maíz', 'elote',
+    // Frutas
+    'manzana', 'platano', 'plátano', 'banana', 'naranja', 'mandarina', 'fresa', 'fresas',
+    'uva', 'uvas', 'mango', 'piña', 'papaya', 'melon', 'melón', 'sandia', 'sandía',
+    'kiwi', 'pera', 'durazno', 'cereza', 'mora', 'arandano', 'arándano', 'coco', 'limon', 'limón',
+    'fruta', 'frutas', 'frutos', 'berry', 'berries',
+    // Vegetales
+    'lechuga', 'espinaca', 'brocoli', 'brócoli', 'coliflor', 'zanahoria', 'tomate', 'jitomate',
+    'pepino', 'cebolla', 'ajo', 'pimiento', 'chile', 'calabaza', 'calabacin', 'calabacín',
+    'apio', 'champiñon', 'champiñones', 'hongo', 'hongos', 'aguacate', 'ejote', 'chicharo',
+    'vegetales', 'verduras', 'ensalada', 'espárrago', 'esparragos',
+    // Lácteos
+    'leche', 'queso', 'yogurt', 'yogur', 'crema', 'mantequilla', 'requesón', 'cottage',
+    // Grasas saludables
+    'aceite', 'oliva', 'almendra', 'almendras', 'nuez', 'nueces', 'cacahuate', 'mani', 'maní',
+    'semilla', 'semillas', 'chia', 'chía', 'linaza', 'ajonjoli', 'ajonjolí',
+    // Bebidas y otros
+    'agua', 'cafe', 'café', 'te', 'té', 'jugo', 'smoothie', 'batido', 'licuado',
+    'miel', 'azucar', 'azúcar', 'sal', 'pimienta', 'especias', 'salsa', 'aderezo',
+    // Comidas preparadas comunes
+    'bowl', 'wrap', 'burrito', 'taco', 'sandwich', 'sándwich', 'hamburguesa', 'pizza',
+    'sopa', 'caldo', 'guiso', 'estofado', 'asado', 'frito', 'horneado', 'vapor',
+    'granola', 'barra', 'galleta', 'pan', 'tostada', 'panqueque', 'hotcake', 'waffle',
+    'snack', 'colacion', 'colación', 'merienda', 'desayuno', 'almuerzo', 'cena'
+  ]
+
+  // Función para validar si el texto contiene alimentos válidos
+  const validarAlimento = (texto: string): { valido: boolean, mensaje: string } => {
+    const textoLower = texto.toLowerCase().trim()
+    
+    // Verificar si está vacío
+    if (!textoLower) {
+      return { valido: false, mensaje: 'Por favor escribe el nombre del alimento' }
+    }
+
+    // Verificar palabras prohibidas
+    for (const palabra of palabrasProhibidas) {
+      if (textoLower.includes(palabra)) {
+        return { 
+          valido: false, 
+          mensaje: 'El texto contiene palabras no permitidas. Por favor ingresa solo alimentos válidos.' 
+        }
+      }
+    }
+
+    // Verificar si contiene al menos una palabra de alimento válido
+    const palabrasTexto = textoLower.split(/[\s,]+/)
+    const contieneAlimento = palabrasTexto.some(palabra => 
+      alimentosValidos.some(alimento => 
+        palabra.includes(alimento) || alimento.includes(palabra)
+      )
+    ) || alimentosValidos.some(alimento => textoLower.includes(alimento))
+
+    if (!contieneAlimento) {
+      return { 
+        valido: false, 
+        mensaje: 'No se reconoce como alimento válido. Intenta con nombres de comida reales (ej: pollo, arroz, ensalada).' 
+      }
+    }
+
+    return { valido: true, mensaje: '' }
+  }
 
   // Cargar dietas y datos del usuario desde localStorage
   useEffect(() => {
@@ -175,13 +284,19 @@ export default function DietasPage() {
       const nuevaFecha = new Date(fechaBase)
       nuevaFecha.setDate(fechaBase.getDate() + diff)
       
+      const dietaConExtras = {
+        ...nuevaDieta,
+        fecha: nuevaFecha,
+        comidasExtras: comidasExtras.length > 0 ? comidasExtras : undefined
+      }
+      
       if (editandoIndex !== null) {
         const nuevoPlan = [...dietaPlan]
-        nuevoPlan[editandoIndex] = {...nuevaDieta, fecha: nuevaFecha}
+        nuevoPlan[editandoIndex] = dietaConExtras
         setDietaPlan(nuevoPlan)
         setEditandoIndex(null)
       } else {
-        setDietaPlan([...dietaPlan, {...nuevaDieta, fecha: nuevaFecha}])
+        setDietaPlan([...dietaPlan, dietaConExtras])
       }
       setIsModalOpen(false)
       setNuevaDieta({
@@ -191,14 +306,16 @@ export default function DietasPage() {
         almuerzo: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
         cena: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 },
       })
+      setComidasExtras([])
     } else {
-      alert('Por favor completa todos los campos')
+      showToast('Por favor completa todos los campos', 'error')
     }
   }
 
   const handleEditarDieta = (index: number) => {
     setEditandoIndex(index)
     setNuevaDieta(dietaPlan[index])
+    setComidasExtras(dietaPlan[index].comidasExtras || [])
     setIsModalOpen(true)
   }
 
@@ -327,11 +444,77 @@ export default function DietasPage() {
     })
   }
 
-  const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
-    if (!nuevaDieta[tipo].nombre.trim()) {
-      alert('Por favor escribe el nombre del alimento primero')
+  const agregarComidaExtra = () => {
+    const nuevaComidaExtra: ComidaExtra = {
+      id: `extra-${Date.now()}`,
+      tipo: 'Snack',
+      hora: '10:00 AM',
+      comida: { nombre: '', calorias: 0, proteina: 0, carbs: 0, grasas: 0 }
+    }
+    setComidasExtras([...comidasExtras, nuevaComidaExtra])
+  }
+
+  const eliminarComidaExtra = (id: string) => {
+    setComidasExtras(comidasExtras.filter(c => c.id !== id))
+  }
+
+  const updateComidaExtra = (id: string, campo: string, valor: string | number) => {
+    setComidasExtras(comidasExtras.map(c => {
+      if (c.id === id) {
+        if (campo === 'tipo' || campo === 'hora') {
+          return { ...c, [campo]: valor }
+        }
+        return { ...c, comida: { ...c.comida, [campo]: valor } }
+      }
+      return c
+    }))
+  }
+
+  const abrirCalculadoraIAExtra = (id: string) => {
+    const comidaExtra = comidasExtras.find(c => c.id === id)
+    if (!comidaExtra || !comidaExtra.comida.nombre.trim()) {
+      showToast('Por favor escribe el nombre del alimento primero', 'error')
       return
     }
+
+    // Validar que sea un alimento válido
+    const validacion = validarAlimento(comidaExtra.comida.nombre)
+    if (!validacion.valido) {
+      showToast(validacion.mensaje, 'error')
+      return
+    }
+
+    setComidaExtraActualId(id)
+    setTipoComidaActual('extra')
+    
+    // Detectar si es comida compuesta
+    const nombre = comidaExtra.comida.nombre.toLowerCase()
+    const esCompuesta = nombre.includes(' con ') || nombre.includes(' y ') || nombre.includes(',')
+    
+    if (esCompuesta) {
+      const ingredientes = detectarIngredientes(nombre)
+      setIngredientesDetectados(ingredientes)
+      setEsComidaCompuesta(true)
+    } else {
+      setEsComidaCompuesta(false)
+    }
+    
+    setPorcionModalOpen(true)
+  }
+
+  const abrirCalculadoraIA = (tipo: 'desayuno' | 'almuerzo' | 'cena') => {
+    if (!nuevaDieta[tipo].nombre.trim()) {
+      showToast('Por favor escribe el nombre del alimento primero', 'error')
+      return
+    }
+
+    // Validar que sea un alimento válido
+    const validacion = validarAlimento(nuevaDieta[tipo].nombre)
+    if (!validacion.valido) {
+      showToast(validacion.mensaje, 'error')
+      return
+    }
+
     setTipoComidaActual(tipo)
     
     // Detectar si es comida compuesta
@@ -382,12 +565,12 @@ export default function DietasPage() {
       // Validar que todos los ingredientes tengan cantidad
       const faltaCantidad = ingredientesDetectados.some(ing => !ing.cantidad)
       if (faltaCantidad) {
-        alert('Por favor indica la cantidad de cada ingrediente')
+        showToast('Por favor indica la cantidad de cada ingrediente', 'error')
         return
       }
     } else {
       if (!porcionInfo.cantidad) {
-        alert('Por favor indica la cantidad')
+        showToast('Por favor indica la cantidad', 'error')
         return
       }
     }
@@ -449,7 +632,13 @@ export default function DietasPage() {
       })
     } else {
       // Cálculo simple para un solo alimento
-      const nombreAlimento = nuevaDieta[tipoComidaActual].nombre.toLowerCase()
+      let nombreAlimento = ''
+      if (tipoComidaActual === 'extra' && comidaExtraActualId) {
+        const comidaExtra = comidasExtras.find(c => c.id === comidaExtraActualId)
+        nombreAlimento = comidaExtra?.comida.nombre.toLowerCase() || ''
+      } else {
+        nombreAlimento = nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'].nombre.toLowerCase()
+      }
       const cantidad = parseFloat(porcionInfo.cantidad)
       const factor = porcionInfo.unidad === 'gramos' ? cantidad / 100 : cantidad
 
@@ -468,22 +657,44 @@ export default function DietasPage() {
       }
     }
 
-    setNuevaDieta({
-      ...nuevaDieta,
-      [tipoComidaActual]: {
-        ...nuevaDieta[tipoComidaActual],
-        calorias: Math.round(macrosTotales.calorias),
-        proteina: Math.round(macrosTotales.proteina),
-        carbs: Math.round(macrosTotales.carbs),
-        grasas: Math.round(macrosTotales.grasas),
-      }
-    })
+    // Aplicar los macros calculados
+    if (tipoComidaActual === 'extra' && comidaExtraActualId) {
+      // Actualizar comida extra
+      setComidasExtras(comidasExtras.map(c => {
+        if (c.id === comidaExtraActualId) {
+          return {
+            ...c,
+            comida: {
+              ...c.comida,
+              calorias: Math.round(macrosTotales.calorias),
+              proteina: Math.round(macrosTotales.proteina),
+              carbs: Math.round(macrosTotales.carbs),
+              grasas: Math.round(macrosTotales.grasas),
+            }
+          }
+        }
+        return c
+      }))
+    } else {
+      // Actualizar comida principal (desayuno, almuerzo, cena)
+      setNuevaDieta({
+        ...nuevaDieta,
+        [tipoComidaActual]: {
+          ...nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'],
+          calorias: Math.round(macrosTotales.calorias),
+          proteina: Math.round(macrosTotales.proteina),
+          carbs: Math.round(macrosTotales.carbs),
+          grasas: Math.round(macrosTotales.grasas),
+        }
+      })
+    }
 
     setCalculandoMacros(false)
     setPorcionModalOpen(false)
     setPorcionInfo({ cantidad: '', unidad: 'gramos' })
     setIngredientesDetectados([])
     setEsComidaCompuesta(false)
+    setComidaExtraActualId(null)
   }
 
   const actualizarIngrediente = (index: number, campo: 'cantidad' | 'unidad', valor: string) => {
@@ -624,7 +835,7 @@ export default function DietasPage() {
 
   const abrirConfirmacionEliminarRango = () => {
     if (!rangoEliminar.inicio || !rangoEliminar.fin) {
-      alert('Selecciona un rango de fechas')
+      showToast('Selecciona un rango de fechas', 'info')
       return
     }
     setConfirmDeleteRangoOpen(true)
@@ -945,6 +1156,32 @@ export default function DietasPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Comidas Extras */}
+                {dia.comidasExtras && dia.comidasExtras.map((comidaExtra) => (
+                  <div key={comidaExtra.id} className="flex items-start gap-4">
+                    <div className="bg-green-500/10 p-2 rounded-lg mt-1">
+                      <ChefHat className="w-5 h-5 text-green-500" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-green-500 text-sm font-medium">{comidaExtra.tipo}</span>
+                        <span className="text-gray-600">•</span>
+                        <span className="text-gray-600 text-sm flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {comidaExtra.hora}
+                        </span>
+                      </div>
+                      <p className="text-black font-medium mb-2">{comidaExtra.comida.nombre}</p>
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        <span className="text-gray-600">{comidaExtra.comida.calorias} kcal</span>
+                        <span className="text-red-400">P: {comidaExtra.comida.proteina}g</span>
+                        <span className="text-blue-400">C: {comidaExtra.comida.carbs}g</span>
+                        <span className="text-yellow-400">G: {comidaExtra.comida.grasas}g</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
@@ -961,6 +1198,8 @@ export default function DietasPage() {
                 onClick={() => {
                   setIsModalOpen(false)
                   setModoCreacion('manual')
+                  setComidasExtras([])
+                  setEditandoIndex(null)
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
@@ -1233,10 +1472,124 @@ export default function DietasPage() {
                 </div>
               </div>
 
+              {/* Comidas Extras */}
+              {comidasExtras.map((comidaExtra, idx) => (
+                <div key={comidaExtra.id} className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <select
+                        value={comidaExtra.tipo}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'tipo', e.target.value)}
+                        className="px-3 py-2 border-2 border-green-300 rounded-lg text-black font-semibold bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        {tiposComidaDisponibles.map((t) => (
+                          <option key={t.tipo} value={t.tipo}>{t.tipo}</option>
+                        ))}
+                        <option value="Personalizado">Personalizado</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Hora"
+                        value={comidaExtra.hora}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'hora', e.target.value)}
+                        className="w-24 px-3 py-2 border-2 border-green-300 rounded-lg text-black text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => eliminarComidaExtra(comidaExtra.id)}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                      title="Eliminar comida"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">NOMBRE DEL ALIMENTO</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Ej: Yogurt con frutas"
+                          value={comidaExtra.comida.nombre}
+                          onChange={(e) => updateComidaExtra(comidaExtra.id, 'nombre', e.target.value)}
+                          className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                        {esPremium && (
+                          <button
+                            type="button"
+                            onClick={() => abrirCalculadoraIAExtra(comidaExtra.id)}
+                            className="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition flex items-center gap-2"
+                            title="Calcular macros con IA - Premium"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            IA
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Calorías</label>
+                      <input
+                        type="number"
+                        placeholder="200"
+                        value={comidaExtra.comida.calorias || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'calorias', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Proteína (g)</label>
+                      <input
+                        type="number"
+                        placeholder="15"
+                        value={comidaExtra.comida.proteina || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'proteina', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Carbohidratos (g)</label>
+                      <input
+                        type="number"
+                        placeholder="20"
+                        value={comidaExtra.comida.carbs || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'carbs', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grasas (g)</label>
+                      <input
+                        type="number"
+                        placeholder="8"
+                        value={comidaExtra.comida.grasas || ''}
+                        onChange={(e) => updateComidaExtra(comidaExtra.id, 'grasas', Number(e.target.value))}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Botón para agregar más comidas */}
+              <button
+                type="button"
+                onClick={agregarComidaExtra}
+                className="w-full py-4 border-2 border-dashed border-gray-300 hover:border-green-500 text-gray-600 hover:text-green-600 rounded-lg transition flex items-center justify-center gap-2 font-medium hover:bg-green-50"
+              >
+                <Plus className="w-5 h-5" />
+                Agregar Comida Extra (Snack, Pre-Entreno, etc.)
+              </button>
+
               {/* Botones */}
               <div className="flex gap-4 pt-4">
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false)
+                    setComidasExtras([])
+                    setEditandoIndex(null)
+                  }}
                   className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium"
                 >
                   Cancelar
@@ -1527,7 +1880,11 @@ export default function DietasPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-black">Calcular Macros con IA</h3>
-                <p className="text-gray-600 text-sm">{nuevaDieta[tipoComidaActual].nombre}</p>
+                <p className="text-gray-600 text-sm">
+                  {tipoComidaActual === 'extra' && comidaExtraActualId
+                    ? comidasExtras.find(c => c.id === comidaExtraActualId)?.comida.nombre
+                    : nuevaDieta[tipoComidaActual as 'desayuno' | 'almuerzo' | 'cena'].nombre}
+                </p>
               </div>
               <button onClick={() => {setPorcionModalOpen(false); setIngredientesDetectados([]); setEsComidaCompuesta(false)}} className="text-gray-500 hover:text-red-600 transition">
                 <X className="w-5 h-5" />
@@ -1943,6 +2300,44 @@ export default function DietasPage() {
                 Eliminar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-[100] animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`
+            flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border-2 backdrop-blur-sm
+            ${toast.type === 'error' 
+              ? 'bg-red-50 border-red-200 text-red-800' 
+              : toast.type === 'success' 
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-blue-50 border-blue-200 text-blue-800'
+            }
+          `}>
+            <div className={`
+              w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+              ${toast.type === 'error' 
+                ? 'bg-red-100' 
+                : toast.type === 'success' 
+                  ? 'bg-green-100'
+                  : 'bg-blue-100'
+              }
+            `}>
+              {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+              {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+              {toast.type === 'info' && <Info className="w-5 h-5 text-blue-600" />}
+            </div>
+            <p className="font-medium text-sm pr-2">{toast.message}</p>
+            <button 
+              onClick={() => setToast({show: false, message: '', type: 'info'})}
+              className={`
+                p-1 rounded-full transition hover:bg-black/10
+              `}
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
