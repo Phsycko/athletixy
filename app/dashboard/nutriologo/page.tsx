@@ -67,7 +67,7 @@ type PlanNutricional = {
 }
 
 export default function NutriologoPage() {
-  const [vistaActiva, setVistaActiva] = useState<'dashboard' | 'panel' | 'pacientes' | 'asignaciones' | 'calendario'>('dashboard')
+  const [vistaActiva, setVistaActiva] = useState<'dashboard' | 'panel' | 'pacientes' | 'asignaciones' | 'calendario'>('panel')
   const [filtroPacientes, setFiltroPacientes] = useState<'todos' | 'existentes' | 'app'>('todos')
   const [busquedaPaciente, setBusquedaPaciente] = useState('')
   const [modalAsignarPlan, setModalAsignarPlan] = useState(false)
