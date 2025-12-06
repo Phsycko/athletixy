@@ -1,18 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Activity, TrendingUp, Calendar, Target, Flame, Droplet } from 'lucide-react'
 
 export default function DashboardPage() {
-  const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    
-    // Verificar rol del usuario y redirigir si es necesario
     if (typeof window !== 'undefined') {
+      setMounted(true)
+      
+      // Verificar rol del usuario y redirigir si es necesario
       const session = localStorage.getItem('athletixy_session')
       if (session) {
         try {
