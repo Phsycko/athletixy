@@ -71,7 +71,7 @@ export default function DashboardLayout({
       // Admin tiene acceso completo, no redirigir
       if (!isAdmin) {
         if (role === 'nutriologo') {
-          const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          const allowedRoutes = ['/dashboard/nutriologo', '/dashboard/comunicaciones', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
           if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
             window.location.href = '/dashboard/nutriologo'
           }
@@ -107,7 +107,7 @@ export default function DashboardLayout({
 
   // Menú completo
   const allMenuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'coach', 'gym', 'vendedor'] },
     { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas', roles: ['atleta'] },
     { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas', roles: ['atleta'] },
     { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta', 'gym'] },
