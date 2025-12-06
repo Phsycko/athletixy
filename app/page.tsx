@@ -170,10 +170,10 @@ export default function LoginPage() {
       u.password === passwordNormalized
     )
     
-    // Si no encuentra usuario, verificar credenciales hardcodeadas de admin
-    if (!user && emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
-      // Crear sesión de admin directamente
-      if (typeof window !== 'undefined') {
+    // Si no encuentra usuario, verificar credenciales hardcodeadas
+    if (!user) {
+      // Admin
+      if (emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
         localStorage.setItem('athletixy_session', JSON.stringify({
           email: 'admin@athletixy.com',
           nombre: 'Administrador',
@@ -182,8 +182,20 @@ export default function LoginPage() {
           isAdmin: true
         }))
         window.location.href = '/dashboard'
+        return
       }
-      return
+      // Atleta de ejemplo
+      if (emailNormalized === 'atleta@athletixy.com' && passwordNormalized === 'atleta123') {
+        localStorage.setItem('athletixy_session', JSON.stringify({
+          email: 'atleta@athletixy.com',
+          nombre: 'Carlos Martínez',
+          role: 'atleta',
+          loggedIn: true,
+          isAdmin: false
+        }))
+        window.location.href = '/dashboard'
+        return
+      }
     }
 
     if (user) {
