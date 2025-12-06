@@ -7,20 +7,49 @@ export default function AjustesPage() {
   const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme')
-    const isDark = savedTheme === 'dark' || document.documentElement.classList.contains('dark')
-    setDarkMode(isDark)
+    // Cargar estado inicial desde localStorage
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme')
+      const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      setDarkMode(isDark)
+      
+      // Aplicar tema inicial
+      if (isDark) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+
+    // Escuchar cambios de tema desde otros componentes (pero no actualizar nuestro estado si nosotros lo cambiamos)
+    const handleThemeChange = () => {
+      if (typeof window !== 'undefined') {
+        const savedTheme = localStorage.getItem('theme')
+        const isDark = savedTheme === 'dark'
+        setDarkMode(isDark)
+      }
+    }
+
+    window.addEventListener('themechange', handleThemeChange)
+
+    return () => {
+      window.removeEventListener('themechange', handleThemeChange)
+    }
   }, [])
 
   const toggleDarkMode = () => {
     const newMode = !darkMode
     setDarkMode(newMode)
-    if (newMode) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
+    
+    if (typeof window !== 'undefined') {
+      if (newMode) {
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('theme', 'light')
+      }
+      window.dispatchEvent(new Event('themechange'))
     }
   }
 
@@ -60,6 +89,7 @@ export default function AjustesPage() {
           </div>
           <button
             onClick={toggleDarkMode}
+            type="button"
             className={`relative w-16 h-9 rounded-full transition-all duration-300 ${
               darkMode 
                 ? 'bg-zinc-700 hover:bg-zinc-600' 

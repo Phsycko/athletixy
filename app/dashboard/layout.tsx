@@ -35,14 +35,33 @@ export default function DashboardLayout({
   const [userRole, setUserRole] = useState<'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'>('atleta')
   const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0)
 
+  // Efecto para manejar el tema
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // Cargar preferencia de tema
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark')
+    // Función para aplicar tema
+    const applyTheme = () => {
+      const savedTheme = localStorage.getItem('theme')
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     }
+
+    // Aplicar tema inicial
+    applyTheme()
+
+    // Escuchar cambios de tema
+    window.addEventListener('themechange', applyTheme)
+    
+    return () => {
+      window.removeEventListener('themechange', applyTheme)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
 
     try {
       // Verificar autenticación
@@ -71,7 +90,7 @@ export default function DashboardLayout({
       // Admin tiene acceso completo, no redirigir
       if (!isAdmin) {
         if (role === 'nutriologo') {
-          const allowedRoutes = ['/dashboard', '/dashboard/nutriologo', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
+          const allowedRoutes = ['/dashboard/nutriologo', '/dashboard/comunicaciones', '/dashboard/notificaciones', '/dashboard/soporte', '/dashboard/ajustes']
           if (pathname.startsWith('/dashboard') && !allowedRoutes.includes(pathname)) {
             window.location.href = '/dashboard/nutriologo'
           }
@@ -107,7 +126,7 @@ export default function DashboardLayout({
 
   // Menú completo
   const allMenuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'nutriologo', 'coach', 'gym', 'vendedor'] },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['atleta', 'coach', 'gym', 'vendedor'] },
     { href: '/dashboard/dietas', icon: UtensilsCrossed, label: 'Dietas', roles: ['atleta'] },
     { href: '/dashboard/rutinas', icon: Dumbbell, label: 'Rutinas', roles: ['atleta'] },
     { href: '/dashboard/membresias', icon: CreditCard, label: 'Membresías', roles: ['atleta', 'gym'] },
@@ -299,7 +318,7 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-gray-50 dark:bg-zinc-950 min-h-screen transition-colors duration-200">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 bg-white dark:bg-zinc-950 min-h-screen transition-colors duration-200">
         <div className="p-6 lg:p-8">
           {children}
         </div>
