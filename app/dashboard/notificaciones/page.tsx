@@ -94,16 +94,16 @@ export default function NotificacionesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-black">Notificaciones</h1>
+            <h1 className="text-2xl font-bold text-black dark:text-zinc-100">Notificaciones</h1>
             {noLeidas > 0 && (
-              <span className="px-3 py-1 bg-white text-black text-sm font-semibold rounded-full">
+              <span className="px-3 py-1 bg-white dark:bg-zinc-100 text-black dark:text-zinc-900 text-sm font-semibold rounded-full">
                 {noLeidas} nuevas
               </span>
             )}
           </div>
-          <p className="text-gray-600">Mantente al día con tus actividades</p>
+          <p className="text-gray-600 dark:text-zinc-400">Mantente al día con tus actividades</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-200 text-black rounded-lg transition border-2 border-gray-200">
+        <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-zinc-900 hover:bg-gray-200 dark:hover:bg-zinc-800 text-black dark:text-zinc-100 rounded-lg transition border-2 border-gray-200 dark:border-zinc-800">
           <Check className="w-5 h-5" />
           Marcar todas como leídas
         </button>
@@ -116,8 +116,8 @@ export default function NotificacionesPage() {
             key={index}
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${
               index === 0
-                ? 'bg-white text-black'
-                : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-black border-2 border-gray-200'
+                ? 'bg-white dark:bg-zinc-100 text-black dark:text-zinc-900'
+                : 'bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-zinc-100 border-2 border-gray-200 dark:border-zinc-800'
             }`}
           >
             {filtro}
@@ -134,8 +134,8 @@ export default function NotificacionesPage() {
               key={index}
               className={`flex items-start gap-4 p-5 rounded-xl border transition-all cursor-pointer ${
                 !notif.leido
-                  ? 'bg-white/5 border-gray-600/30 hover:border-gray-600'
-                  : 'bg-white border-gray-200 hover:border-gray-300'
+                  ? 'bg-white/5 dark:bg-zinc-800/50 border-gray-600/30 dark:border-zinc-700 hover:border-gray-600 dark:hover:border-zinc-600'
+                  : 'bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700'
               }`}
             >
               <div className={`${notif.bgColor} p-3 rounded-lg flex-shrink-0`}>
@@ -144,19 +144,19 @@ export default function NotificacionesPage() {
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4 mb-1">
-                  <h3 className="text-black font-semibold">{notif.titulo}</h3>
+                  <h3 className="text-black dark:text-zinc-100 font-semibold">{notif.titulo}</h3>
                   {!notif.leido && (
-                    <span className="w-2 h-2 bg-white rounded-full flex-shrink-0 mt-1.5"></span>
+                    <span className="w-2 h-2 bg-white dark:bg-zinc-100 rounded-full flex-shrink-0 mt-1.5"></span>
                   )}
                 </div>
-                <p className="text-gray-600 text-sm mb-2">{notif.mensaje}</p>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm mb-2">{notif.mensaje}</p>
                 <div className="flex items-center gap-4">
-                  <span className="text-gray-600 text-xs flex items-center gap-1">
+                  <span className="text-gray-600 dark:text-zinc-400 text-xs flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {notif.fecha}
                   </span>
                   {!notif.leido && (
-                    <button className="text-gray-700 text-xs hover:text-primary-300 transition">
+                    <button className="text-gray-700 dark:text-zinc-300 text-xs hover:text-black dark:hover:text-zinc-100 transition">
                       Marcar como leída
                     </button>
                   )}
@@ -168,39 +168,39 @@ export default function NotificacionesPage() {
       </div>
 
       {/* Preferencias de Notificación */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-black mb-4">Preferencias de Notificación</h2>
-        <p className="text-gray-600 text-sm mb-4">
+      <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-black dark:text-zinc-100 mb-4">Preferencias de Notificación</h2>
+        <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">
           Configura qué notificaciones deseas recibir. Puedes ajustar estas preferencias en{' '}
-          <a href="/dashboard/ajustes" className="text-gray-700 hover:text-primary-300">
+          <a href="/dashboard/ajustes" className="text-gray-700 dark:text-zinc-300 hover:text-black dark:hover:text-zinc-100">
             Ajustes
           </a>
           .
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg">
             <div className="bg-orange-500/10 p-2 rounded">
               <AlertCircle className="w-4 h-4 text-orange-400" />
             </div>
-            <span className="text-gray-700 text-sm">Recordatorios de entrenamiento</span>
+            <span className="text-gray-700 dark:text-zinc-300 text-sm">Recordatorios de entrenamiento</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg">
             <div className="bg-green-500/10 p-2 rounded">
               <TrendingUp className="w-4 h-4 text-green-400" />
             </div>
-            <span className="text-gray-700 text-sm">Actualizaciones de progreso</span>
+            <span className="text-gray-700 dark:text-zinc-300 text-sm">Actualizaciones de progreso</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg">
             <div className="bg-blue-500/10 p-2 rounded">
               <MessageSquare className="w-4 h-4 text-blue-400" />
             </div>
-            <span className="text-gray-700 text-sm">Mensajes directos</span>
+            <span className="text-gray-700 dark:text-zinc-300 text-sm">Mensajes directos</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg">
             <div className="bg-purple-500/10 p-2 rounded">
               <Star className="w-4 h-4 text-purple-400" />
             </div>
-            <span className="text-gray-700 text-sm">Actualizaciones del sistema</span>
+            <span className="text-gray-700 dark:text-zinc-300 text-sm">Actualizaciones del sistema</span>
           </div>
         </div>
       </div>
