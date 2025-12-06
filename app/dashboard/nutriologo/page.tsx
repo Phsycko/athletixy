@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Calendar,
   Video,
@@ -187,18 +187,16 @@ export default function NutriologoPage() {
 
   const [planesNutricionales, setPlanesNutricionales] = useState<PlanNutricional[]>([])
 
-  // Estadísticas - calculadas de forma segura y reactiva
-  const estadisticas = useMemo(() => {
-    const pacientesArray = pacientes || []
-    return {
-      totalPacientes: pacientesArray.length,
-      pacientesActivos: pacientesArray.filter(p => p?.estado === 'activo').length,
-      pacientesApp: pacientesArray.filter(p => p?.tipo === 'app').length,
-      pacientesExistentes: pacientesArray.filter(p => p?.tipo === 'existente').length,
-      consultasEsteMes: 24,
-      planesActivos: (planesNutricionales || []).filter(p => p?.estado === 'activo').length
-    }
-  }, [pacientes, planesNutricionales])
+  // Estadísticas - calculadas de forma segura
+  const pacientesArray = pacientes || []
+  const estadisticas = {
+    totalPacientes: pacientesArray.length,
+    pacientesActivos: pacientesArray.filter(p => p?.estado === 'activo').length,
+    pacientesApp: pacientesArray.filter(p => p?.tipo === 'app').length,
+    pacientesExistentes: pacientesArray.filter(p => p?.tipo === 'existente').length,
+    consultasEsteMes: 24,
+    planesActivos: (planesNutricionales || []).filter(p => p?.estado === 'activo').length
+  }
 
   // Cargar datos del localStorage
   useEffect(() => {
