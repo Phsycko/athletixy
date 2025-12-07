@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Settings, Building2, MapPin, Clock, Mail, Phone, Upload, Save } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Settings, Building2, MapPin, Clock, Mail, Phone, Upload, Save, Dumbbell, Plus, X, Trash2 } from 'lucide-react'
 
 export default function ConfiguracionPage() {
   const [configuracion, setConfiguracion] = useState({
@@ -17,11 +17,70 @@ export default function ConfiguracionPage() {
   })
 
   const [mostrarMensaje, setMostrarMensaje] = useState(false)
+  const [maquinaria, setMaquinaria] = useState<string[]>([])
+  const [nuevaMaquina, setNuevaMaquina] = useState('')
+
+  useEffect(() => {
+    // Cargar maquinaria guardada
+    try {
+      const maquinariaStr = localStorage.getItem('gym_maquinaria')
+      if (maquinariaStr) {
+        setMaquinaria(JSON.parse(maquinariaStr))
+      } else {
+        // Maquinaria por defecto común
+        const maquinariaDefault = [
+          'Barra',
+          'Mancuernas',
+          'Máquina de poleas',
+          'Máquina de prensa',
+          'Máquina de extensión',
+          'Máquina de curl',
+          'Máquina Smith',
+          'Paralelas',
+          'Banco',
+          'Cinta de correr',
+          'Bicicleta estática',
+          'Elíptica',
+          'Máquina de remo',
+          'Máquina de hombros',
+          'Máquina de remo sentado'
+        ]
+        setMaquinaria(maquinariaDefault)
+        localStorage.setItem('gym_maquinaria', JSON.stringify(maquinariaDefault))
+      }
+    } catch (error) {
+      console.error('Error loading equipment:', error)
+    }
+  }, [])
 
   const handleSave = () => {
-    // Aquí se guardaría la configuración
-    setMostrarMensaje(true)
-    setTimeout(() => setMostrarMensaje(false), 3000)
+    // Guardar configuración y maquinaria
+    try {
+      localStorage.setItem('gym_configuracion', JSON.stringify(configuracion))
+      localStorage.setItem('gym_maquinaria', JSON.stringify(maquinaria))
+      setMostrarMensaje(true)
+      setTimeout(() => setMostrarMensaje(false), 3000)
+    } catch (error) {
+      console.error('Error saving configuration:', error)
+      alert('Error al guardar la configuración')
+    }
+  }
+
+  const handleAgregarMaquina = () => {
+    if (nuevaMaquina.trim() && !maquinaria.includes(nuevaMaquina.trim())) {
+      const maquinariaActualizada = [...maquinaria, nuevaMaquina.trim()]
+      setMaquinaria(maquinariaActualizada)
+      setNuevaMaquina('')
+      localStorage.setItem('gym_maquinaria', JSON.stringify(maquinariaActualizada))
+    }
+  }
+
+  const handleEliminarMaquina = (maquina: string) => {
+    if (confirm(`¿Estás seguro de eliminar "${maquina}"?`)) {
+      const maquinariaActualizada = maquinaria.filter(m => m !== maquina)
+      setMaquinaria(maquinariaActualizada)
+      localStorage.setItem('gym_maquinaria', JSON.stringify(maquinariaActualizada))
+    }
   }
 
   return (
@@ -156,6 +215,63 @@ export default function ConfiguracionPage() {
             </button>
             <p className="text-sm text-gray-500 dark:text-zinc-500 mt-2">PNG, JPG hasta 2MB</p>
           </div>
+        </div>
+      </div>
+
+      {/* Maquinaria del Gimnasio */}
+      <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Dumbbell className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+          <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Maquinaria del Gimnasio</h2>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-zinc-500 mb-4">
+          Registra toda la maquinaria disponible en tu gimnasio. Esta información será utilizada por los coaches internos para generar ejercicios personalizados con IA.
+        </p>
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={nuevaMaquina}
+              onChange={(e) => setNuevaMaquina(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleAgregarMaquina()
+                }
+              }}
+              placeholder="Ej: Press de banca, Máquina de poleas, etc."
+              className="flex-1 px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
+            />
+            <button
+              onClick={handleAgregarMaquina}
+              className="flex items-center gap-2 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
+            >
+              <Plus className="w-5 h-5" />
+              Agregar
+            </button>
+          </div>
+          {maquinaria.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {maquinaria.map((maquina, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border-2 border-gray-200 dark:border-zinc-700"
+                >
+                  <span className="text-sm font-medium text-black dark:text-zinc-100">{maquina}</span>
+                  <button
+                    onClick={() => handleEliminarMaquina(maquina)}
+                    className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded transition"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500 dark:text-zinc-500">
+              <Dumbbell className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <p>No hay maquinaria registrada</p>
+            </div>
+          )}
         </div>
       </div>
 

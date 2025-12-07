@@ -27,7 +27,10 @@ export default function LoginPage() {
           if (sessionData.loggedIn) {
             // Redirigir según el rol del usuario sin mostrar el formulario
             const role = sessionData.role
-            if (role === 'GYM_MANAGER') {
+            if (role === 'COACH_INTERNO') {
+              window.location.href = '/gym/coach-interno'
+              return
+            } else if (role === 'GYM_MANAGER') {
               window.location.href = '/gym/dashboard'
               return
             } else if (role === 'nutriologo') {
@@ -298,6 +301,37 @@ export default function LoginPage() {
             window.location.href = '/gym/dashboard'
           }, 100)
           return
+        }
+
+        // COACH_INTERNO - Verificar coaches internos del gym
+        try {
+          const coachesInternos = localStorage.getItem('gym_coaches_internos')
+          if (coachesInternos) {
+            const coaches = JSON.parse(coachesInternos)
+            const coach = coaches.find((c: any) => 
+              c.email.toLowerCase() === emailNormalized && 
+              c.password === passwordNormalized &&
+              c.activo === true
+            )
+            if (coach) {
+              const sessionData = {
+                email: coach.email,
+                nombre: coach.nombre,
+                role: 'COACH_INTERNO',
+                coachId: coach.id,
+                loggedIn: true,
+                isAdmin: false
+              }
+              localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+              setSuccess('Iniciando sesión...')
+              setTimeout(() => {
+                window.location.href = '/gym/coach-interno'
+              }, 100)
+              return
+            }
+          }
+        } catch (error) {
+          console.error('Error verificando coach interno:', error)
         }
       }
 
