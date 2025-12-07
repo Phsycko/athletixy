@@ -42,9 +42,9 @@ export default function SoportePage() {
 
       {/* Contacto Rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
-          <div className="bg-white/10 dark:bg-zinc-800 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-            <MessageSquare className="w-6 h-6 text-gray-700 dark:text-zinc-300" />
+        <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
+          <div className="bg-gray-100 dark:bg-zinc-700 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+            <MessageSquare className="w-6 h-6 text-gray-700 dark:text-zinc-200" />
           </div>
           <h3 className="text-black dark:text-zinc-100 font-semibold mb-2">Chat en Vivo</h3>
           <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">Respuesta inmediata de nuestro equipo</p>
@@ -53,9 +53,9 @@ export default function SoportePage() {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
+        <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
           <div className="bg-green-600/10 dark:bg-green-500/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-            <Mail className="w-6 h-6 text-green-400" />
+            <Mail className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
           <h3 className="text-black dark:text-zinc-100 font-semibold mb-2">Email</h3>
           <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">soporte@athletixy.com</p>
@@ -64,9 +64,9 @@ export default function SoportePage() {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
+        <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer">
           <div className="bg-blue-600/10 dark:bg-blue-500/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-            <Phone className="w-6 h-6 text-blue-400" />
+            <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <h3 className="text-black dark:text-zinc-100 font-semibold mb-2">Teléfono</h3>
           <p className="text-gray-600 dark:text-zinc-400 text-sm mb-4">+52 55 1234 5678</p>
@@ -77,7 +77,7 @@ export default function SoportePage() {
       </div>
 
       {/* Nuevo Ticket */}
-      <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+      <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Send className="w-5 h-5 text-gray-700 dark:text-zinc-300" />
           <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Enviar Nuevo Ticket</h2>
@@ -120,7 +120,7 @@ export default function SoportePage() {
       </div>
 
       {/* Tickets Recientes */}
-      <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+      <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <Book className="w-5 h-5 text-gray-700 dark:text-zinc-300" />
           <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Tickets Recientes</h2>
@@ -129,7 +129,7 @@ export default function SoportePage() {
           {ticketsRecientes.map((ticket, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 bg-white dark:bg-zinc-800 rounded-lg border-2 border-gray-200 dark:border-zinc-700 hover:border-gray-600 dark:hover:border-zinc-600 transition cursor-pointer"
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-700/50 rounded-lg border-2 border-gray-200 dark:border-zinc-600 hover:border-gray-600 dark:hover:border-zinc-500 transition cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-3 mb-1">
@@ -153,7 +153,7 @@ export default function SoportePage() {
       </div>
 
       {/* Preguntas Frecuentes */}
-      <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-6">
+      <div className="bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <HelpCircle className="w-5 h-5 text-gray-700 dark:text-zinc-300" />
           <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Preguntas Frecuentes</h2>
@@ -162,7 +162,7 @@ export default function SoportePage() {
           {preguntasFrecuentes.map((faq, index) => (
             <details
               key={index}
-              className="group bg-white dark:bg-zinc-800 rounded-lg border-2 border-gray-200 dark:border-zinc-700 overflow-hidden"
+              className="group bg-gray-50 dark:bg-zinc-700/50 rounded-lg border-2 border-gray-200 dark:border-zinc-600 overflow-hidden"
             >
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-700 transition">
                 <span className="text-black dark:text-zinc-100 font-medium">{faq.pregunta}</span>
