@@ -15,6 +15,44 @@ export default function LoginPage() {
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [checkingSession, setCheckingSession] = useState(true)
+
+  // Verificar si ya hay una sesión activa y redirigir ANTES de renderizar
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const session = localStorage.getItem('athletixy_session')
+        if (session) {
+          const sessionData = JSON.parse(session)
+          if (sessionData.loggedIn) {
+            // Redirigir según el rol del usuario sin mostrar el formulario
+            const role = sessionData.role
+            if (role === 'nutriologo') {
+              window.location.href = '/dashboard/nutriologo'
+              return
+            } else if (role === 'coach') {
+              window.location.href = '/dashboard/coach'
+              return
+            } else if (role === 'gym') {
+              window.location.href = '/dashboard'
+              return
+            } else if (role === 'vendedor') {
+              window.location.href = '/dashboard/marketplace'
+              return
+            } else {
+              window.location.href = '/dashboard'
+              return
+            }
+          }
+        }
+        // Si no hay sesión activa, mostrar el formulario
+        setCheckingSession(false)
+      } catch (error) {
+        console.error('Error verificando sesión:', error)
+        setCheckingSession(false)
+      }
+    }
+  }, [])
 
   // Inicializar usuarios en localStorage si no existen
   useEffect(() => {
@@ -274,6 +312,20 @@ export default function LoginPage() {
       console.error('Error en login:', error)
       setError('Ocurrió un error al iniciar sesión. Por favor intenta de nuevo.')
     }
+  }
+
+  // No renderizar nada mientras se verifica la sesión
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white" style={{ minHeight: '100vh' }}>
+        <div className="text-center">
+          <div className="bg-black p-4 rounded-2xl shadow-2xl inline-block mb-4">
+            <Dumbbell className="w-12 h-12 text-white animate-pulse" />
+          </div>
+          <p className="text-gray-600">Verificando sesión...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

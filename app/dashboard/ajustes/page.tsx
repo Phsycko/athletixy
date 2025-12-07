@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, Lock, Bell, Globe, Shield, Moon, Sun } from 'lucide-react'
+import { User, Lock, Bell, Globe, Shield, Moon, Sun, Download } from 'lucide-react'
 
 export default function AjustesPage() {
   const [darkMode, setDarkMode] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+  const [isInstallable, setIsInstallable] = useState(false)
+  const [isInstalling, setIsInstalling] = useState(false)
 
   useEffect(() => {
     // Cargar estado inicial desde localStorage
@@ -36,6 +39,151 @@ export default function AjustesPage() {
       window.removeEventListener('themechange', handleThemeChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Verificar si ya está instalada
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                          (window.navigator as any).standalone === true ||
+                          document.referrer.includes('android-app://')
+      
+      if (isStandalone) {
+        setIsInstallable(false)
+        return
+      }
+
+      // Detectar iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+      
+      // Detectar Android
+      const isAndroid = /Android/.test(navigator.userAgent)
+
+      // Para iOS, siempre mostrar el botón (instalación manual)
+      if (isIOS) {
+        setIsInstallable(true)
+        return
+      }
+
+      // Para Android y otros, usar beforeinstallprompt
+      const handler = (e: Event) => {
+        e.preventDefault()
+        setDeferredPrompt(e)
+        setIsInstallable(true)
+      }
+
+      window.addEventListener('beforeinstallprompt', handler as EventListener)
+
+      // Timeout para verificar si el evento no se dispara (puede tardar)
+      const timeout = setTimeout(() => {
+        // Si es Android y no se disparó el evento, verificar si el manifest está bien
+        if (isAndroid && !deferredPrompt) {
+          // Verificar que el service worker esté registrado y el manifest sea válido
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration().then(reg => {
+              if (reg) {
+                // Si hay service worker, probablemente se puede instalar
+                setIsInstallable(true)
+              }
+            })
+          }
+        }
+      }, 2000)
+
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handler as EventListener)
+        clearTimeout(timeout)
+      }
+    }
+  }, [deferredPrompt])
+
+  const handleInstallClick = async () => {
+    setIsInstalling(true)
+    console.log('Botón de instalar clickeado')
+    console.log('deferredPrompt:', deferredPrompt)
+    
+    try {
+      // Detectar iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+      const isAndroid = /Android/.test(navigator.userAgent)
+
+      console.log('isIOS:', isIOS, 'isAndroid:', isAndroid)
+
+      if (isIOS) {
+        // En iOS, usar Web Share API si está disponible
+        if ((navigator as any).share) {
+          try {
+            await (navigator as any).share({
+              title: 'Athletixy',
+              text: 'Instala Athletixy',
+              url: window.location.origin
+            })
+            setIsInstalling(false)
+            return
+          } catch (error: any) {
+            if (error.name !== 'AbortError') {
+              console.error('Error al compartir:', error)
+              alert('Error al abrir el menú de compartir. Por favor, usa el botón de compartir del navegador manualmente.')
+            }
+            setIsInstalling(false)
+            return
+          }
+        } else {
+          console.log('Web Share API no disponible en iOS')
+          alert('Por favor, toca el botón de compartir (↑) en la barra del navegador y selecciona "Agregar a pantalla de inicio"')
+          setIsInstalling(false)
+          return
+        }
+      }
+
+      // Para Android y otros navegadores
+      if (deferredPrompt) {
+        console.log('Usando deferredPrompt para instalar')
+        try {
+          await deferredPrompt.prompt()
+          const { outcome } = await deferredPrompt.userChoice
+          console.log('Resultado de instalación:', outcome)
+          
+          if (outcome === 'accepted') {
+            setIsInstallable(false)
+            alert('¡Aplicación instalada exitosamente!')
+          }
+          
+          setDeferredPrompt(null)
+          setIsInstalling(false)
+        } catch (error) {
+          console.error('Error al mostrar el prompt de instalación:', error)
+          setDeferredPrompt(null)
+          alert('Error al mostrar el diálogo de instalación. Por favor, intenta desde el menú del navegador.')
+          setIsInstalling(false)
+        }
+      } else {
+        console.log('No hay deferredPrompt disponible')
+        // Si no hay deferredPrompt pero estamos en Android, intentar métodos alternativos
+        if (isAndroid) {
+          // Verificar si hay service worker registrado
+          try {
+            const registration = await navigator.serviceWorker.getRegistration()
+            if (registration) {
+              console.log('Service worker encontrado')
+              alert('Por favor, toca el menú del navegador (⋮) y selecciona "Instalar aplicación" o "Agregar a pantalla de inicio"')
+            } else {
+              alert('El service worker no está registrado. Por favor, recarga la página e intenta de nuevo.')
+            }
+          } catch (error) {
+            console.error('Error al verificar service worker:', error)
+            alert('Error al verificar el estado de la aplicación. Por favor, recarga la página.')
+          }
+        } else {
+          alert('La instalación no está disponible en este navegador. Por favor, usa Chrome, Edge o Safari.')
+        }
+        setIsInstalling(false)
+      }
+    } catch (error) {
+      console.error('Error general en handleInstallClick:', error)
+      alert('Ocurrió un error. Por favor, intenta de nuevo.')
+      setIsInstalling(false)
+    }
+  }
 
   const toggleDarkMode = () => {
     const newMode = !darkMode
@@ -112,6 +260,44 @@ export default function AjustesPage() {
           </button>
         </div>
       </div>
+
+      {/* Instalar App */}
+      {isInstallable && (
+        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
+          <div className="flex items-center gap-3 mb-5">
+            <Download className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
+            <h2 className="text-lg font-semibold text-black dark:text-zinc-100">Instalar Aplicación</h2>
+          </div>
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-black dark:bg-zinc-100">
+                <Download className="w-6 h-6 text-white dark:text-zinc-900" />
+              </div>
+              <div>
+                <span className="text-black dark:text-zinc-100 font-medium block">
+                  Instalar Athletixy
+                </span>
+                <p className="text-sm text-gray-500 dark:text-zinc-500">
+                  Instala la app para acceso rápido desde tu pantalla de inicio
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                console.log('Botón clickeado, ejecutando handleInstallClick')
+                handleInstallClick()
+              }}
+              type="button"
+              disabled={isInstalling}
+              className="px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition-colors duration-200 font-medium active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isInstalling ? 'Instalando...' : 'Instalar'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Perfil Personal */}
       <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 transition-colors duration-200">
