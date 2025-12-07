@@ -148,12 +148,15 @@ export default function LoginPage() {
       return
     }
 
-    // Crear nuevo usuario con el tipo seleccionado
+    // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
+    const tipoUsuarioFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
+
+    // Crear nuevo usuario con el tipo seleccionado (guardamos 'gym' en el usuario pero usamos GYM_MANAGER para el sistema)
     const newUser = {
       email: emailNormalized,
       password: credentials.password,
       nombre: nombreNormalized,
-      tipoUsuario: credentials.tipoUsuario,
+      tipoUsuario: credentials.tipoUsuario, // Guardamos el tipo original
       fechaRegistro: new Date().toISOString()
     }
 
@@ -161,11 +164,11 @@ export default function LoginPage() {
     users.push(newUser)
     localStorage.setItem('athletixy_users', JSON.stringify(users))
 
-    // Iniciar sesión automáticamente
+    // Iniciar sesión automáticamente con el tipo final (GYM_MANAGER si es gym)
     localStorage.setItem('athletixy_session', JSON.stringify({
       email: emailNormalized,
       nombre: nombreNormalized,
-      role: credentials.tipoUsuario,
+      role: tipoUsuarioFinal, // Usamos GYM_MANAGER si es gym
       loggedIn: true
     }))
 
@@ -174,15 +177,13 @@ export default function LoginPage() {
       // Redirigir según tipo de usuario
       setTimeout(() => {
         if (typeof window !== 'undefined') {
-          if (credentials.tipoUsuario === 'GYM_MANAGER') {
+          if (tipoUsuarioFinal === 'GYM_MANAGER') {
             window.location.href = '/gym/dashboard'
-          } else if (credentials.tipoUsuario === 'nutriologo') {
+          } else if (tipoUsuarioFinal === 'nutriologo') {
             window.location.href = '/dashboard/nutriologo'
-          } else if (credentials.tipoUsuario === 'coach') {
+          } else if (tipoUsuarioFinal === 'coach') {
             window.location.href = '/dashboard/coach'
-          } else if (credentials.tipoUsuario === 'gym') {
-            window.location.href = '/dashboard'
-          } else if (credentials.tipoUsuario === 'vendedor') {
+          } else if (tipoUsuarioFinal === 'vendedor') {
             window.location.href = '/dashboard/marketplace'
           } else {
             window.location.href = '/dashboard'
@@ -301,11 +302,14 @@ export default function LoginPage() {
       }
 
       if (user) {
+        // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
+        const roleFinal = user.tipoUsuario === 'gym' ? 'GYM_MANAGER' : user.tipoUsuario
+        
         // Guardar sesión
         const sessionData = {
           email: user.email,
           nombre: user.nombre,
-          role: user.tipoUsuario,
+          role: roleFinal, // Usamos GYM_MANAGER si es gym
           loggedIn: true,
           isAdmin: user.isAdmin || false
         }
@@ -314,15 +318,13 @@ export default function LoginPage() {
 
         // Redirigir según rol
         setTimeout(() => {
-          if (user.tipoUsuario === 'GYM_MANAGER') {
+          if (roleFinal === 'GYM_MANAGER') {
             window.location.href = '/gym/dashboard'
-          } else if (user.tipoUsuario === 'nutriologo') {
+          } else if (roleFinal === 'nutriologo') {
             window.location.href = '/dashboard/nutriologo'
-          } else if (user.tipoUsuario === 'coach') {
+          } else if (roleFinal === 'coach') {
             window.location.href = '/dashboard/coach'
-          } else if (user.tipoUsuario === 'gym') {
-            window.location.href = '/dashboard'
-          } else if (user.tipoUsuario === 'vendedor') {
+          } else if (roleFinal === 'vendedor') {
             window.location.href = '/dashboard/marketplace'
           } else {
             window.location.href = '/dashboard'
