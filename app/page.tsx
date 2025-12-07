@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
 
-type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor'
+type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' | 'GYM_MANAGER'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -27,7 +27,10 @@ export default function LoginPage() {
           if (sessionData.loggedIn) {
             // Redirigir según el rol del usuario sin mostrar el formulario
             const role = sessionData.role
-            if (role === 'nutriologo') {
+            if (role === 'GYM_MANAGER') {
+              window.location.href = '/gym/dashboard'
+              return
+            } else if (role === 'nutriologo') {
               window.location.href = '/dashboard/nutriologo'
               return
             } else if (role === 'coach') {
@@ -171,7 +174,9 @@ export default function LoginPage() {
       // Redirigir según tipo de usuario
       setTimeout(() => {
         if (typeof window !== 'undefined') {
-          if (credentials.tipoUsuario === 'nutriologo') {
+          if (credentials.tipoUsuario === 'GYM_MANAGER') {
+            window.location.href = '/gym/dashboard'
+          } else if (credentials.tipoUsuario === 'nutriologo') {
             window.location.href = '/dashboard/nutriologo'
           } else if (credentials.tipoUsuario === 'coach') {
             window.location.href = '/dashboard/coach'
@@ -277,6 +282,22 @@ export default function LoginPage() {
           }, 100)
           return
         }
+        // GYM_MANAGER
+        if (emailNormalized === 'gymmanager@athletixy.com' && passwordNormalized === 'gymmanager123') {
+          const sessionData = {
+            email: 'gymmanager@athletixy.com',
+            nombre: 'Gestor del Gimnasio',
+            role: 'GYM_MANAGER',
+            loggedIn: true,
+            isAdmin: false
+          }
+          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
+          setSuccess('Iniciando sesión...')
+          setTimeout(() => {
+            window.location.href = '/gym/dashboard'
+          }, 100)
+          return
+        }
       }
 
       if (user) {
@@ -293,7 +314,9 @@ export default function LoginPage() {
 
         // Redirigir según rol
         setTimeout(() => {
-          if (user.tipoUsuario === 'nutriologo') {
+          if (user.tipoUsuario === 'GYM_MANAGER') {
+            window.location.href = '/gym/dashboard'
+          } else if (user.tipoUsuario === 'nutriologo') {
             window.location.href = '/dashboard/nutriologo'
           } else if (user.tipoUsuario === 'coach') {
             window.location.href = '/dashboard/coach'
@@ -509,9 +532,24 @@ export default function LoginPage() {
                       Vendedor
                     </span>
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setCredentials({...credentials, tipoUsuario: 'GYM_MANAGER'})}
+                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
+                      credentials.tipoUsuario === 'GYM_MANAGER'
+                        ? 'border-black bg-gray-100'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Building2 className={`w-6 h-6 ${credentials.tipoUsuario === 'GYM_MANAGER' ? 'text-black' : 'text-gray-400'}`} />
+                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'GYM_MANAGER' ? 'text-black' : 'text-gray-600'}`}>
+                      Gestor Gym
+                    </span>
+                  </button>
                 </div>
                 <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <p className="text-xs text-gray-600">
+                    {credentials.tipoUsuario === 'GYM_MANAGER' && 'Como gestor del gimnasio tendrás acceso completo a finanzas, suscripciones, atletas, ventas, reportes y configuración del gimnasio.'}
                     {credentials.tipoUsuario === 'nutriologo' && 'Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.'}
                     {credentials.tipoUsuario === 'coach' && 'Como coach podrás gestionar rutinas, entrenamientos y seguimiento de tus atletas.'}
                     {credentials.tipoUsuario === 'gym' && 'Como gimnasio podrás administrar membresías, instalaciones y servicios para tus miembros.'}
