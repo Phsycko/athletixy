@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+export const config = {
+  runtime: "nodejs",
+};
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+
 /**
  * Cargar Prisma correctamente SOLO si DATABASE_URL existe.
- * Esto evita errores de entorno en Vercel y Supabase.
  */
 async function getPrisma() {
   if (!process.env.DATABASE_URL) {
@@ -15,18 +18,18 @@ async function getPrisma() {
     );
   }
 
-  // Import dinámico para que Prisma lea DATABASE_URL en runtime
   const { prisma } = await import("@/lib/prisma");
   return prisma;
 }
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("🔍 DATABASE_URL detectada:", process.env.DATABASE_URL?.slice(0, 20));
+
     const prisma = await getPrisma();
     const body = await request.json();
     const { email, password, nombre, tipoUsuario } = body;
 
-    // Validaciones básicas
     if (!email || !password || !nombre || !tipoUsuario) {
       return NextResponse.json(
         { error: "Todos los campos son requeridos" },
@@ -43,7 +46,6 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
-    // Verificar si el usuario ya existe
     const existingUser = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
@@ -55,10 +57,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear usuario
     const newUser = await prisma.user.create({
       data: {
         email: emailNormalized,
@@ -78,10 +78,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      {
-        message: "Usuario creado exitosamente",
-        user: newUser,
-      },
+      { message: "Usuario creado exitosamente", user: newUser },
       { status: 201 }
     );
   } catch (error: any) {
@@ -89,8 +86,6 @@ export async function POST(request: NextRequest) {
       message: error.message,
       code: error.code,
       meta: error.meta,
-      stack:
-        process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
 
     let errorMessage = "Error al crear el usuario.";
@@ -103,9 +98,6 @@ export async function POST(request: NextRequest) {
     ) {
       errorMessage =
         "Error de conexión con la base de datos. Verifica la configuración.";
-    } else if (error.message?.includes("Tenant or user not found")) {
-      errorMessage =
-        "Error de autenticación con la base de datos. Credenciales incorrectas.";
     } else if (error.message?.includes("DATABASE_URL")) {
       errorMessage =
         "No se detectó DATABASE_URL en producción. Verifica las variables en Vercel.";
