@@ -17,6 +17,12 @@ function getDatabaseUrl(): string {
   return url
 }
 
+// Configurar DATABASE_URL si no existe
+const databaseUrl = getDatabaseUrl()
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = databaseUrl
+}
+
 // Función para crear PrismaClient
 function createPrismaClient() {
   // Asegurar que DATABASE_URL esté disponible
@@ -27,26 +33,20 @@ function createPrismaClient() {
     throw new Error(`DATABASE_URL inválida: ${url}`)
   }
 
-  // Configurar DATABASE_URL en process.env
+  // Asegurar que process.env.DATABASE_URL esté configurada
   if (!process.env.DATABASE_URL) {
     process.env.DATABASE_URL = url
   }
 
   try {
-    // En Prisma v7, pasar la URL directamente en el constructor usando datasources
+    // En Prisma v7, PrismaClient lee DATABASE_URL de process.env automáticamente
     const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: url,
-        },
-      },
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     })
     
     return prisma
   } catch (error: any) {
     console.error('Error creando PrismaClient:', error)
-    console.error('DATABASE_URL disponible:', !!url)
     throw new Error(`Error al inicializar Prisma Client: ${error.message}`)
   }
 }
