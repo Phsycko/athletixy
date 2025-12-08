@@ -81,6 +81,67 @@ export default function AtletaDetallePage() {
     'Otra'
   ]
 
+  const handleGuardarLesion = async () => {
+    if (!nuevaLesion.tipo) {
+      alert('Por favor selecciona el tipo de lesión')
+      return
+    }
+
+    try {
+      const session = localStorage.getItem('athletixy_session')
+      if (!session) return
+      const sessionData = JSON.parse(session)
+      if (!sessionData.coachId) return
+
+      const coachesInternos = localStorage.getItem('gym_coaches_internos')
+      if (!coachesInternos) return
+
+      const coaches = JSON.parse(coachesInternos)
+      const coachIndex = coaches.findIndex((c: any) => c.id === sessionData.coachId)
+      if (coachIndex === -1) return
+
+      const coach = coaches[coachIndex]
+      const atletaIndex = coach.atletas.findIndex((a: any) => a.id === atletaId)
+      if (atletaIndex === -1) return
+
+      // Inicializar array de lesiones si no existe
+      if (!coach.atletas[atletaIndex].lesiones) {
+        coach.atletas[atletaIndex].lesiones = []
+      }
+
+      // Crear nueva lesión
+      const lesionId = `lesion_${Date.now()}`
+      const nuevaLesionCompleta = {
+        id: lesionId,
+        tipo: nuevaLesion.tipo,
+        descripcion: nuevaLesion.descripcion,
+        fecha: nuevaLesion.fecha,
+        activa: nuevaLesion.activa,
+        fechaCreacion: new Date().toISOString()
+      }
+
+      // Agregar la lesión
+      coach.atletas[atletaIndex].lesiones.push(nuevaLesionCompleta)
+
+      coaches[coachIndex] = coach
+      localStorage.setItem('gym_coaches_internos', JSON.stringify(coaches))
+
+      // Recargar datos
+      setAtleta(coach.atletas[atletaIndex])
+
+      // Cerrar modal y resetear formulario
+      setMostrarModalLesion(false)
+      setNuevaLesion({ tipo: '', descripcion: '', fecha: new Date().toISOString().split('T')[0], activa: true })
+
+      setMensajeExito('Lesión registrada correctamente')
+      setMostrarModalExito(true)
+    } catch (error) {
+      console.error('Error guardando lesión:', error)
+      setMensajeExito('Error al guardar la lesión. Por favor intenta nuevamente.')
+      setMostrarModalExito(true)
+    }
+  }
+
   useEffect(() => {
     if (typeof window === 'undefined') return
 
