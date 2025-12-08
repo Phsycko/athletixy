@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-// Importar Prisma solo cuando se necesite
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+// Importar Prisma solo cuando se necesite - dentro de la función
 async function getPrisma() {
+  // Asegurar DATABASE_URL antes de importar
+  if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL = "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
+  }
+  
   const { prisma } = await import("@/lib/prisma");
   return prisma;
 }
-
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,7 +85,7 @@ export async function POST(request: NextRequest) {
       message: error.message,
       code: error.code,
       meta: error.meta,
-      stack: error.stack
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
     
     // Mensaje de error más específico
@@ -90,6 +95,8 @@ export async function POST(request: NextRequest) {
       errorMessage = "Este email ya está registrado";
     } else if (error.code === 'P1001' || error.message?.includes('Can\'t reach database server')) {
       errorMessage = "Error de conexión con la base de datos. Verifica la configuración.";
+    } else if (error.message?.includes('Tenant or user not found')) {
+      errorMessage = "Error de autenticación con la base de datos. Verifica las credenciales.";
     } else if (error.message) {
       errorMessage = `Error: ${error.message}`;
     }
