@@ -75,10 +75,30 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Error creando usuario:", error);
+  } catch (error: any) {
+    console.error("Error creando usuario - Detalles completos:", {
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+      stack: error.stack
+    });
+    
+    // Mensaje de error más específico
+    let errorMessage = "Error al crear el usuario. Por favor intenta nuevamente.";
+    
+    if (error.code === 'P2002') {
+      errorMessage = "Este email ya está registrado";
+    } else if (error.code === 'P1001' || error.message?.includes('Can\'t reach database server')) {
+      errorMessage = "Error de conexión con la base de datos. Verifica la configuración.";
+    } else if (error.message) {
+      errorMessage = `Error: ${error.message}`;
+    }
+    
     return NextResponse.json(
-      { error: "Error al crear el usuario. Por favor intenta nuevamente." },
+      { 
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+      },
       { status: 500 }
     );
   }
