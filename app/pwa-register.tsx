@@ -31,19 +31,23 @@ export default function PWARegister() {
       appleTitle.content = 'Athletixy'
       document.head.appendChild(appleTitle)
 
-      // Registrar service worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration)
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError)
-            })
-        })
-      }
+      /**
+       * SERVICE WORKER DESACTIVADO
+       * Eliminar el SW evita bloqueos y errores de rutas cacheadas.
+       * Lo activaremos más adelante cuando la app esté estable.
+       */
+      // if ('serviceWorker' in navigator) {
+      //   window.addEventListener('load', () => {
+      //     navigator.serviceWorker
+      //       .register('/sw.js')
+      //       .then((registration) => {
+      //         console.log('SW registered: ', registration)
+      //       })
+      //       .catch((registrationError) => {
+      //         console.log('SW registration failed: ', registrationError)
+      //       })
+      //   })
+      // }
     }
   }, [])
 
