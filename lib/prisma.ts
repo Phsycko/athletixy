@@ -1,5 +1,6 @@
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client'
+import postgres from 'postgres'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -39,8 +40,21 @@ function createPrismaClient() {
   }
 
   try {
-    // En Prisma v7, PrismaClient lee DATABASE_URL de process.env automáticamente
+    // En Prisma v7, necesitamos usar un adapter de PostgreSQL
+    // Crear conexión postgres
+    const sql = postgres(url, { max: 1 })
+    
+    // Crear PrismaClient con el adapter usando postgres
     const prisma = new PrismaClient({
+      adapter: {
+        queryRaw: async (query, ...params) => {
+          const result = await sql.unsafe(query as string, params as any[])
+          return result as any
+        },
+        executeRaw: async (query, ...params) => {
+          await sql.unsafe(query as string, params as any[])
+        },
+      } as any,
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     })
     
