@@ -1,5 +1,6 @@
+export const runtime = "nodejs"; 
+export const preferredRegion = "iad1"; 
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -9,9 +10,7 @@ import bcrypt from "bcryptjs";
  */
 async function getPrisma() {
   if (!process.env.DATABASE_URL) {
-    throw new Error(
-      "DATABASE_URL no está definida en el entorno de ejecución."
-    );
+    throw new Error("DATABASE_URL no está definida en el entorno de ejecución.");
   }
 
   const { prisma } = await import("@/lib/prisma");
