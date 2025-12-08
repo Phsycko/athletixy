@@ -5,14 +5,17 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 /**
- * Cargar Prisma con DATABASE_URL del entorno.
- * NO se usa fallback, porque eso rompe supabase/vercel.
+ * Cargar Prisma correctamente SOLO si DATABASE_URL existe.
+ * Esto evita errores de entorno en Vercel y Supabase.
  */
 async function getPrisma() {
   if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL no está definida en el entorno de ejecución.");
+    throw new Error(
+      "DATABASE_URL no está definida en el entorno de ejecución."
+    );
   }
 
+  // Import dinámico para que Prisma lea DATABASE_URL en runtime
   const { prisma } = await import("@/lib/prisma");
   return prisma;
 }
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Error creando usuario - Detalles:", {
+    console.error("🔥 Error creando usuario:", {
       message: error.message,
       code: error.code,
       meta: error.meta,
@@ -103,6 +106,9 @@ export async function POST(request: NextRequest) {
     } else if (error.message?.includes("Tenant or user not found")) {
       errorMessage =
         "Error de autenticación con la base de datos. Credenciales incorrectas.";
+    } else if (error.message?.includes("DATABASE_URL")) {
+      errorMessage =
+        "No se detectó DATABASE_URL en producción. Verifica las variables en Vercel.";
     }
 
     return NextResponse.json(
