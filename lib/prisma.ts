@@ -5,29 +5,36 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// URL de conexión a Supabase - debe estar disponible antes de crear PrismaClient
+// URL de conexión a Supabase
 const DATABASE_URL_FALLBACK = "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
 
-// Asegurar que DATABASE_URL esté configurada
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = DATABASE_URL_FALLBACK
+// Función para obtener DATABASE_URL
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL || DATABASE_URL_FALLBACK
+  if (!url || url.trim() === '') {
+    throw new Error('DATABASE_URL no está configurada o está vacía')
+  }
+  return url
 }
 
-// Verificar que DATABASE_URL no esté vacía
-const databaseUrl = process.env.DATABASE_URL
-if (!databaseUrl || databaseUrl.trim() === '') {
-  throw new Error('DATABASE_URL no está configurada o está vacía. Por favor configura la variable de entorno DATABASE_URL.')
+// Configurar DATABASE_URL si no existe
+const databaseUrl = getDatabaseUrl()
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = databaseUrl
 }
 
 // Función para crear PrismaClient
 function createPrismaClient() {
-  // Verificar nuevamente que DATABASE_URL esté disponible
-  const url = process.env.DATABASE_URL
-  if (!url || url.trim() === '') {
-    throw new Error('DATABASE_URL no está disponible al crear PrismaClient')
+  // Asegurar que DATABASE_URL esté disponible
+  const url = getDatabaseUrl()
+  
+  // Verificar que la URL sea válida
+  if (!url || !url.startsWith('postgresql://')) {
+    throw new Error(`DATABASE_URL inválida: ${url}`)
   }
 
   try {
+    // En Prisma v7, PrismaClient lee DATABASE_URL de process.env automáticamente
     return new PrismaClient()
   } catch (error: any) {
     console.error('Error creando PrismaClient:', error)
