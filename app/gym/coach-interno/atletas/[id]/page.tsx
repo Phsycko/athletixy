@@ -69,6 +69,18 @@ export default function AtletaDetallePage() {
     registroEjercicios: [] as any[]
   })
 
+  const lesionesComunes = [
+    'Hombro',
+    'Rodilla',
+    'Espalda baja',
+    'Cuello',
+    'Codo',
+    'Muñeca',
+    'Tobillo',
+    'Cadera',
+    'Otra'
+  ]
+
   useEffect(() => {
     if (typeof window === 'undefined') return
 
