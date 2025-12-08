@@ -5,25 +5,25 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Configurar DATABASE_URL si no existe (para Vercel)
-const getDatabaseUrl = () => {
-  return process.env.DATABASE_URL || "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
-}
-
-// Función para crear PrismaClient con la URL correcta
-const createPrismaClient = () => {
-  const url = getDatabaseUrl()
-  // Asegurar que DATABASE_URL esté configurada
+// Función lazy para obtener PrismaClient
+function getPrismaClient() {
+  // Configurar DATABASE_URL si no existe (para Vercel)
   if (!process.env.DATABASE_URL) {
-    process.env.DATABASE_URL = url
+    process.env.DATABASE_URL = "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
   }
-  return new PrismaClient()
+
+  if (globalForPrisma.prisma) {
+    return globalForPrisma.prisma
+  }
+
+  const prisma = new PrismaClient()
+  
+  if (process.env.NODE_ENV !== 'production') {
+    globalForPrisma.prisma = prisma
+  }
+
+  return prisma
 }
 
-export const prisma =
-  globalForPrisma.prisma ??
-  createPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma
-}
+// Exportar función en lugar de instancia directa
+export const prisma = getPrismaClient()
