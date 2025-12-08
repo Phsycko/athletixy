@@ -94,7 +94,8 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || 'Error al crear el usuario. Por favor intenta nuevamente.')
+        console.error('Error del servidor:', data)
+        setError(data.error || data.details || 'Error al crear el usuario. Por favor intenta nuevamente.')
         return
       }
 
@@ -127,9 +128,9 @@ export default function LoginPage() {
           }
         }
       }, 1000)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error en el registro:', error)
-      setError('Error al crear el usuario. Por favor intenta nuevamente.')
+      setError(error.message || 'Error al crear el usuario. Por favor intenta nuevamente.')
     }
   }
 
