@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-// Importar Prisma solo cuando se necesite - dentro de la función
+/**
+ * Cargar Prisma con DATABASE_URL del entorno.
+ * NO se usa fallback, porque eso rompe supabase/vercel.
+ */
 async function getPrisma() {
-  // Asegurar DATABASE_URL antes de importar
   if (!process.env.DATABASE_URL) {
-    process.env.DATABASE_URL = "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
+    throw new Error("DATABASE_URL no está definida en el entorno de ejecución.");
   }
-  
+
   const { prisma } = await import("@/lib/prisma");
   return prisma;
 }
@@ -21,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password, nombre, tipoUsuario } = body;
 
-    // Validaciones
+    // Validaciones básicas
     if (!email || !password || !nombre || !tipoUsuario) {
       return NextResponse.json(
         { error: "Todos los campos son requeridos" },
@@ -36,7 +38,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Normalizar email
     const emailNormalized = email.trim().toLowerCase();
 
     // Verificar si el usuario ya existe
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hashear contraseña
+    // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crear usuario
@@ -81,30 +82,36 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Error creando usuario - Detalles completos:", {
+    console.error("Error creando usuario - Detalles:", {
       message: error.message,
       code: error.code,
       meta: error.meta,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack:
+        process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
-    
-    // Mensaje de error más específico
-    let errorMessage = "Error al crear el usuario. Por favor intenta nuevamente.";
-    
-    if (error.code === 'P2002') {
-      errorMessage = "Este email ya está registrado";
-    } else if (error.code === 'P1001' || error.message?.includes('Can\'t reach database server')) {
-      errorMessage = "Error de conexión con la base de datos. Verifica la configuración.";
-    } else if (error.message?.includes('Tenant or user not found')) {
-      errorMessage = "Error de autenticación con la base de datos. Verifica las credenciales.";
-    } else if (error.message) {
-      errorMessage = `Error: ${error.message}`;
+
+    let errorMessage = "Error al crear el usuario.";
+
+    if (error.code === "P2002") {
+      errorMessage = "Este email ya está registrado.";
+    } else if (
+      error.code === "P1001" ||
+      error.message?.includes("Can't reach database server")
+    ) {
+      errorMessage =
+        "Error de conexión con la base de datos. Verifica la configuración.";
+    } else if (error.message?.includes("Tenant or user not found")) {
+      errorMessage =
+        "Error de autenticación con la base de datos. Credenciales incorrectas.";
     }
-    
+
     return NextResponse.json(
-      { 
+      {
         error: errorMessage,
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+        details:
+          process.env.NODE_ENV === "development"
+            ? error.message
+            : undefined,
       },
       { status: 500 }
     );
