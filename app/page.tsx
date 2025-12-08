@@ -60,68 +60,8 @@ export default function LoginPage() {
     }
   }, [])
 
-  // Inicializar usuarios en localStorage si no existen
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const users = localStorage.getItem('athletixy_users')
-        if (!users) {
-          // Usuarios por defecto
-          const defaultUsers = [
-            {
-              email: 'admin@athletixy.com',
-              password: 'admin123',
-              nombre: 'Administrador',
-              tipoUsuario: 'atleta' as UserType,
-              fechaRegistro: new Date().toISOString(),
-              isAdmin: true
-            },
-            {
-              email: 'atleta@athletixy.com',
-              password: 'atleta123',
-              nombre: 'Carlos Martínez',
-              tipoUsuario: 'atleta' as UserType,
-              fechaRegistro: new Date().toISOString()
-            },
-            {
-              email: 'nutriologo@athletixy.com',
-              password: 'nutriologo123',
-              nombre: 'Dra. Patricia Mendoza',
-              tipoUsuario: 'nutriologo' as UserType,
-              fechaRegistro: new Date().toISOString()
-            },
-            {
-              email: 'coach@athletixy.com',
-              password: 'coach123',
-              nombre: 'Miguel Ángel Torres',
-              tipoUsuario: 'coach' as UserType,
-              fechaRegistro: new Date().toISOString()
-            }
-          ]
-          localStorage.setItem('athletixy_users', JSON.stringify(defaultUsers))
-        } else {
-          // Verificar si existe admin, si no agregarlo
-          const existingUsers = JSON.parse(users)
-          const adminExists = existingUsers.some((u: any) => u.email === 'admin@athletixy.com')
-          if (!adminExists) {
-            existingUsers.push({
-              email: 'admin@athletixy.com',
-              password: 'admin123',
-              nombre: 'Administrador',
-              tipoUsuario: 'atleta',
-              fechaRegistro: new Date().toISOString(),
-              isAdmin: true
-            })
-            localStorage.setItem('athletixy_users', JSON.stringify(existingUsers))
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error inicializando usuarios:', error)
-    }
-  }, [])
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess('')
@@ -136,47 +76,41 @@ export default function LoginPage() {
       return
     }
 
-    // Normalizar email
-    const emailNormalized = credentials.email.trim().toLowerCase()
-    const nombreNormalized = credentials.nombre.trim()
+    try {
+      // Enviar datos al backend para crear usuario en Supabase
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+          nombre: credentials.nombre,
+          tipoUsuario: credentials.tipoUsuario
+        })
+      })
 
-    // Obtener usuarios existentes
-    const usersStr = localStorage.getItem('athletixy_users')
-    const users = usersStr ? JSON.parse(usersStr) : []
+      const data = await response.json()
 
-    // Verificar si el email ya existe
-    const emailExists = users.some((u: any) => u.email.toLowerCase() === emailNormalized)
-    if (emailExists) {
-      setError('Este email ya está registrado. Por favor inicia sesión.')
-      return
-    }
+      if (!response.ok) {
+        setError(data.error || 'Error al crear el usuario. Por favor intenta nuevamente.')
+        return
+      }
 
-    // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
-    const tipoUsuarioFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
+      // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
+      const tipoUsuarioFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
 
-    // Crear nuevo usuario con el tipo seleccionado (guardamos 'gym' en el usuario pero usamos GYM_MANAGER para el sistema)
-    const newUser = {
-      email: emailNormalized,
-      password: credentials.password,
-      nombre: nombreNormalized,
-      tipoUsuario: credentials.tipoUsuario, // Guardamos el tipo original
-      fechaRegistro: new Date().toISOString()
-    }
+      // Iniciar sesión automáticamente con el tipo final (GYM_MANAGER si es gym)
+      localStorage.setItem('athletixy_session', JSON.stringify({
+        email: credentials.email.trim().toLowerCase(),
+        nombre: credentials.nombre.trim(),
+        role: tipoUsuarioFinal, // Usamos GYM_MANAGER si es gym
+        loggedIn: true
+      }))
 
-    // Guardar usuario
-    users.push(newUser)
-    localStorage.setItem('athletixy_users', JSON.stringify(users))
-
-    // Iniciar sesión automáticamente con el tipo final (GYM_MANAGER si es gym)
-    localStorage.setItem('athletixy_session', JSON.stringify({
-      email: emailNormalized,
-      nombre: nombreNormalized,
-      role: tipoUsuarioFinal, // Usamos GYM_MANAGER si es gym
-      loggedIn: true
-    }))
-
-    setSuccess('¡Registro exitoso! Redirigiendo...')
-    
+      setSuccess('¡Registro exitoso! Redirigiendo...')
+      
       // Redirigir según tipo de usuario
       setTimeout(() => {
         if (typeof window !== 'undefined') {
@@ -193,6 +127,10 @@ export default function LoginPage() {
           }
         }
       }, 1000)
+    } catch (error) {
+      console.error('Error en el registro:', error)
+      setError('Error al crear el usuario. Por favor intenta nuevamente.')
+    }
   }
 
   const handleLogin = (e: React.FormEvent) => {
