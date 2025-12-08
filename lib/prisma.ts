@@ -17,12 +17,6 @@ function getDatabaseUrl(): string {
   return url
 }
 
-// Configurar DATABASE_URL si no existe
-const databaseUrl = getDatabaseUrl()
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = databaseUrl
-}
-
 // Función para crear PrismaClient
 function createPrismaClient() {
   // Asegurar que DATABASE_URL esté disponible
@@ -33,11 +27,23 @@ function createPrismaClient() {
     throw new Error(`DATABASE_URL inválida: ${url}`)
   }
 
+  // Configurar DATABASE_URL en process.env si no está
+  if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL = url
+  }
+
   try {
     // En Prisma v7, PrismaClient lee DATABASE_URL de process.env automáticamente
-    return new PrismaClient()
+    // pero necesitamos asegurarnos de que esté disponible
+    const prisma = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    })
+    
+    return prisma
   } catch (error: any) {
     console.error('Error creando PrismaClient:', error)
+    console.error('DATABASE_URL disponible:', !!process.env.DATABASE_URL)
+    console.error('DATABASE_URL valor:', process.env.DATABASE_URL ? '***configurada***' : 'NO CONFIGURADA')
     throw new Error(`Error al inicializar Prisma Client: ${error.message}`)
   }
 }
@@ -57,5 +63,14 @@ function getPrismaClient() {
   return prisma
 }
 
-// Exportar instancia - solo se crea cuando se importa
-export const prisma = getPrismaClient()
+// NO exportar la instancia directamente - solo la función
+// Esto evita que se ejecute durante el build
+let prismaInstance: PrismaClient | undefined = undefined
+
+export const prisma = (() => {
+  if (prismaInstance) {
+    return prismaInstance
+  }
+  prismaInstance = getPrismaClient()
+  return prismaInstance
+})()
