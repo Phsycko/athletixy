@@ -6,25 +6,33 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 // URL de conexión a Supabase - debe estar disponible antes de crear PrismaClient
-const getDatabaseUrl = () => {
-  return process.env.DATABASE_URL || "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
-}
+const DATABASE_URL_FALLBACK = "postgresql://postgres:GUgHJBmqYCW1wQZB@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
 
 // Asegurar que DATABASE_URL esté configurada
-const databaseUrl = getDatabaseUrl()
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = databaseUrl
+  process.env.DATABASE_URL = DATABASE_URL_FALLBACK
+}
+
+// Verificar que DATABASE_URL no esté vacía
+const databaseUrl = process.env.DATABASE_URL
+if (!databaseUrl || databaseUrl.trim() === '') {
+  throw new Error('DATABASE_URL no está configurada o está vacía. Por favor configura la variable de entorno DATABASE_URL.')
 }
 
 // Función para crear PrismaClient
 function createPrismaClient() {
-  // Verificar que DATABASE_URL esté disponible
+  // Verificar nuevamente que DATABASE_URL esté disponible
   const url = process.env.DATABASE_URL
   if (!url || url.trim() === '') {
-    throw new Error('DATABASE_URL no está configurada o está vacía')
+    throw new Error('DATABASE_URL no está disponible al crear PrismaClient')
   }
 
-  return new PrismaClient()
+  try {
+    return new PrismaClient()
+  } catch (error: any) {
+    console.error('Error creando PrismaClient:', error)
+    throw new Error(`Error al inicializar Prisma Client: ${error.message}`)
+  }
 }
 
 // Función lazy para obtener PrismaClient
