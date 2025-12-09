@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
+// Cargar Prisma sólo cuando se necesite
 async function getPrisma() {
   const { prisma } = await import("@/lib/prisma");
   return prisma;
@@ -15,6 +16,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = body;
 
+    // Validaciones básicas
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email y contraseña son requeridos" },
@@ -24,17 +26,9 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
+    // Buscar usuario en la tabla User por email
     const user = await prisma.user.findUnique({
       where: { email: emailNormalized },
-      select: {
-        id: true,
-        email: true,
-        password: true,
-        nombre: true,
-        tipoUsuario: true,
-        gymManagerId: true,
-        isAdmin: true,
-      },
     });
 
     if (!user) {
@@ -44,6 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Comparar contraseña hasheada
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
@@ -53,16 +48,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔥 NORMALIZACIÓN REAL DEL ROL
-    let roleFinal = user.tipoUsuario; // valor exacto de BD
-
-    // Si es coach y tiene gymManagerId, es un coach interno
-    if (roleFinal === "coach" && user.gymManagerId) {
-      roleFinal = "COACH_INTERNO";
-    } else if (roleFinal === "gym") {
-      roleFinal = "GYM_MANAGER";
-    }
-
+    // No transformamos el tipoUsuario, lo mandamos tal cual:
+    // atleta | coach | nutriologo | vendedor | GYM_MANAGER | COACH_INTERNO
     return NextResponse.json(
       {
         message: "Login exitoso",
@@ -70,7 +57,7 @@ export async function POST(request: NextRequest) {
           id: user.id,
           email: user.email,
           nombre: user.nombre,
-          role: roleFinal,
+          role: user.tipoUsuario,
           isAdmin: user.isAdmin,
         },
       },

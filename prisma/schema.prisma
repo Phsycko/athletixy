@@ -12,8 +12,10 @@ model User {
   email         String   @unique
   password      String
   nombre        String
-  tipoUsuario   String
-  gymManagerId  String?
+  tipoUsuario   String          // atleta | coach | nutriologo | vendedor | GYM_MANAGER | COACH_INTERNO
+  especialidad  String?         // para coach interno
+  activo        Boolean  @default(true)
+  gymManagerId  String?         // id del GYM_MANAGER que lo creó
   fechaRegistro DateTime @default(now())
   isAdmin       Boolean  @default(false)
   createdAt     DateTime @default(now())
