@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-// Cargar Prisma sólo cuando se necesite
 async function getPrisma() {
   const { prisma } = await import("@/lib/prisma");
   return prisma;
@@ -16,7 +15,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = body;
 
-    // Validaciones básicas
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email y contraseña son requeridos" },
@@ -26,7 +24,6 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
-    // Buscar usuario en la tabla User por email
     const user = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
@@ -38,7 +35,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Comparar contraseña hasheada
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
@@ -48,17 +44,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🚀 Aquí enviamos toda la información CORRECTA
+    // 🔥 ENVIAMOS gymManagerId SI EXISTE (coach interno)
     return NextResponse.json(
       {
         message: "Login exitoso",
         user: {
-          id: user.id,                     // 🔥 NECESARIO PARA GYM_MANAGER Y CREAR COACHES
+          id: user.id,
           email: user.email,
           nombre: user.nombre,
-          role: user.tipoUsuario,          // 🔥 YA DEVUELVE COACH_INTERNO, GYM_MANAGER TAL CUAL
+          role: user.tipoUsuario,
+          gymManagerId: user.gymManagerId || null, // <--- 🔥 CLAVE
           isAdmin: user.isAdmin,
-          gymManagerId: user.gymManagerId, // 🔥 SI ES COACH_INTERNO, ESTO INDICA SU PADRE
         },
       },
       { status: 200 }

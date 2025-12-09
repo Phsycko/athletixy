@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
 
-type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' | 'GYM_MANAGER'
+type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' | 'GYM_MANAGER' | 'COACH_INTERNO'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState('')
   const [checkingSession, setCheckingSession] = useState(true)
 
-  // 🔍 Revisar sesión activa
+  // 🔍 Revisar si ya había sesión guardada
   useEffect(() => {
     const session = localStorage.getItem('athletixy_session')
     if (!session) {
@@ -37,7 +37,7 @@ export default function LoginPage() {
     }
   }, [])
 
-  // 👇 FUNCIÓN REUTILIZABLE DE REDIRECCIÓN
+  // 🔁 Función de redirección centralizada
   const redirigirPorRol = (role: string) => {
     window.location.href =
       role === 'COACH_INTERNO'
@@ -53,7 +53,7 @@ export default function LoginPage() {
         : '/dashboard'
   }
 
-  // 🔥 REGISTRO
+  // 🔥 Registrar usuario desde el login
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -84,7 +84,7 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || data.details || 'Error al crear el usuario.')
+        setError(data.error || 'Error al crear el usuario.')
         return
       }
 
@@ -93,22 +93,23 @@ export default function LoginPage() {
       localStorage.setItem(
         'athletixy_session',
         JSON.stringify({
+          id: data.user.id,
           email: credentials.email.trim().toLowerCase(),
           nombre: credentials.nombre.trim(),
           role: tipoFinal,
+          gymManagerId: data.user.id,
           loggedIn: true,
         })
       )
 
       setSuccess('¡Registro exitoso! Redirigiendo...')
       setTimeout(() => redirigirPorRol(tipoFinal), 800)
-    } catch (error: any) {
-      console.error(error)
+    } catch {
       setError('Error inesperado al registrar usuario.')
     }
   }
 
-  // 🔥 **LOGIN REAL CON BACKEND**
+  // 🔥 LOGIN REAL CON BACKEND
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -120,8 +121,6 @@ export default function LoginPage() {
     }
 
     try {
-      console.log("🔐 Enviando login a /api/auth/login...")
-
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -133,20 +132,20 @@ export default function LoginPage() {
 
       const data = await response.json()
 
-      console.log("📥 Respuesta backend:", data)
-
       if (!response.ok) {
         setError(data.error || 'Credenciales inválidas.')
         return
       }
 
-      // Guardar sesión
+      // 🟩 GUARDAMOS SESIÓN COMPLETA (AQUÍ ESTABA EL PROBLEMA)
       localStorage.setItem(
         'athletixy_session',
         JSON.stringify({
+          id: data.user.id,                     // NECESARIO PARA GYM_MANAGER
           email: data.user.email,
           nombre: data.user.nombre,
           role: data.user.role,
+          gymManagerId: data.user.gymManagerId || data.user.id, // NECESARIO PARA COACH_INTERNO
           loggedIn: true,
           isAdmin: data.user.isAdmin || false
         })
@@ -155,47 +154,39 @@ export default function LoginPage() {
       setSuccess('Iniciando sesión...')
       setTimeout(() => redirigirPorRol(data.user.role), 500)
     } catch (error) {
-      console.error('Login error:', error)
+      console.error(error)
       setError('Ocurrió un error al iniciar sesión.')
     }
   }
 
-  // Pantalla de carga mientras revisa sesión
   if (checkingSession) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="bg-black p-4 rounded-2xl shadow-2xl inline-block mb-4">
-            <Dumbbell className="w-12 h-12 text-white animate-pulse" />
-          </div>
-          <p className="text-gray-600">Verificando sesión...</p>
-        </div>
+        <Dumbbell className="w-12 h-12 animate-pulse text-black" />
       </div>
     )
   }
 
-  // UI PRINCIPAL
+  // 🟦 UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8">
       <div className="w-full max-w-md">
-
-        {/* LOGO */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
-            <div className="bg-black p-4 rounded-2xl shadow-2xl">
+            <div className="bg-black p-4 rounded-2xl">
               <Dumbbell className="w-12 h-12 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-black mb-2">Athletixy</h1>
+          <h1 className="text-3xl font-bold">Athletixy</h1>
           <p className="text-gray-600">Gestión profesional de atletas</p>
         </div>
 
-        {/* LOGIN / REGISTER TABS */}
+        {/* TABS LOGIN / REGISTER */}
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
           <button
             onClick={() => { setIsLogin(true); setError(''); setSuccess(''); }}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium ${
-              isLogin ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
+            className={`flex-1 py-2 rounded-lg font-medium ${
+              isLogin ? 'bg-black text-white' : 'text-gray-600'
             }`}
           >
             Iniciar Sesión
@@ -203,63 +194,59 @@ export default function LoginPage() {
 
           <button
             onClick={() => { setIsLogin(false); setError(''); setSuccess(''); }}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium ${
-              !isLogin ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
+            className={`flex-1 py-2 rounded-lg font-medium ${
+              !isLogin ? 'bg-black text-white' : 'text-gray-600'
             }`}
           >
             Registrarse
           </button>
         </div>
 
-        {/* FORMULARIO */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-200">
-          <h2 className="text-xl font-semibold mb-6 text-black">
+        {/* FORM */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border">
+          <h2 className="text-xl font-semibold mb-6">
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
 
           <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
-            {/* Nombre */}
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                <label className="text-sm">Nombre Completo</label>
                 <input
                   type="text"
                   value={credentials.nombre}
                   onChange={(e) => setCredentials({ ...credentials, nombre: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
-                  placeholder="Tu nombre completo"
+                  className="w-full px-4 py-3 border rounded-lg"
                 />
               </div>
             )}
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="text-sm">Email</label>
               <input
                 type="email"
                 value={credentials.email}
                 onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
-                placeholder="tu@email.com"
+                className="w-full px-4 py-3 border rounded-lg"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+              <label className="text-sm">Contraseña</label>
               <input
                 type="password"
                 value={credentials.password}
                 onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
-                placeholder="••••••••"
+                className="w-full px-4 py-3 border rounded-lg"
               />
             </div>
 
-            {/* Tipo de Usuario */}
+            {/* Tipos de usuario (solo registro) */}
             {!isLogin && (
               <>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Tipo de Usuario</label>
+                <label className="text-sm">Tipo de Usuario</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
                     { key: 'atleta', label: 'Atleta', icon: User },
@@ -268,19 +255,19 @@ export default function LoginPage() {
                     { key: 'gym', label: 'Gym', icon: Building2 },
                     { key: 'vendedor', label: 'Vendedor', icon: ShoppingBag },
                     { key: 'GYM_MANAGER', label: 'Gestor Gym', icon: Building2 },
-                  ].map(item => {
+                  ].map((item) => {
                     const Icon = item.icon
                     return (
                       <button
                         key={item.key}
                         type="button"
                         onClick={() => setCredentials({ ...credentials, tipoUsuario: item.key as UserType })}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 ${
+                        className={`p-4 border rounded-lg flex flex-col items-center gap-2 ${
                           credentials.tipoUsuario === item.key ? 'border-black bg-gray-100' : 'border-gray-200'
                         }`}
                       >
                         <Icon className="w-6 h-6" />
-                        <span className="font-medium text-sm">{item.label}</span>
+                        <span>{item.label}</span>
                       </button>
                     )
                   })}
@@ -288,25 +275,10 @@ export default function LoginPage() {
               </>
             )}
 
-            {/* ERROR */}
-            {error && (
-              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+            {error && <div className="text-red-600 bg-red-100 p-3 rounded-lg">{error}</div>}
+            {success && <div className="text-green-600 bg-green-100 p-3 rounded-lg">{success}</div>}
 
-            {/* SUCCESS */}
-            {success && (
-              <div className="bg-green-500/10 border border-green-500 text-green-600 px-4 py-3 rounded-lg text-sm">
-                {success}
-              </div>
-            )}
-
-            {/* BOTÓN */}
-            <button
-              type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2"
-            >
+            <button className="w-full bg-black text-white py-3 rounded-lg flex items-center justify-center gap-2">
               {isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
               {isLogin ? 'Ingresar' : 'Registrarse'}
             </button>
