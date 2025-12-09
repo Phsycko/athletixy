@@ -51,13 +51,13 @@ export async function POST(request: NextRequest) {
     // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear coach interno
+    // Crear coach interno CORREGIDO 🔥🔥🔥
     const newCoach = await prisma.user.create({
       data: {
         email: emailNormalized,
         password: hashedPassword,
         nombre: nombre.trim(),
-        tipoUsuario: "coach",
+        tipoUsuario: "COACH_INTERNO", // 👈🔥 AQUÍ ESTABA EL ERROR
         gymManagerId: gymManagerId,
         isAdmin: false,
       },
