@@ -17,50 +17,36 @@ export default function LoginPage() {
   const [success, setSuccess] = useState('')
   const [checkingSession, setCheckingSession] = useState(true)
 
-  // Verificar si ya hay una sesión activa y redirigir ANTES de renderizar
+  // 🔍 Revisar sesión antes de mostrar formulario
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const session = localStorage.getItem('athletixy_session')
-        if (session) {
-          const sessionData = JSON.parse(session)
-          if (sessionData.loggedIn) {
-            // Redirigir según el rol del usuario sin mostrar el formulario
-            const role = sessionData.role
-            if (role === 'COACH_INTERNO') {
-              window.location.href = '/gym/coach-interno'
-              return
-            } else if (role === 'GYM_MANAGER') {
-              window.location.href = '/gym/dashboard'
-              return
-            } else if (role === 'nutriologo') {
-              window.location.href = '/dashboard/nutriologo'
-              return
-            } else if (role === 'coach') {
-              window.location.href = '/dashboard/coach'
-              return
-            } else if (role === 'gym') {
-              window.location.href = '/dashboard'
-              return
-            } else if (role === 'vendedor') {
-              window.location.href = '/dashboard/marketplace'
-              return
-            } else {
-              window.location.href = '/dashboard'
-              return
-            }
-          }
-        }
-        // Si no hay sesión activa, mostrar el formulario
-        setCheckingSession(false)
-      } catch (error) {
-        console.error('Error verificando sesión:', error)
+    const session = localStorage.getItem('athletixy_session')
+    if (!session) {
+      setCheckingSession(false)
+      return
+    }
+
+    try {
+      const data = JSON.parse(session)
+      if (data.loggedIn) {
+        window.location.href =
+          data.role === 'GYM_MANAGER'
+            ? '/gym/dashboard'
+            : data.role === 'nutriologo'
+            ? '/dashboard/nutriologo'
+            : data.role === 'coach'
+            ? '/dashboard/coach'
+            : data.role === 'vendedor'
+            ? '/dashboard/marketplace'
+            : '/dashboard'
+      } else {
         setCheckingSession(false)
       }
+    } catch {
+      setCheckingSession(false)
     }
   }, [])
 
-
+  // 🔥 REGISTRO
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -77,64 +63,57 @@ export default function LoginPage() {
     }
 
     try {
-      // Enviar datos al backend para crear usuario en Supabase
       const response = await fetch('/api/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: credentials.email,
           password: credentials.password,
           nombre: credentials.nombre,
           tipoUsuario: credentials.tipoUsuario
-        })
+        }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        console.error('Error del servidor:', data)
-        setError(data.error || data.details || 'Error al crear el usuario. Por favor intenta nuevamente.')
+        setError(data.error || data.details || 'Error al crear el usuario.')
         return
       }
 
-      // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
-      const tipoUsuarioFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
+      const tipoFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
 
-      // Iniciar sesión automáticamente con el tipo final (GYM_MANAGER si es gym)
-      localStorage.setItem('athletixy_session', JSON.stringify({
-        email: credentials.email.trim().toLowerCase(),
-        nombre: credentials.nombre.trim(),
-        role: tipoUsuarioFinal, // Usamos GYM_MANAGER si es gym
-        loggedIn: true
-      }))
+      localStorage.setItem(
+        'athletixy_session',
+        JSON.stringify({
+          email: credentials.email.trim().toLowerCase(),
+          nombre: credentials.nombre.trim(),
+          role: tipoFinal,
+          loggedIn: true,
+        })
+      )
 
       setSuccess('¡Registro exitoso! Redirigiendo...')
-      
-      // Redirigir según tipo de usuario
+
       setTimeout(() => {
-        if (typeof window !== 'undefined') {
-          if (tipoUsuarioFinal === 'GYM_MANAGER') {
-            window.location.href = '/gym/dashboard'
-          } else if (tipoUsuarioFinal === 'nutriologo') {
-            window.location.href = '/dashboard/nutriologo'
-          } else if (tipoUsuarioFinal === 'coach') {
-            window.location.href = '/dashboard/coach'
-          } else if (tipoUsuarioFinal === 'vendedor') {
-            window.location.href = '/dashboard/marketplace'
-          } else {
-            window.location.href = '/dashboard'
-          }
-        }
-      }, 1000)
+        window.location.href =
+          tipoFinal === 'GYM_MANAGER'
+            ? '/gym/dashboard'
+            : tipoFinal === 'nutriologo'
+            ? '/dashboard/nutriologo'
+            : tipoFinal === 'coach'
+            ? '/dashboard/coach'
+            : tipoFinal === 'vendedor'
+            ? '/dashboard/marketplace'
+            : '/dashboard'
+      }, 800)
     } catch (error: any) {
-      console.error('Error en el registro:', error)
-      setError(error.message || 'Error al crear el usuario. Por favor intenta nuevamente.')
+      setError('Error inesperado al registrar usuario.')
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  // 🔥 LOGIN REAL (SE CONECTA A TU API /api/login)
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess('')
@@ -145,177 +124,59 @@ export default function LoginPage() {
     }
 
     try {
-      // Normalizar email
-      const emailNormalized = credentials.email.trim().toLowerCase()
-      const passwordNormalized = credentials.password.trim()
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: credentials.email.trim().toLowerCase(),
+          password: credentials.password.trim()
+        })
+      })
 
-      // Obtener usuarios registrados
-      const usersStr = localStorage.getItem('athletixy_users')
-      const users = usersStr ? JSON.parse(usersStr) : []
+      const data = await response.json()
 
-      // Buscar usuario
-      const user = users.find((u: any) => 
-        u.email.toLowerCase() === emailNormalized && 
-        u.password === passwordNormalized
-      )
-      
-      // Si no encuentra usuario, verificar credenciales hardcodeadas
-      if (!user) {
-        // Admin
-        if (emailNormalized === 'admin@athletixy.com' && passwordNormalized === 'admin123') {
-          const sessionData = {
-            email: 'admin@athletixy.com',
-            nombre: 'Administrador',
-            role: 'atleta',
-            loggedIn: true,
-            isAdmin: true
-          }
-          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-          setSuccess('Iniciando sesión...')
-          setTimeout(() => {
-            window.location.href = '/dashboard'
-          }, 100)
-          return
-        }
-        // Atleta de ejemplo
-        if (emailNormalized === 'atleta@athletixy.com' && passwordNormalized === 'atleta123') {
-          const sessionData = {
-            email: 'atleta@athletixy.com',
-            nombre: 'Carlos Martínez',
-            role: 'atleta',
-            loggedIn: true,
-            isAdmin: false
-          }
-          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-          setSuccess('Iniciando sesión...')
-          setTimeout(() => {
-            window.location.href = '/dashboard'
-          }, 100)
-          return
-        }
-        // Nutriólogo
-        if (emailNormalized === 'nutriologo@athletixy.com' && passwordNormalized === 'nutriologo123') {
-          const sessionData = {
-            email: 'nutriologo@athletixy.com',
-            nombre: 'Dra. Patricia Mendoza',
-            role: 'nutriologo',
-            loggedIn: true,
-            isAdmin: false
-          }
-          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-          setSuccess('Iniciando sesión...')
-          setTimeout(() => {
-            window.location.href = '/dashboard/nutriologo'
-          }, 100)
-          return
-        }
-        // Coach
-        if (emailNormalized === 'coach@athletixy.com' && passwordNormalized === 'coach123') {
-          const sessionData = {
-            email: 'coach@athletixy.com',
-            nombre: 'Miguel Ángel Torres',
-            role: 'coach',
-            loggedIn: true,
-            isAdmin: false
-          }
-          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-          setSuccess('Iniciando sesión...')
-          setTimeout(() => {
-            window.location.href = '/dashboard/coach'
-          }, 100)
-          return
-        }
-        // GYM_MANAGER
-        if (emailNormalized === 'gymmanager@athletixy.com' && passwordNormalized === 'gymmanager123') {
-          const sessionData = {
-            email: 'gymmanager@athletixy.com',
-            nombre: 'Gestor del Gimnasio',
-            role: 'GYM_MANAGER',
-            loggedIn: true,
-            isAdmin: false
-          }
-          localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-          setSuccess('Iniciando sesión...')
-          setTimeout(() => {
-            window.location.href = '/gym/dashboard'
-          }, 100)
-          return
-        }
-
-        // COACH_INTERNO - Verificar coaches internos del gym
-        try {
-          const coachesInternos = localStorage.getItem('gym_coaches_internos')
-          if (coachesInternos) {
-            const coaches = JSON.parse(coachesInternos)
-            const coach = coaches.find((c: any) => 
-              c.email.toLowerCase() === emailNormalized && 
-              c.password === passwordNormalized &&
-              c.activo === true
-            )
-            if (coach) {
-              const sessionData = {
-                email: coach.email,
-                nombre: coach.nombre,
-                role: 'COACH_INTERNO',
-                coachId: coach.id,
-                loggedIn: true,
-                isAdmin: false
-              }
-              localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-              setSuccess('Iniciando sesión...')
-              setTimeout(() => {
-                window.location.href = '/gym/coach-interno'
-              }, 100)
-              return
-            }
-          }
-        } catch (error) {
-          console.error('Error verificando coach interno:', error)
-        }
+      if (!response.ok) {
+        setError(data.error || 'Credenciales inválidas.')
+        return
       }
 
-      if (user) {
-        // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
-        const roleFinal = user.tipoUsuario === 'gym' ? 'GYM_MANAGER' : user.tipoUsuario
-        
-        // Guardar sesión
-        const sessionData = {
-          email: user.email,
-          nombre: user.nombre,
-          role: roleFinal, // Usamos GYM_MANAGER si es gym
+      // Guardar sesión
+      localStorage.setItem(
+        'athletixy_session',
+        JSON.stringify({
+          email: data.user.email,
+          nombre: data.user.nombre,
+          role: data.user.role,
           loggedIn: true,
-          isAdmin: user.isAdmin || false
-        }
-        localStorage.setItem('athletixy_session', JSON.stringify(sessionData))
-        setSuccess('Iniciando sesión...')
+          isAdmin: data.user.isAdmin || false
+        })
+      )
 
-        // Redirigir según rol
-        setTimeout(() => {
-          if (roleFinal === 'GYM_MANAGER') {
-            window.location.href = '/gym/dashboard'
-          } else if (roleFinal === 'nutriologo') {
-            window.location.href = '/dashboard/nutriologo'
-          } else if (roleFinal === 'coach') {
-            window.location.href = '/dashboard/coach'
-          } else if (roleFinal === 'vendedor') {
-            window.location.href = '/dashboard/marketplace'
-          } else {
-            window.location.href = '/dashboard'
-          }
-        }, 100)
-      } else {
-        setError('Credenciales inválidas. Por favor verifica tu email y contraseña.')
-      }
+      setSuccess('Iniciando sesión...')
+
+      setTimeout(() => {
+        const role = data.user.role
+        window.location.href =
+          role === 'GYM_MANAGER'
+            ? '/gym/dashboard'
+            : role === 'nutriologo'
+            ? '/dashboard/nutriologo'
+            : role === 'coach'
+            ? '/dashboard/coach'
+            : role === 'vendedor'
+            ? '/dashboard/marketplace'
+            : '/dashboard'
+      }, 500)
     } catch (error) {
-      console.error('Error en login:', error)
-      setError('Ocurrió un error al iniciar sesión. Por favor intenta de nuevo.')
+      console.error('Login error:', error)
+      setError('Ocurrió un error al iniciar sesión.')
     }
   }
 
-  // No renderizar nada mientras se verifica la sesión
+  // Pantalla de carga mientras revisa sesión
   if (checkingSession) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white" style={{ minHeight: '100vh' }}>
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="bg-black p-4 rounded-2xl shadow-2xl inline-block mb-4">
             <Dumbbell className="w-12 h-12 text-white animate-pulse" />
@@ -326,10 +187,12 @@ export default function LoginPage() {
     )
   }
 
+  // UI PRINCIPAL
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8" style={{ minHeight: '100vh' }}>
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Logo y título */}
+
+        {/* LOGO */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="bg-black p-4 rounded-2xl shadow-2xl">
@@ -340,238 +203,139 @@ export default function LoginPage() {
           <p className="text-gray-600">Gestión profesional de atletas</p>
         </div>
 
-        {/* Toggle Login/Register */}
+        {/* LOGIN / REGISTER TABS */}
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
           <button
-            onClick={() => {
-              setIsLogin(true)
-              setError('')
-              setSuccess('')
-            }}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-              isLogin
-                ? 'bg-black text-white'
-                : 'text-gray-600 hover:text-black'
+            onClick={() => { setIsLogin(true); setError(''); setSuccess(''); }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium ${
+              isLogin ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
             }`}
           >
             Iniciar Sesión
           </button>
+
           <button
-            onClick={() => {
-              setIsLogin(false)
-              setError('')
-              setSuccess('')
-            }}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-              !isLogin
-                ? 'bg-black text-white'
-                : 'text-gray-600 hover:text-black'
+            onClick={() => { setIsLogin(false); setError(''); setSuccess(''); }}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium ${
+              !isLogin ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
             }`}
           >
             Registrarse
           </button>
         </div>
 
-        {/* Formulario */}
+        {/* FORMULARIO */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-200">
           <h2 className="text-xl font-semibold mb-6 text-black">
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
 
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            if (isLogin) {
-              handleLogin(e)
-            } else {
-              handleRegister(e)
-            }
-          }} className="space-y-6">
+          <form
+            onSubmit={isLogin ? handleLogin : handleRegister}
+            className="space-y-6"
+          >
+            {/* Nombre */}
             {!isLogin && (
               <div>
-                <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nombre Completo
                 </label>
                 <input
-                  id="nombre"
                   type="text"
                   value={credentials.nombre}
-                  onChange={(e) => setCredentials({...credentials, nombre: e.target.value})}
-                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+                  onChange={(e) => setCredentials({ ...credentials, nombre: e.target.value })}
+                  className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
                   placeholder="Tu nombre completo"
                 />
               </div>
             )}
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
-                id="email"
                 type="email"
                 value={credentials.email}
-                onChange={(e) => setCredentials({...credentials, email: e.target.value})}
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+                onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
                 placeholder="tu@email.com"
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
               <input
-                id="password"
                 type="password"
                 value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
-                placeholder={isLogin ? "••••••••" : "Mínimo 6 caracteres"}
+                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg"
+                placeholder="••••••••"
               />
             </div>
 
+            {/* Tipo de Usuario */}
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Tipo de Usuario
                 </label>
+
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'atleta'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'atleta'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <User className={`w-6 h-6 ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'atleta' ? 'text-black' : 'text-gray-600'}`}>
-                      Atleta
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'nutriologo'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'nutriologo'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Apple className={`w-6 h-6 ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'nutriologo' ? 'text-black' : 'text-gray-600'}`}>
-                      Nutriólogo
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'coach'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'coach'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Users className={`w-6 h-6 ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'coach' ? 'text-black' : 'text-gray-600'}`}>
-                      Coach
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'gym'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'gym'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Building2 className={`w-6 h-6 ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'gym' ? 'text-black' : 'text-gray-600'}`}>
-                      Gym
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'vendedor'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'vendedor'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <ShoppingBag className={`w-6 h-6 ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'vendedor' ? 'text-black' : 'text-gray-600'}`}>
-                      Vendedor
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCredentials({...credentials, tipoUsuario: 'GYM_MANAGER'})}
-                    className={`p-4 rounded-lg border-2 transition flex flex-col items-center gap-2 ${
-                      credentials.tipoUsuario === 'GYM_MANAGER'
-                        ? 'border-black bg-gray-100'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Building2 className={`w-6 h-6 ${credentials.tipoUsuario === 'GYM_MANAGER' ? 'text-black' : 'text-gray-400'}`} />
-                    <span className={`font-medium text-sm ${credentials.tipoUsuario === 'GYM_MANAGER' ? 'text-black' : 'text-gray-600'}`}>
-                      Gestor Gym
-                    </span>
-                  </button>
-                </div>
-                <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-xs text-gray-600">
-                    {credentials.tipoUsuario === 'GYM_MANAGER' && 'Como gestor del gimnasio tendrás acceso completo a finanzas, suscripciones, atletas, ventas, reportes y configuración del gimnasio.'}
-                    {credentials.tipoUsuario === 'nutriologo' && 'Como nutriólogo tendrás acceso completo a tu panel de gestión de pacientes y planes nutricionales.'}
-                    {credentials.tipoUsuario === 'coach' && 'Como coach podrás gestionar rutinas, entrenamientos y seguimiento de tus atletas.'}
-                    {credentials.tipoUsuario === 'gym' && 'Como gimnasio podrás administrar membresías, instalaciones y servicios para tus miembros.'}
-                    {credentials.tipoUsuario === 'vendedor' && 'Como vendedor podrás gestionar tu tienda en el marketplace, productos y ventas.'}
-                    {credentials.tipoUsuario === 'atleta' && 'Como atleta tendrás acceso a dietas, rutinas, progreso y todos los servicios de Athletixy.'}
-                  </p>
+                  {[
+                    { key: 'atleta', label: 'Atleta', icon: User },
+                    { key: 'nutriologo', label: 'Nutriólogo', icon: Apple },
+                    { key: 'coach', label: 'Coach', icon: Users },
+                    { key: 'gym', label: 'Gym', icon: Building2 },
+                    { key: 'vendedor', label: 'Vendedor', icon: ShoppingBag },
+                    { key: 'GYM_MANAGER', label: 'Gestor Gym', icon: Building2 },
+                  ].map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <button
+                        type="button"
+                        key={item.key}
+                        onClick={() =>
+                          setCredentials({ ...credentials, tipoUsuario: item.key as UserType })
+                        }
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 ${
+                          credentials.tipoUsuario === item.key
+                            ? 'border-black bg-gray-100'
+                            : 'border-gray-200'
+                        }`}
+                      >
+                        <Icon className="w-6 h-6" />
+                        <span className="font-medium text-sm">{item.label}</span>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
 
+            {/* ERROR */}
             {error && (
-              <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
+            {/* SUCCESS */}
             {success && (
               <div className="bg-green-500/10 border border-green-500 text-green-600 px-4 py-3 rounded-lg text-sm">
                 {success}
               </div>
             )}
 
+            {/* BOTÓN */}
             <button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2"
             >
-              {isLogin ? (
-                <>
-                  <LogIn className="w-5 h-5" />
-                  Ingresar
-                </>
-              ) : (
-                <>
-                  <UserPlus className="w-5 h-5" />
-                  Registrarse
-                </>
-              )}
+              {isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+              {isLogin ? 'Ingresar' : 'Registrarse'}
             </button>
           </form>
-
-          {isLogin && (
-            <div className="mt-6 text-center">
-              <a href="#" className="text-sm text-gray-600 hover:text-black transition">
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
-          )}
         </div>
 
         <p className="text-center mt-6 text-gray-500 text-sm">
