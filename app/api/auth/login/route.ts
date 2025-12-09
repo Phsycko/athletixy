@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-async function getPrisma() {
-  const { prisma } = await import("@/lib/prisma");
-  return prisma;
-}
-
-export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    const prisma = await getPrisma();
+    const { prisma } = await import("@/lib/prisma");
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -44,31 +40,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔥 NORMALIZACIÓN REAL DEL ROL
-    let roleFinal = user.tipoUsuario; // valor exacto de BD
-
-    if (roleFinal === "GYM_MANAGER") {
-      roleFinal = "gym"; // tu frontend espera "gym"
+    let role = user.tipoUsuario;
+    if (user.tipoUsuario === "gym") {
+      role = "GYM_MANAGER";
     }
 
     return NextResponse.json(
       {
-        message: "Login exitoso",
         user: {
           id: user.id,
           email: user.email,
           nombre: user.nombre,
-          role: roleFinal, // 🔥 corregido
+          role: role,
           isAdmin: user.isAdmin,
         },
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error en login:", error);
     return NextResponse.json(
-      { error: "Error al iniciar sesión. Por favor intenta nuevamente." },
+      { error: "Error al iniciar sesión" },
       { status: 500 }
     );
   }
 }
+
