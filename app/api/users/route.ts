@@ -19,8 +19,6 @@ async function getPrisma() {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("🔍 DATABASE_URL detectada:", process.env.DATABASE_URL?.slice(0, 20));
-
     const prisma = await getPrisma();
     const body = await request.json();
     const { email, password, nombre, tipoUsuario } = body;
