@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-// Importar Prisma solo cuando se necesite
+// Forzar ejecución en Node → NECESARIO PARA BCRYPT Y PRISMA EN VERCEL
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// Import dinámico de Prisma → evita errores en serverless
 async function getPrisma() {
   const { prisma } = await import("@/lib/prisma");
   return prisma;
 }
-
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,43 +17,56 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = body;
 
-    // Validaciones
+    // ---------------------------
+    // VALIDACIONES
+    // ---------------------------
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Email y contraseña son requeridos" },
+        { error: "Email y contraseña son requeridos." },
         { status: 400 }
       );
     }
 
-    // Normalizar email
     const emailNormalized = email.trim().toLowerCase();
 
-    // Buscar usuario en la base de datos
+    // ---------------------------
+    // BUSCAR USUARIO
+    // ---------------------------
     const user = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
 
     if (!user) {
       return NextResponse.json(
-        { error: "Credenciales inválidas" },
+        { error: "Credenciales inválidas." },
         { status: 401 }
       );
     }
 
-    // Verificar contraseña
+    // ---------------------------
+    // VALIDAR CONTRASEÑA
+    // ---------------------------
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       return NextResponse.json(
-        { error: "Credenciales inválidas" },
+        { error: "Credenciales inválidas." },
         { status: 401 }
       );
     }
 
-    // Si el tipo es 'gym', convertirlo a 'GYM_MANAGER' para el sistema
-    const roleFinal = user.tipoUsuario === "gym" ? "GYM_MANAGER" : user.tipoUsuario;
+    // ---------------------------
+    // NORMALIZAR ROLES DEL SISTEMA
+    // ---------------------------
+    let roleFinal = user.tipoUsuario;
 
-    // Retornar datos del usuario (sin contraseña)
+    if (user.tipoUsuario === "gym") {
+      roleFinal = "GYM_MANAGER"; // tu sistema lo usa internamente así
+    }
+
+    // ---------------------------
+    // RESPUESTA FINAL
+    // ---------------------------
     return NextResponse.json(
       {
         message: "Login exitoso",
@@ -67,10 +81,16 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Error en login:", error);
+  } catch (error: any) {
+    console.error("🔥 Error en login:", {
+      message: error.message,
+      code: error.code,
+    });
+
     return NextResponse.json(
-      { error: "Error al iniciar sesión. Por favor intenta nuevamente." },
+      {
+        error: "Error al iniciar sesión. Intenta nuevamente.",
+      },
       { status: 500 }
     );
   }
