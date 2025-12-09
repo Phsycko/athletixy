@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-export const runtime = "nodejs";
+async function getPrisma() {
+  const { prisma } = await import("@/lib/prisma");
+  return prisma;
+}
+
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const { prisma } = await import("@/lib/prisma");
-
+    const prisma = await getPrisma();
     const body = await request.json();
     const { email, password } = body;
 
@@ -22,6 +26,15 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: emailNormalized },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        nombre: true,
+        tipoUsuario: true,
+        gymManagerId: true,
+        isAdmin: true,
+      },
     });
 
     if (!user) {
@@ -40,29 +53,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let role = user.tipoUsuario;
-    if (user.tipoUsuario === "gym") {
-      role = "GYM_MANAGER";
+    // 🔥 NORMALIZACIÓN REAL DEL ROL
+    let roleFinal = user.tipoUsuario; // valor exacto de BD
+
+    // Si es coach y tiene gymManagerId, es un coach interno
+    if (roleFinal === "coach" && user.gymManagerId) {
+      roleFinal = "COACH_INTERNO";
+    } else if (roleFinal === "gym") {
+      roleFinal = "GYM_MANAGER";
     }
 
     return NextResponse.json(
       {
+        message: "Login exitoso",
         user: {
           id: user.id,
           email: user.email,
           nombre: user.nombre,
-          role: role,
+          role: roleFinal,
           isAdmin: user.isAdmin,
         },
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error en login:", error);
     return NextResponse.json(
-      { error: "Error al iniciar sesión" },
+      { error: "Error al iniciar sesión. Por favor intenta nuevamente." },
       { status: 500 }
     );
   }
 }
-

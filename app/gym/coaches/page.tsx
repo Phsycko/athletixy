@@ -1,12 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { UserCog, Users, Plus, Search, UserPlus, X, User, Check } from 'lucide-react'
 
 export default function CoachesPage() {
+  const router = useRouter()
   const [busqueda, setBusqueda] = useState('')
   const [mostrarModalAsignar, setMostrarModalAsignar] = useState(false)
   const [mostrarModalCrear, setMostrarModalCrear] = useState(false)
+  const [mostrarModalCrearAPI, setMostrarModalCrearAPI] = useState(false)
   const [mostrarCredenciales, setMostrarCredenciales] = useState(false)
   const [credencialesCreadas, setCredencialesCreadas] = useState<any>(null)
   const [coachSeleccionado, setCoachSeleccionado] = useState<any>(null)
@@ -16,6 +19,13 @@ export default function CoachesPage() {
     password: '',
     especialidad: ''
   })
+  const [nuevoCoachAPI, setNuevoCoachAPI] = useState({
+    nombre: '',
+    email: '',
+    password: ''
+  })
+  const [errorAPI, setErrorAPI] = useState('')
+  const [loadingAPI, setLoadingAPI] = useState(false)
 
   // Cargar coaches desde localStorage
   const [coaches, setCoaches] = useState<any[]>(() => {
@@ -177,13 +187,26 @@ export default function CoachesPage() {
           <h1 className="text-2xl font-bold text-black dark:text-zinc-100 mb-1">Gestión de Coaches</h1>
           <p className="text-gray-500 dark:text-zinc-500">Administra coaches y asigna atletas</p>
         </div>
-        <button 
-          onClick={() => setMostrarModalCrear(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
-        >
-          <Plus className="w-5 h-5" />
-          Agregar Coach
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => {
+              setMostrarModalCrearAPI(true)
+              setErrorAPI('')
+              setNuevoCoachAPI({ nombre: '', email: '', password: '' })
+            }}
+            className="flex items-center gap-2 px-6 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
+          >
+            <Plus className="w-5 h-5" />
+            Registrar Coach Interno
+          </button>
+          <button 
+            onClick={() => setMostrarModalCrear(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium"
+          >
+            <Plus className="w-5 h-5" />
+            Agregar Coach
+          </button>
+        </div>
       </div>
 
       {/* Estadísticas */}
@@ -540,6 +563,150 @@ export default function CoachesPage() {
               >
                 Entendido
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Crear Coach Interno (API) */}
+      {mostrarModalCrearAPI && (
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 max-w-md w-full border-2 border-gray-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-black dark:text-zinc-100">Registrar Coach Interno</h2>
+              <button
+                onClick={() => {
+                  setMostrarModalCrearAPI(false)
+                  setNuevoCoachAPI({ nombre: '', email: '', password: '' })
+                  setErrorAPI('')
+                }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
+              >
+                <X className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
+              </button>
+            </div>
+
+            {errorAPI && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{errorAPI}</p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Nombre Completo</label>
+                <input
+                  type="text"
+                  value={nuevoCoachAPI.nombre}
+                  onChange={(e) => setNuevoCoachAPI({...nuevoCoachAPI, nombre: e.target.value})}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
+                  placeholder="Nombre del coach"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={nuevoCoachAPI.email}
+                  onChange={(e) => setNuevoCoachAPI({...nuevoCoachAPI, email: e.target.value})}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
+                  placeholder="email@ejemplo.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Contraseña</label>
+                <input
+                  type="password"
+                  value={nuevoCoachAPI.password}
+                  onChange={(e) => setNuevoCoachAPI({...nuevoCoachAPI, password: e.target.value})}
+                  className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => {
+                    setMostrarModalCrearAPI(false)
+                    setNuevoCoachAPI({ nombre: '', email: '', password: '' })
+                    setErrorAPI('')
+                  }}
+                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium"
+                  disabled={loadingAPI}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!nuevoCoachAPI.nombre || !nuevoCoachAPI.email || !nuevoCoachAPI.password) {
+                      setErrorAPI('Por favor completa todos los campos')
+                      return
+                    }
+
+                    if (nuevoCoachAPI.password.length < 6) {
+                      setErrorAPI('La contraseña debe tener al menos 6 caracteres')
+                      return
+                    }
+
+                    try {
+                      setLoadingAPI(true)
+                      setErrorAPI('')
+
+                      // Obtener gymManagerId desde localStorage
+                      const session = localStorage.getItem('athletixy_session')
+                      if (!session) {
+                        setErrorAPI('No se encontró la sesión. Por favor inicia sesión nuevamente.')
+                        setLoadingAPI(false)
+                        return
+                      }
+
+                      const sessionData = JSON.parse(session)
+                      const gymManagerId = sessionData.user?.id || sessionData.id
+
+                      if (!gymManagerId) {
+                        setErrorAPI('No se pudo obtener el ID del gimnasio. Por favor inicia sesión nuevamente.')
+                        setLoadingAPI(false)
+                        return
+                      }
+
+                      const response = await fetch('/api/gym/coaches', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          nombre: nuevoCoachAPI.nombre,
+                          email: nuevoCoachAPI.email,
+                          password: nuevoCoachAPI.password,
+                          gymManagerId: gymManagerId,
+                        }),
+                      })
+
+                      const data = await response.json()
+
+                      if (!response.ok) {
+                        setErrorAPI(data.error || 'Error al crear el coach interno')
+                        setLoadingAPI(false)
+                        return
+                      }
+
+                      // Éxito
+                      setMostrarModalCrearAPI(false)
+                      setNuevoCoachAPI({ nombre: '', email: '', password: '' })
+                      setErrorAPI('')
+                      router.refresh()
+                    } catch (error: any) {
+                      console.error('Error creando coach interno:', error)
+                      setErrorAPI('Error al crear el coach interno. Por favor intenta nuevamente.')
+                    } finally {
+                      setLoadingAPI(false)
+                    }
+                  }}
+                  className="flex-1 px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loadingAPI}
+                >
+                  {loadingAPI ? 'Creando...' : 'Crear Coach'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

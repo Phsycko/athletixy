@@ -40,7 +40,9 @@ export default function LoginPage() {
   // 👇 FUNCIÓN REUTILIZABLE DE REDIRECCIÓN
   const redirigirPorRol = (role: string) => {
     window.location.href =
-      role === 'GYM_MANAGER'
+      role === 'COACH_INTERNO'
+        ? '/gym/coach-interno'
+        : role === 'GYM_MANAGER'
         ? '/gym/dashboard'
         : role === 'nutriologo'
         ? '/dashboard/nutriologo'
