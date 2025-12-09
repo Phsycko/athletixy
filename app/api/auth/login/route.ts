@@ -15,6 +15,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = body;
 
+    // 🔍 DEBUG — mira lo que llega desde el frontend
+    console.log("📩 Email recibido:", email);
+    console.log("🔑 Password recibido:", password);
+
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email y contraseña son requeridos" },
@@ -24,9 +28,15 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
+    // 🔍 DEBUG
+    console.log("📩 Email normalizado:", emailNormalized);
+
     const user = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
+
+    // 🔍 DEBUG
+    console.log("👤 Usuario encontrado en BD:", user);
 
     if (!user) {
       return NextResponse.json(
@@ -35,7 +45,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verificar contraseña
     const passwordMatch = await bcrypt.compare(password, user.password);
+
+    // 🔍 DEBUG
+    console.log("🔐 Password coincide?:", passwordMatch);
+
     if (!passwordMatch) {
       return NextResponse.json(
         { error: "Credenciales inválidas" },
@@ -43,13 +58,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔥 ARREGLA EL PROBLEMA:
-    // Convertimos el tipoUsuario real de BD a un rol válido en frontend
+    // 🔥 ARREGLO DE ROLES
+    // Normalizamos el tipoUsuario para que tu frontend no falle
     let roleFinal = user.tipoUsuario.toLowerCase();
 
     if (roleFinal === "gym_manager") {
       roleFinal = "gym";
     }
+
+    console.log("🏷️ Role final enviado al frontend:", roleFinal);
 
     return NextResponse.json(
       {
@@ -58,14 +75,14 @@ export async function POST(request: NextRequest) {
           id: user.id,
           email: user.email,
           nombre: user.nombre,
-          tipoUsuario: roleFinal, // 🔥 YA VIENE NORMALIZADO
+          tipoUsuario: roleFinal,
           isAdmin: user.isAdmin,
         },
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error en login:", error);
+    console.error("❌ Error en login:", error);
     return NextResponse.json(
       { error: "Error al iniciar sesión. Por favor intenta nuevamente." },
       { status: 500 }
