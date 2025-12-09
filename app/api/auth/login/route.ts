@@ -48,17 +48,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // No transformamos el tipoUsuario, lo mandamos tal cual:
-    // atleta | coach | nutriologo | vendedor | GYM_MANAGER | COACH_INTERNO
+    // 🚀 Aquí enviamos toda la información CORRECTA
     return NextResponse.json(
       {
         message: "Login exitoso",
         user: {
-          id: user.id,
+          id: user.id,                     // 🔥 NECESARIO PARA GYM_MANAGER Y CREAR COACHES
           email: user.email,
           nombre: user.nombre,
-          role: user.tipoUsuario,
+          role: user.tipoUsuario,          // 🔥 YA DEVUELVE COACH_INTERNO, GYM_MANAGER TAL CUAL
           isAdmin: user.isAdmin,
+          gymManagerId: user.gymManagerId, // 🔥 SI ES COACH_INTERNO, ESTO INDICA SU PADRE
         },
       },
       { status: 200 }
