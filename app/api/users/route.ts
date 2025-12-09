@@ -1,17 +1,20 @@
-export const runtime = "nodejs"; 
-export const preferredRegion = "iad1"; 
+export const runtime = "nodejs";
+export const preferredRegion = "iad1";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 /**
- * Cargar Prisma correctamente SOLO si DATABASE_URL existe.
+ * Obtiene Prisma asegurando que DATABASE_URL exista
  */
 async function getPrisma() {
   if (!process.env.DATABASE_URL) {
+    console.error("❌ DATABASE_URL NO DETECTADA");
     throw new Error("DATABASE_URL no está definida en el entorno de ejecución.");
   }
+
+  console.log("🔍 DATABASE_URL detectada:", process.env.DATABASE_URL.slice(0, 30));
 
   const { prisma } = await import("@/lib/prisma");
   return prisma;
@@ -23,6 +26,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password, nombre, tipoUsuario } = body;
 
+    // Validaciones
     if (!email || !password || !nombre || !tipoUsuario) {
       return NextResponse.json(
         { error: "Todos los campos son requeridos" },
@@ -39,13 +43,14 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
+    // Verificar si ya existe
     const existingUser = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Este email ya está registrado" },
+        { error: "Este email ya está registrado." },
         { status: 409 }
       );
     }
@@ -93,17 +98,11 @@ export async function POST(request: NextRequest) {
         "Error de conexión con la base de datos. Verifica la configuración.";
     } else if (error.message?.includes("DATABASE_URL")) {
       errorMessage =
-        "No se detectó DATABASE_URL en producción. Verifica las variables en Vercel.";
+        "DATABASE_URL no está configurada correctamente en Vercel.";
     }
 
     return NextResponse.json(
-      {
-        error: errorMessage,
-        details:
-          process.env.NODE_ENV === "development"
-            ? error.message
-            : undefined,
-      },
+      { error: errorMessage },
       { status: 500 }
     );
   }
