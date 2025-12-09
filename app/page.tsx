@@ -37,21 +37,23 @@ export default function LoginPage() {
     }
   }, [])
 
-  // 🔁 Función de redirección centralizada
-  const redirigirPorRol = (role: string) => {
-    window.location.href =
-      role === 'COACH_INTERNO'
-        ? '/gym/coach-interno'
-        : role === 'GYM_MANAGER'
-        ? '/gym/dashboard'
-        : role === 'nutriologo'
-        ? '/dashboard/nutriologo'
-        : role === 'coach'
-        ? '/dashboard/coach'
-        : role === 'vendedor'
-        ? '/dashboard/marketplace'
-        : '/dashboard'
-  }
+// 🔁 Función de redirección centralizada
+const redirigirPorRol = (role: string) => {
+  role = role.toUpperCase(); // Normalizar por seguridad
+
+  window.location.href =
+    role === 'COACH_INTERNO'
+      ? '/gym/coach-interno'
+      : role === 'GYM_MANAGER'
+      ? '/gym/dashboard'
+      : role === 'NUTRIOLOGO'
+      ? '/dashboard/nutriologo'
+      : role === 'COACH'
+      ? '/dashboard/coach'
+      : role === 'VENDEDOR'
+      ? '/dashboard/marketplace'
+      : '/dashboard'; // atleta u otros
+};
 
   // 🔥 Registrar usuario desde el login
   const handleRegister = async (e: React.FormEvent) => {
