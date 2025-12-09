@@ -75,8 +75,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // 🔥 IMPORTANTE:
+    // El frontend usa "role" para redirigir correctamente.
+    const roleFinal = newUser.tipoUsuario === "gym" ? "GYM_MANAGER" : newUser.tipoUsuario;
+
     return NextResponse.json(
-      { message: "Usuario creado exitosamente", user: newUser },
+      {
+        message: "Usuario creado exitosamente",
+        user: {
+          ...newUser,
+          role: roleFinal, // 👈 Clave para que el login no falle
+        },
+      },
       { status: 201 }
     );
   } catch (error: any) {

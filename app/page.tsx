@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState('')
   const [checkingSession, setCheckingSession] = useState(true)
 
-  // 🔍 Revisar sesión antes de mostrar formulario
+  // 🔍 Revisar sesión activa
   useEffect(() => {
     const session = localStorage.getItem('athletixy_session')
     if (!session) {
@@ -28,16 +28,7 @@ export default function LoginPage() {
     try {
       const data = JSON.parse(session)
       if (data.loggedIn) {
-        window.location.href =
-          data.role === 'GYM_MANAGER'
-            ? '/gym/dashboard'
-            : data.role === 'nutriologo'
-            ? '/dashboard/nutriologo'
-            : data.role === 'coach'
-            ? '/dashboard/coach'
-            : data.role === 'vendedor'
-            ? '/dashboard/marketplace'
-            : '/dashboard'
+        redirigirPorRol(data.role)
       } else {
         setCheckingSession(false)
       }
@@ -45,6 +36,20 @@ export default function LoginPage() {
       setCheckingSession(false)
     }
   }, [])
+
+  // 👇 FUNCIÓN REUTILIZABLE DE REDIRECCIÓN
+  const redirigirPorRol = (role: string) => {
+    window.location.href =
+      role === 'GYM_MANAGER'
+        ? '/gym/dashboard'
+        : role === 'nutriologo'
+        ? '/dashboard/nutriologo'
+        : role === 'coach'
+        ? '/dashboard/coach'
+        : role === 'vendedor'
+        ? '/dashboard/marketplace'
+        : '/dashboard'
+  }
 
   // 🔥 REGISTRO
   const handleRegister = async (e: React.FormEvent) => {
@@ -94,25 +99,14 @@ export default function LoginPage() {
       )
 
       setSuccess('¡Registro exitoso! Redirigiendo...')
-
-      setTimeout(() => {
-        window.location.href =
-          tipoFinal === 'GYM_MANAGER'
-            ? '/gym/dashboard'
-            : tipoFinal === 'nutriologo'
-            ? '/dashboard/nutriologo'
-            : tipoFinal === 'coach'
-            ? '/dashboard/coach'
-            : tipoFinal === 'vendedor'
-            ? '/dashboard/marketplace'
-            : '/dashboard'
-      }, 800)
+      setTimeout(() => redirigirPorRol(tipoFinal), 800)
     } catch (error: any) {
+      console.error(error)
       setError('Error inesperado al registrar usuario.')
     }
   }
 
-  // 🔥 LOGIN REAL (SE CONECTA A TU API /api/login)
+  // 🔥 **LOGIN REAL CON BACKEND**
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -124,7 +118,9 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('/api/login', {
+      console.log("🔐 Enviando login a /api/auth/login...")
+
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -134,6 +130,8 @@ export default function LoginPage() {
       })
 
       const data = await response.json()
+
+      console.log("📥 Respuesta backend:", data)
 
       if (!response.ok) {
         setError(data.error || 'Credenciales inválidas.')
@@ -153,20 +151,7 @@ export default function LoginPage() {
       )
 
       setSuccess('Iniciando sesión...')
-
-      setTimeout(() => {
-        const role = data.user.role
-        window.location.href =
-          role === 'GYM_MANAGER'
-            ? '/gym/dashboard'
-            : role === 'nutriologo'
-            ? '/dashboard/nutriologo'
-            : role === 'coach'
-            ? '/dashboard/coach'
-            : role === 'vendedor'
-            ? '/dashboard/marketplace'
-            : '/dashboard'
-      }, 500)
+      setTimeout(() => redirigirPorRol(data.user.role), 500)
     } catch (error) {
       console.error('Login error:', error)
       setError('Ocurrió un error al iniciar sesión.')
@@ -230,16 +215,11 @@ export default function LoginPage() {
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
           </h2>
 
-          <form
-            onSubmit={isLogin ? handleLogin : handleRegister}
-            className="space-y-6"
-          >
+          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
             {/* Nombre */}
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre Completo
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
                 <input
                   type="text"
                   value={credentials.nombre}
@@ -276,11 +256,8 @@ export default function LoginPage() {
 
             {/* Tipo de Usuario */}
             {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Tipo de Usuario
-                </label>
-
+              <>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Tipo de Usuario</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
                     { key: 'atleta', label: 'Atleta', icon: User },
@@ -289,19 +266,15 @@ export default function LoginPage() {
                     { key: 'gym', label: 'Gym', icon: Building2 },
                     { key: 'vendedor', label: 'Vendedor', icon: ShoppingBag },
                     { key: 'GYM_MANAGER', label: 'Gestor Gym', icon: Building2 },
-                  ].map((item) => {
+                  ].map(item => {
                     const Icon = item.icon
                     return (
                       <button
-                        type="button"
                         key={item.key}
-                        onClick={() =>
-                          setCredentials({ ...credentials, tipoUsuario: item.key as UserType })
-                        }
+                        type="button"
+                        onClick={() => setCredentials({ ...credentials, tipoUsuario: item.key as UserType })}
                         className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 ${
-                          credentials.tipoUsuario === item.key
-                            ? 'border-black bg-gray-100'
-                            : 'border-gray-200'
+                          credentials.tipoUsuario === item.key ? 'border-black bg-gray-100' : 'border-gray-200'
                         }`}
                       >
                         <Icon className="w-6 h-6" />
@@ -310,7 +283,7 @@ export default function LoginPage() {
                     )
                   })}
                 </div>
-              </div>
+              </>
             )}
 
             {/* ERROR */}
