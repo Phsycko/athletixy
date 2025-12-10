@@ -44,6 +44,8 @@ const redirigirPorRol = (role: string) => {
   window.location.href =
     role === 'COACH_INTERNO'
       ? '/gym/coach-interno'
+      : role === 'ATHLETE_INTERNO'
+      ? '/athlete/dashboard'
       : role === 'GYM_MANAGER'
       ? '/gym/dashboard'
       : role === 'NUTRIOLOGO'
@@ -146,6 +148,8 @@ const redirigirPorRol = (role: string) => {
         roleFinal = "COACH_INTERNO"
       } else if (roleFinal === "gym") {
         roleFinal = "GYM_MANAGER"
+      } else if (roleFinal === "ATHLETE_INTERNO") {
+        roleFinal = "ATHLETE_INTERNO"
       }
 
       localStorage.setItem(

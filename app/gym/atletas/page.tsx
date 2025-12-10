@@ -1,74 +1,148 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Users, Search, Filter, User, Calendar, Activity, TrendingUp, CreditCard, Plus, X } from 'lucide-react'
 
 export default function AtletasPage() {
+  const router = useRouter()
   const [busqueda, setBusqueda] = useState('')
   const [filtroActividad, setFiltroActividad] = useState<'todos' | 'activos' | 'inactivos'>('todos')
   const [mostrarModalCrear, setMostrarModalCrear] = useState(false)
   const [nuevoAtleta, setNuevoAtleta] = useState({
     nombre: '',
     email: '',
-    telefono: '',
-    fechaNacimiento: '',
-    genero: '',
-    suscripcion: ''
+    password: ''
   })
+  const [errorAPI, setErrorAPI] = useState('')
+  const [loadingAPI, setLoadingAPI] = useState(false)
 
-  // Cargar atletas desde localStorage
-  const [atletas, setAtletas] = useState<any[]>(() => {
-    if (typeof window === 'undefined') return []
+  // Estado de atletas
+  const [atletas, setAtletas] = useState<any[]>([])
+
+  // Función para recargar atletas desde la API
+  const recargarAtletas = async () => {
+    if (typeof window === 'undefined') return
     try {
-      const stored = localStorage.getItem('gym_atletas')
-      return stored ? JSON.parse(stored) : []
-    } catch {
-      return []
-    }
-  })
+      const session = JSON.parse(localStorage.getItem("athletixy_session") || '{}')
+      const gymManagerId = session?.id || session?.userId
+      
+      if (!gymManagerId) return
 
-  const handleCrearAtleta = () => {
-    if (!nuevoAtleta.nombre || !nuevoAtleta.email) {
-      alert('Por favor completa al menos el nombre y email')
+      const res = await fetch(`/api/gym/athletes?gymManagerId=${gymManagerId}`)
+      const data = await res.json()
+
+      if (res.ok) {
+        setAtletas(data.athletes || [])
+      }
+    } catch (error) {
+      console.error("Error recargando atletas:", error)
+    }
+  }
+
+  // Cargar atletas desde Supabase al montar el componente
+  useEffect(() => {
+    async function loadAthletes() {
+      try {
+        const session = JSON.parse(localStorage.getItem("athletixy_session") || '{}')
+        const gymManagerId = session?.id || session?.userId
+
+        if (!gymManagerId) return
+
+        const res = await fetch(`/api/gym/athletes?gymManagerId=${gymManagerId}`)
+        const data = await res.json()
+
+        setAtletas(data.athletes || [])
+      } catch (error) {
+        console.error("Error loading athletes:", error)
+      }
+    }
+
+    loadAthletes()
+  }, [])
+
+  const handleCrearAtleta = async () => {
+    if (!nuevoAtleta.nombre || !nuevoAtleta.email || !nuevoAtleta.password) {
+      setErrorAPI('Por favor completa todos los campos')
       return
     }
 
-    const atletaId = `atleta_${Date.now()}`
-    const nuevoAtletaCompleto = {
-      id: atletaId,
-      nombre: nuevoAtleta.nombre,
-      email: nuevoAtleta.email.toLowerCase().trim(),
-      telefono: nuevoAtleta.telefono || '',
-      fechaNacimiento: nuevoAtleta.fechaNacimiento || '',
-      genero: nuevoAtleta.genero || '',
-      suscripcion: nuevoAtleta.suscripcion || 'sin-suscripcion',
-      fechaRegistro: new Date().toISOString(),
-      ultimaActividad: new Date().toISOString().split('T')[0],
-      diasInactivos: 0,
-      estadoSuscripcion: nuevoAtleta.suscripcion || 'sin-suscripcion',
-      rutinasCompletadas: 0,
-      progreso: 0,
-      activo: true
+    if (nuevoAtleta.password.length < 6) {
+      setErrorAPI('La contraseña debe tener al menos 6 caracteres')
+      return
     }
 
-    const atletasActualizados = [...atletas, nuevoAtletaCompleto]
-    setAtletas(atletasActualizados)
-    localStorage.setItem('gym_atletas', JSON.stringify(atletasActualizados))
+    try {
+      setLoadingAPI(true)
+      setErrorAPI('')
 
-    // Limpiar formulario
-    setNuevoAtleta({ nombre: '', email: '', telefono: '', fechaNacimiento: '', genero: '', suscripcion: '' })
-    setMostrarModalCrear(false)
+      // Obtener gymManagerId desde localStorage
+      const session = localStorage.getItem('athletixy_session')
+      if (!session) {
+        setErrorAPI('No se encontró la sesión. Por favor inicia sesión nuevamente.')
+        setLoadingAPI(false)
+        return
+      }
+
+      const sessionData = JSON.parse(session)
+      const gymManagerId = sessionData.id || sessionData.userId
+
+      if (!gymManagerId) {
+        setErrorAPI('No se pudo obtener el ID del gimnasio. Por favor inicia sesión nuevamente.')
+        setLoadingAPI(false)
+        return
+      }
+
+      const response = await fetch('/api/gym/athletes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: nuevoAtleta.nombre,
+          email: nuevoAtleta.email,
+          password: nuevoAtleta.password,
+          gymManagerId: gymManagerId,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setErrorAPI(data.error || 'Error al crear el atleta interno')
+        setLoadingAPI(false)
+        return
+      }
+
+      // Éxito
+      setMostrarModalCrear(false)
+      setNuevoAtleta({ nombre: '', email: '', password: '' })
+      setErrorAPI('')
+      // Recargar la lista de atletas
+      recargarAtletas()
+      router.refresh()
+    } catch (error: any) {
+      console.error('Error creando atleta interno:', error)
+      setErrorAPI('Error al crear el atleta interno. Por favor intenta nuevamente.')
+    } finally {
+      setLoadingAPI(false)
+    }
   }
 
   const atletasFiltrados = atletas.filter(atleta => {
     const matchBusqueda = busqueda === '' || 
       atleta.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
       atleta.email.toLowerCase().includes(busqueda.toLowerCase())
-    const matchActividad = filtroActividad === 'todos' ||
-      (filtroActividad === 'activos' && atleta.diasInactivos < 7) ||
-      (filtroActividad === 'inactivos' && atleta.diasInactivos >= 7)
+    // Por ahora todos los atletas se consideran activos (se puede ajustar después)
+    const matchActividad = filtroActividad === 'todos' || filtroActividad === 'activos'
     return matchBusqueda && matchActividad
   })
+
+  // Calcular estadísticas
+  const totalAtletas = atletas.length
+  const atletasActivos = atletas.length // Por ahora todos son activos
+  const atletasInactivos = 0 // Por ahora 0
+  const conSuscripcion = 0 // Por ahora 0
 
   return (
     <div className="space-y-6">
@@ -91,24 +165,24 @@ export default function AtletasPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-4">
           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-1">Total Atletas</p>
-          <p className="text-2xl font-bold text-black dark:text-zinc-100">{atletas.length}</p>
+          <p className="text-2xl font-bold text-black dark:text-zinc-100">{totalAtletas}</p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-4">
           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-1">Activos</p>
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            {atletas.filter(a => a.diasInactivos < 7).length}
+            {atletasActivos}
           </p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-4">
           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-1">Inactivos</p>
           <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-            {atletas.filter(a => a.diasInactivos >= 7).length}
+            {atletasInactivos}
           </p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border-2 border-gray-200 dark:border-zinc-800 rounded-xl p-4">
           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-1">Con Suscripción</p>
           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-            {atletas.filter(a => a.estadoSuscripcion === 'activa').length}
+            {conSuscripcion}
           </p>
         </div>
       </div>
@@ -164,41 +238,24 @@ export default function AtletasPage() {
                     <p className="text-black dark:text-zinc-100 font-semibold">{atleta.nombre}</p>
                     <p className="text-sm text-gray-500 dark:text-zinc-500">{atleta.email}</p>
                   </div>
-                  {atleta.diasInactivos >= 7 && (
-                    <span className="px-2 py-1 bg-yellow-500/20 dark:bg-yellow-500/30 text-yellow-600 dark:text-yellow-400 rounded-full text-xs font-medium">
-                      Inactivo {atleta.diasInactivos} días
-                    </span>
-                  )}
-                  {atleta.diasInactivos < 7 && (
-                    <span className="px-2 py-1 bg-green-500/20 dark:bg-green-500/30 text-green-600 dark:text-green-400 rounded-full text-xs font-medium">
-                      Activo
-                    </span>
-                  )}
+                  <span className="px-2 py-1 bg-green-500/20 dark:bg-green-500/30 text-green-600 dark:text-green-400 rounded-full text-xs font-medium">
+                    Activo
+                  </span>
                 </div>
-                <div className="ml-15 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="ml-15 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500 dark:text-zinc-500">Suscripción</p>
-                    <p className="text-black dark:text-zinc-100 font-medium">{atleta.suscripcion}</p>
+                    <p className="text-gray-500 dark:text-zinc-500">Fecha de Registro</p>
+                    <p className="text-black dark:text-zinc-100 font-medium">
+                      {atleta.fechaRegistro ? new Date(atleta.fechaRegistro).toLocaleDateString() : 'N/A'}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 dark:text-zinc-500">Última Actividad</p>
-                    <p className="text-black dark:text-zinc-100 font-medium">{atleta.ultimaActividad}</p>
+                    <p className="text-gray-500 dark:text-zinc-500">Tipo de Usuario</p>
+                    <p className="text-black dark:text-zinc-100 font-medium">{atleta.tipoUsuario || 'ATHLETE_INTERNO'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 dark:text-zinc-500">Rutinas Completadas</p>
-                    <p className="text-black dark:text-zinc-100 font-medium">{atleta.rutinasCompletadas}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500 dark:text-zinc-500">Progreso</p>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
-                        <div 
-                          className="bg-black dark:bg-zinc-100 h-2 rounded-full"
-                          style={{ width: `${atleta.progreso}%` }}
-                        />
-                      </div>
-                      <span className="text-black dark:text-zinc-100 font-medium">{atleta.progreso}%</span>
-                    </div>
+                    <p className="text-gray-500 dark:text-zinc-500">Estado</p>
+                    <p className="text-black dark:text-zinc-100 font-medium">Activo</p>
                   </div>
                 </div>
               </div>
@@ -233,6 +290,12 @@ export default function AtletasPage() {
               </button>
             </div>
 
+            {errorAPI && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{errorAPI}</p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">
@@ -259,66 +322,35 @@ export default function AtletasPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Teléfono</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">
+                  Contraseña <span className="text-red-500">*</span>
+                </label>
                 <input
-                  type="tel"
-                  value={nuevoAtleta.telefono}
-                  onChange={(e) => setNuevoAtleta({...nuevoAtleta, telefono: e.target.value})}
+                  type="password"
+                  value={nuevoAtleta.password}
+                  onChange={(e) => setNuevoAtleta({...nuevoAtleta, password: e.target.value})}
                   className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
-                  placeholder="+52 55 1234 5678"
+                  placeholder="Mínimo 6 caracteres"
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Fecha de Nacimiento</label>
-                  <input
-                    type="date"
-                    value={nuevoAtleta.fechaNacimiento}
-                    onChange={(e) => setNuevoAtleta({...nuevoAtleta, fechaNacimiento: e.target.value})}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Género</label>
-                  <select
-                    value={nuevoAtleta.genero}
-                    onChange={(e) => setNuevoAtleta({...nuevoAtleta, genero: e.target.value})}
-                    className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
-                  >
-                    <option value="">Seleccionar</option>
-                    <option value="masculino">Masculino</option>
-                    <option value="femenino">Femenino</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 dark:text-zinc-400 mb-2">Tipo de Suscripción</label>
-                <select
-                  value={nuevoAtleta.suscripcion}
-                  onChange={(e) => setNuevoAtleta({...nuevoAtleta, suscripcion: e.target.value})}
-                  className="w-full px-4 py-3 bg-white dark:bg-zinc-800 border-2 border-gray-200 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-zinc-100"
-                >
-                  <option value="sin-suscripcion">Sin Suscripción</option>
-                  <option value="basico">Básico</option>
-                  <option value="premium">Premium</option>
-                </select>
               </div>
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={() => {
                     setMostrarModalCrear(false)
-                    setNuevoAtleta({ nombre: '', email: '', telefono: '', fechaNacimiento: '', genero: '', suscripcion: '' })
+                    setNuevoAtleta({ nombre: '', email: '', password: '' })
+                    setErrorAPI('')
                   }}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium"
+                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loadingAPI}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleCrearAtleta}
-                  className="flex-1 px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium"
+                  className="flex-1 px-4 py-3 bg-black dark:bg-zinc-100 hover:bg-gray-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loadingAPI}
                 >
-                  Crear Atleta
+                  {loadingAPI ? 'Creando...' : 'Crear Atleta'}
                 </button>
               </div>
             </div>

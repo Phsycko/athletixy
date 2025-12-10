@@ -52,6 +52,8 @@ export async function POST(request: NextRequest) {
       roleFinal = "COACH_INTERNO";
     } else if (roleFinal === "gym") {
       roleFinal = "GYM_MANAGER";
+    } else if (roleFinal === "ATHLETE_INTERNO") {
+      roleFinal = "ATHLETE_INTERNO";
     }
 
     // 🔥 ENVIAMOS gymManagerId SI EXISTE (coach interno)

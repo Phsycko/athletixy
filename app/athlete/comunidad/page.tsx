@@ -1,0 +1,13 @@
+'use client'
+
+export default function AthleteComunidadPage() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-black dark:text-zinc-100 mb-1">Comunidad</h1>
+        <p className="text-gray-500 dark:text-zinc-500">Módulo de Comunidad (Falta implementar)</p>
+      </div>
+    </div>
+  )
+}
+

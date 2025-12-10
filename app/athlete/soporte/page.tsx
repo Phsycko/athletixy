@@ -1,0 +1,13 @@
+'use client'
+
+export default function AthleteSoportePage() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-black dark:text-zinc-100 mb-1">Soporte</h1>
+        <p className="text-gray-500 dark:text-zinc-500">Módulo de Soporte (Falta implementar)</p>
+      </div>
+    </div>
+  )
+}
+
