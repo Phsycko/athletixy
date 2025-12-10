@@ -39,12 +39,15 @@ export default function LoginPage() {
 
 // 🔁 Función de redirección centralizada
 const redirigirPorRol = (role: string) => {
+  const normalizedRole = role?.toUpperCase() || '';
+  console.log('Redirigiendo por rol:', normalizedRole);
+  
   window.location.href =
-    role === "COACH_INTERNO"
+    normalizedRole === "COACH_INTERNO"
       ? "/gym/coach-interno"
-      : role === "GYM_MANAGER"
+      : normalizedRole === "GYM_MANAGER"
       ? "/gym/dashboard"
-      : role === "ATHLETE_INTERNO"
+      : normalizedRole === "ATHLETE_INTERNO"
       ? "/gym/atletas-internos/dashboard"
       : "/dashboard";
 };
@@ -135,13 +138,29 @@ const redirigirPorRol = (role: string) => {
         return
       }
 
+      console.log('Login exitoso, datos recibidos:', data);
+      console.log('Sesión a guardar:', data.session);
+      
+      if (!data.session) {
+        console.error('No se recibió session en la respuesta');
+        setError('Error al procesar la sesión.')
+        return
+      }
+
       localStorage.setItem(
         "athletixy_session",
         JSON.stringify(data.session)
       )
 
+      // Verificar que se guardó correctamente
+      const savedSession = localStorage.getItem("athletixy_session");
+      console.log('Sesión guardada en localStorage:', savedSession);
+
       setSuccess('Iniciando sesión...')
-      setTimeout(() => redirigirPorRol(data.session.role), 500)
+      setTimeout(() => {
+        console.log('Redirigiendo con rol:', data.session.role);
+        redirigirPorRol(data.session.role);
+      }, 500)
     } catch (error) {
       console.error(error)
       setError('Ocurrió un error al iniciar sesión.')
