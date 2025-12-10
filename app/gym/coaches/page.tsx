@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { UserCog, Users, Plus, Search, UserPlus, X, User, Check } from 'lucide-react'
+import { UserCog, Users, Plus, Search, UserPlus, X, User, Check, Trash2 } from 'lucide-react'
 
 export default function CoachesPage() {
   const router = useRouter()
@@ -26,6 +26,9 @@ export default function CoachesPage() {
   })
   const [errorAPI, setErrorAPI] = useState('')
   const [loadingAPI, setLoadingAPI] = useState(false)
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false)
+  const [coachAEliminar, setCoachAEliminar] = useState<any>(null)
+  const [eliminando, setEliminando] = useState(false)
 
   // Función para recargar coaches desde localStorage
   const recargarCoaches = () => {
@@ -190,6 +193,48 @@ export default function CoachesPage() {
     localStorage.setItem('gym_coaches_internos', JSON.stringify(coachesActualizados))
   }
 
+  const handleEliminarCoach = (coach: any) => {
+    setCoachAEliminar(coach)
+    setMostrarModalEliminar(true)
+  }
+
+  const confirmarEliminarCoach = async () => {
+    if (!coachAEliminar) return
+
+    try {
+      setEliminando(true)
+
+      const response = await fetch('/api/gym/coaches/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          coachId: coachAEliminar.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Error al eliminar el coach')
+        setEliminando(false)
+        return
+      }
+
+      // Éxito - actualizar lista
+      setMostrarModalEliminar(false)
+      setCoachAEliminar(null)
+      recargarCoaches()
+      router.refresh()
+    } catch (error: any) {
+      console.error('Error eliminando coach:', error)
+      alert('Error al eliminar el coach. Por favor intenta nuevamente.')
+    } finally {
+      setEliminando(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -304,6 +349,13 @@ export default function CoachesPage() {
                     </button>
                     <button className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium text-sm">
                       Ver Detalles
+                    </button>
+                    <button
+                      onClick={() => handleEliminarCoach(coach)}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition font-medium text-sm"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Eliminar
                     </button>
                   </div>
                 </div>
@@ -711,6 +763,59 @@ export default function CoachesPage() {
                   disabled={loadingAPI}
                 >
                   {loadingAPI ? 'Creando...' : 'Crear Coach'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Eliminar Coach */}
+      {mostrarModalEliminar && coachAEliminar && (
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 max-w-md w-full border-2 border-gray-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-black dark:text-zinc-100">Eliminar Coach</h2>
+              <button
+                onClick={() => {
+                  setMostrarModalEliminar(false)
+                  setCoachAEliminar(null)
+                }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
+                disabled={eliminando}
+              >
+                <X className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-gray-600 dark:text-zinc-400">
+                ¿Estás seguro de que deseas eliminar este coach? Esta acción no se puede deshacer.
+              </p>
+              
+              <div className="p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border-2 border-gray-200 dark:border-zinc-700">
+                <p className="text-sm font-medium text-black dark:text-zinc-100 mb-1">Coach a eliminar:</p>
+                <p className="text-sm text-gray-600 dark:text-zinc-400">{coachAEliminar.nombre}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">{coachAEliminar.email}</p>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => {
+                    setMostrarModalEliminar(false)
+                    setCoachAEliminar(null)
+                  }}
+                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={eliminando}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmarEliminarCoach}
+                  className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={eliminando}
+                >
+                  {eliminando ? 'Eliminando...' : 'Eliminar Coach'}
                 </button>
               </div>
             </div>
