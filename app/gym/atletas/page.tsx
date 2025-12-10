@@ -282,7 +282,7 @@ export default function AtletasPage() {
               <button
                 onClick={() => {
                   setMostrarModalCrear(false)
-                  setNuevoAtleta({ nombre: '', email: '', telefono: '', fechaNacimiento: '', genero: '', suscripcion: '' })
+                  setNuevoAtleta({ nombre: '', email: '', password: '' })
                 }}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition"
               >
