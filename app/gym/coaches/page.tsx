@@ -27,6 +27,17 @@ export default function CoachesPage() {
   const [errorAPI, setErrorAPI] = useState('')
   const [loadingAPI, setLoadingAPI] = useState(false)
 
+  // Función para recargar coaches desde localStorage
+  const recargarCoaches = () => {
+    if (typeof window === 'undefined') return
+    try {
+      const stored = localStorage.getItem('gym_coaches_internos')
+      setCoaches(stored ? JSON.parse(stored) : [])
+    } catch {
+      setCoaches([])
+    }
+  }
+
   // Cargar coaches desde localStorage
   const [coaches, setCoaches] = useState<any[]>(() => {
     if (typeof window === 'undefined') return []
@@ -198,13 +209,6 @@ export default function CoachesPage() {
           >
             <Plus className="w-5 h-5" />
             Registrar Coach Interno
-          </button>
-          <button 
-            onClick={() => setMostrarModalCrear(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 text-black dark:text-zinc-100 rounded-lg transition font-medium"
-          >
-            <Plus className="w-5 h-5" />
-            Agregar Coach
           </button>
         </div>
       </div>
@@ -693,6 +697,8 @@ export default function CoachesPage() {
                       setMostrarModalCrearAPI(false)
                       setNuevoCoachAPI({ nombre: '', email: '', password: '' })
                       setErrorAPI('')
+                      // Recargar la lista de coaches
+                      recargarCoaches()
                       router.refresh()
                     } catch (error: any) {
                       console.error('Error creando coach interno:', error)
