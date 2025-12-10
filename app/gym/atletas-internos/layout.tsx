@@ -3,50 +3,64 @@
 import { useEffect, useState } from "react";
 
 export default function AthleteInternLayout({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
-  const [isVerifying, setIsVerifying] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (isVerifying === false) return;
+    if (typeof window === 'undefined') {
+      setIsChecking(false);
+      return;
+    }
 
-    const verifySession = () => {
+    const checkAuth = () => {
       try {
-        const session = localStorage.getItem("athletixy_session");
-        if (!session) {
-          setIsVerifying(false);
-          setTimeout(() => window.location.href = '/', 100);
+        const sessionStr = localStorage.getItem("athletixy_session");
+        
+        if (!sessionStr) {
+          setIsChecking(false);
+          setIsAuthorized(false);
+          window.location.href = '/';
           return;
         }
 
-        const data = JSON.parse(session);
-        if (!data.loggedIn || data.role !== "ATHLETE_INTERNO") {
-          setIsVerifying(false);
-          setTimeout(() => window.location.href = '/', 100);
-          return;
+        const session = JSON.parse(sessionStr);
+        const role = session?.role || '';
+        
+        // Normalizar el rol para comparación
+        const normalizedRole = role.toUpperCase();
+        
+        if (session?.loggedIn && normalizedRole === 'ATHLETE_INTERNO') {
+          setIsAuthorized(true);
+          setIsChecking(false);
+        } else {
+          setIsChecking(false);
+          setIsAuthorized(false);
+          window.location.href = '/';
         }
-
-        setUser(data);
-        setIsVerifying(false);
       } catch (error) {
-        console.error('Error parsing session:', error);
+        console.error('Error verificando sesión:', error);
         localStorage.removeItem('athletixy_session');
-        setIsVerifying(false);
-        setTimeout(() => window.location.href = '/', 100);
+        setIsChecking(false);
+        setIsAuthorized(false);
+        window.location.href = '/';
       }
     };
 
-    verifySession();
-  }, [isVerifying]);
+    checkAuth();
+  }, []);
 
-  if (isVerifying || !user) {
+  if (isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-900">
         <div className="text-center">
-          <p className="text-gray-600 dark:text-zinc-400">Cargando...</p>
+          <p className="text-gray-600 dark:text-zinc-400">Verificando sesión...</p>
         </div>
       </div>
     );
+  }
+
+  if (!isAuthorized) {
+    return null;
   }
 
   return <>{children}</>;

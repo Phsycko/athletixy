@@ -44,12 +44,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalizar el rol
+    let roleFinal = user.tipoUsuario;
+    if (roleFinal === "ATHLETE_INTERNO") {
+      roleFinal = "ATHLETE_INTERNO";
+    } else if (roleFinal === "coach" && user.gymManagerId) {
+      roleFinal = "COACH_INTERNO";
+    } else if (roleFinal === "gym") {
+      roleFinal = "GYM_MANAGER";
+    }
+
     const sessionData = {
       loggedIn: true,
       userId: user.id,
       email: user.email,
       nombre: user.nombre,
-      role: user.tipoUsuario,
+      role: roleFinal,
       gymManagerId: user.gymManagerId || null,
     };
 
