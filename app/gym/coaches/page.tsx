@@ -63,6 +63,32 @@ export default function CoachesPage() {
     }
   })
 
+  // Limpiar datos viejos de coaches del localStorage al montar el componente
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    // Limpiar claves viejas de coaches generados por el sistema antiguo
+    localStorage.removeItem("gym_coaches")
+    localStorage.removeItem("local_coaches")
+    localStorage.removeItem("coaches")
+    localStorage.removeItem("gym_coaches_internos")
+    localStorage.removeItem("coach_list")
+    localStorage.removeItem("coach_data")
+    
+    // Limpiar cualquier otra clave que contenga "coach" y sea del sistema viejo
+    const keysToRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && (
+        key.toLowerCase().includes('coach') && 
+        (key.includes('gym_') || key.includes('local_') || key === 'coaches' || key === 'coach_list' || key === 'coach_data')
+      )) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key))
+  }, [])
+
   // Actualizar atletas disponibles cuando cambien
   useEffect(() => {
     if (typeof window === 'undefined') return
