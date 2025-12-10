@@ -52,7 +52,7 @@ export default function CoachInternoLayout({
     if (typeof window === 'undefined') return
     if (isVerifying === false) return
 
-    const verifySession = () => {
+    const verifySession = async () => {
       try {
         const session = localStorage.getItem('athletixy_session')
         if (!session) {
@@ -75,24 +75,35 @@ export default function CoachInternoLayout({
           return
         }
 
-        // Obtener datos del coach desde localStorage
-        const coachesInternos = localStorage.getItem('gym_coaches_internos')
-        if (coachesInternos) {
-          const coaches = JSON.parse(coachesInternos)
-          const coach = coaches.find((c: any) => c.id === sessionData.coachId)
-          if (coach && coach.activo) {
-            setCoachData(coach)
-            setIsVerifying(false)
-          } else {
-            // Si no se encuentra el coach o está inactivo
-            console.error('Coach no encontrado o inactivo')
+        // Obtener el ID del coach desde la sesión
+        // La sesión ahora incluye tanto 'id' como 'coachId' (ambos son el mismo para COACH_INTERNO)
+        const coachId = sessionData.id || sessionData.coachId
+        if (!coachId) {
+          console.error('No se encontró ID del coach en la sesión')
+          localStorage.removeItem('athletixy_session')
+          setIsVerifying(false)
+          setTimeout(() => window.location.href = '/', 100)
+          return
+        }
+
+        // Obtener datos del coach desde Prisma
+        try {
+          const response = await fetch(`/api/gym/coach-interno?coachId=${coachId}`)
+          const data = await response.json()
+
+          if (!response.ok) {
+            console.error('Error obteniendo datos del coach:', data.error)
             localStorage.removeItem('athletixy_session')
             setIsVerifying(false)
             setTimeout(() => window.location.href = '/', 100)
             return
           }
-        } else {
-          // Si no hay coaches internos, redirigir
+
+          // Datos del coach obtenidos correctamente
+          setCoachData(data.coach)
+          setIsVerifying(false)
+        } catch (error) {
+          console.error('Error en la petición al API:', error)
           localStorage.removeItem('athletixy_session')
           setIsVerifying(false)
           setTimeout(() => window.location.href = '/', 100)
@@ -107,7 +118,7 @@ export default function CoachInternoLayout({
     }
 
     verifySession()
-  }, [])
+  }, [isVerifying])
 
   const handleLogout = () => {
     localStorage.removeItem('athletixy_session')

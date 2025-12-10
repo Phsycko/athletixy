@@ -44,6 +44,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 🔥 NORMALIZACIÓN REAL DEL ROL
+    let roleFinal = user.tipoUsuario; // valor exacto de BD
+
+    // Si es coach y tiene gymManagerId, es un coach interno
+    if (roleFinal === "coach" && user.gymManagerId) {
+      roleFinal = "COACH_INTERNO";
+    } else if (roleFinal === "gym") {
+      roleFinal = "GYM_MANAGER";
+    }
+
     // 🔥 ENVIAMOS gymManagerId SI EXISTE (coach interno)
     return NextResponse.json(
       {
@@ -52,8 +62,8 @@ export async function POST(request: NextRequest) {
           id: user.id,
           email: user.email,
           nombre: user.nombre,
-          role: user.tipoUsuario,
-          gymManagerId: user.gymManagerId || null, // <--- 🔥 CLAVE
+          role: roleFinal, // 🔥 rol normalizado
+          gymManagerId: user.gymManagerId || null,
           isAdmin: user.isAdmin,
         },
       },

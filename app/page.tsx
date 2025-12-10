@@ -140,14 +140,23 @@ const redirigirPorRol = (role: string) => {
       }
 
       // 🟩 GUARDAMOS SESIÓN COMPLETA (AQUÍ ESTABA EL PROBLEMA)
+      // Normalizar el rol en el cliente también
+      let roleFinal = data.user.role
+      if (roleFinal === "coach" && data.user.gymManagerId) {
+        roleFinal = "COACH_INTERNO"
+      } else if (roleFinal === "gym") {
+        roleFinal = "GYM_MANAGER"
+      }
+
       localStorage.setItem(
         'athletixy_session',
         JSON.stringify({
-          id: data.user.id,                     // NECESARIO PARA GYM_MANAGER
+          id: data.user.id,                     // ID del usuario (coachId para COACH_INTERNO)
           email: data.user.email,
           nombre: data.user.nombre,
-          role: data.user.role,
-          gymManagerId: data.user.gymManagerId || data.user.id, // NECESARIO PARA COACH_INTERNO
+          role: roleFinal,                       // Rol normalizado
+          coachId: data.user.id,                 // Para COACH_INTERNO: su propio ID
+          gymManagerId: data.user.gymManagerId || null, // ID del GYM_MANAGER que lo creó
           loggedIn: true,
           isAdmin: data.user.isAdmin || false
         })

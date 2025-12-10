@@ -20,23 +20,36 @@ export default function CoachInternoDashboardPage() {
 
       const session = JSON.parse(rawSession)
 
-      // 🔥 Ahora usamos el ID REAL del usuario
-      const coachId = session.id
+      // 🔥 Usamos el ID del usuario de la sesión
+      const coachId = session.id || session.coachId
       if (!coachId) {
         console.warn("No se encontró ID del coach en la sesión.")
         setLoading(false)
         return
       }
 
-      // Buscar en el almacenamiento local de coaches
+      // Los datos del coach ya están disponibles desde el layout
+      // Por ahora, inicializar con datos básicos desde la sesión
+      if (session.nombre) {
+        setCoachData({
+          id: coachId,
+          nombre: session.nombre,
+          email: session.email
+        })
+      }
+
+      // Para atletas asignados, por ahora inicializar vacío
+      // Esto se debe obtener desde una API o desde localStorage si existe
       const rawCoaches = localStorage.getItem('gym_coaches_internos')
       if (rawCoaches) {
-        const coaches = JSON.parse(rawCoaches)
-        const coach = coaches.find((c: any) => c.id === coachId)
-
-        if (coach) {
-          setCoachData(coach)
-          setAtletasAsignados(coach.atletas || [])
+        try {
+          const coaches = JSON.parse(rawCoaches)
+          const coach = coaches.find((c: any) => c.id === coachId)
+          if (coach && coach.atletas) {
+            setAtletasAsignados(coach.atletas || [])
+          }
+        } catch (e) {
+          // Ignorar errores de parsing
         }
       }
 
