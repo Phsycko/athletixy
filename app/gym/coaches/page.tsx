@@ -30,27 +30,28 @@ export default function CoachesPage() {
   const [coachAEliminar, setCoachAEliminar] = useState<any>(null)
   const [eliminando, setEliminando] = useState(false)
 
-  // Función para recargar coaches desde localStorage
-  const recargarCoaches = () => {
+  // Estado de coaches
+  const [coaches, setCoaches] = useState<any[]>([])
+
+  // Función para recargar coaches desde la API
+  const recargarCoaches = async () => {
     if (typeof window === 'undefined') return
     try {
-      const stored = localStorage.getItem('gym_coaches_internos')
-      setCoaches(stored ? JSON.parse(stored) : [])
-    } catch {
-      setCoaches([])
+      const session = JSON.parse(localStorage.getItem("athletixy_session") || '{}')
+      const gymManagerId = session?.id || session?.userId
+      
+      if (!gymManagerId) return
+
+      const res = await fetch(`/api/gym/coaches?gymManagerId=${gymManagerId}`)
+      const data = await res.json()
+
+      if (res.ok) {
+        setCoaches(data.coaches || [])
+      }
+    } catch (error) {
+      console.error("Error recargando coaches:", error)
     }
   }
-
-  // Cargar coaches desde localStorage
-  const [coaches, setCoaches] = useState<any[]>(() => {
-    if (typeof window === 'undefined') return []
-    try {
-      const stored = localStorage.getItem('gym_coaches_internos')
-      return stored ? JSON.parse(stored) : []
-    } catch {
-      return []
-    }
-  })
 
   // Cargar atletas disponibles desde el módulo de atletas del gym
   const [atletasDisponibles, setAtletasDisponibles] = useState<any[]>(() => {
@@ -87,6 +88,27 @@ export default function CoachesPage() {
       }
     }
     keysToRemove.forEach(key => localStorage.removeItem(key))
+  }, [])
+
+  // Cargar coaches desde Supabase al montar el componente
+  useEffect(() => {
+    async function loadCoaches() {
+      try {
+        const session = JSON.parse(localStorage.getItem("athletixy_session") || '{}')
+        const gymManagerId = session?.id || session?.userId
+
+        if (!gymManagerId) return
+
+        const res = await fetch(`/api/gym/coaches?gymManagerId=${gymManagerId}`)
+        const data = await res.json()
+
+        setCoaches(data.coaches || [])
+      } catch (error) {
+        console.error("Error loading coaches:", error)
+      }
+    }
+
+    loadCoaches()
   }, [])
 
   // Actualizar atletas disponibles cuando cambien

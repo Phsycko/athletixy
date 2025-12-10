@@ -13,6 +13,56 @@ async function getPrisma() {
   return prisma;
 }
 
+export async function GET(request: NextRequest) {
+  try {
+    const prisma = await getPrisma();
+    const { searchParams } = new URL(request.url);
+    const gymManagerId = searchParams.get("gymManagerId");
+
+    if (!gymManagerId) {
+      return NextResponse.json(
+        { error: "gymManagerId es requerido" },
+        { status: 400 }
+      );
+    }
+
+    // Obtener todos los coaches internos del gym manager
+    const coaches = await prisma.user.findMany({
+      where: {
+        tipoUsuario: "coach",
+        gymManagerId: gymManagerId,
+      },
+      select: {
+        id: true,
+        email: true,
+        nombre: true,
+        tipoUsuario: true,
+        gymManagerId: true,
+        fechaRegistro: true,
+        isAdmin: true,
+      },
+      orderBy: {
+        fechaRegistro: "desc",
+      },
+    });
+
+    return NextResponse.json(
+      { coaches },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error obteniendo coaches:", {
+      message: error.message,
+      code: error.code,
+    });
+
+    return NextResponse.json(
+      { error: "Error al obtener los coaches" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const prisma = await getPrisma();
