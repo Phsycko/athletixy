@@ -44,33 +44,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔥 NORMALIZACIÓN REAL DEL ROL
-    let roleFinal = user.tipoUsuario; // valor exacto de BD
+    const sessionData = {
+      loggedIn: true,
+      userId: user.id,
+      email: user.email,
+      nombre: user.nombre,
+      role: user.tipoUsuario,
+      gymManagerId: user.gymManagerId || null,
+    };
 
-    // Si es coach y tiene gymManagerId, es un coach interno
-    if (roleFinal === "coach" && user.gymManagerId) {
-      roleFinal = "COACH_INTERNO";
-    } else if (roleFinal === "gym") {
-      roleFinal = "GYM_MANAGER";
-    } else if (roleFinal === "ATHLETE_INTERNO") {
-      roleFinal = "ATHLETE_INTERNO";
-    }
-
-    // 🔥 ENVIAMOS gymManagerId SI EXISTE (coach interno)
-    return NextResponse.json(
-      {
-        message: "Login exitoso",
-        user: {
-          id: user.id,
-          email: user.email,
-          nombre: user.nombre,
-          role: roleFinal, // 🔥 rol normalizado
-          gymManagerId: user.gymManagerId || null,
-          isAdmin: user.isAdmin,
-        },
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      message: "Login exitoso",
+      user: sessionData,
+      session: sessionData,
+    });
   } catch (error) {
     console.error("Error en login:", error);
     return NextResponse.json(

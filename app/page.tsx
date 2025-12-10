@@ -39,22 +39,14 @@ export default function LoginPage() {
 
 // 🔁 Función de redirección centralizada
 const redirigirPorRol = (role: string) => {
-  role = role.toUpperCase(); // Normalizar por seguridad
-
   window.location.href =
-    role === 'COACH_INTERNO'
-      ? '/gym/coach-interno'
-      : role === 'ATHLETE_INTERNO'
-      ? '/gym/atletas-internos/dashboard'
-      : role === 'GYM_MANAGER'
-      ? '/gym/dashboard'
-      : role === 'NUTRIOLOGO'
-      ? '/dashboard/nutriologo'
-      : role === 'COACH'
-      ? '/dashboard/coach'
-      : role === 'VENDEDOR'
-      ? '/dashboard/marketplace'
-      : '/dashboard'; // atleta u otros
+    role === "COACH_INTERNO"
+      ? "/gym/coach-interno"
+      : role === "GYM_MANAGER"
+      ? "/gym/dashboard"
+      : role === "ATHLETE_INTERNO"
+      ? "/gym/atletas-internos/dashboard"
+      : "/dashboard";
 };
 
   // 🔥 Registrar usuario desde el login
@@ -94,16 +86,18 @@ const redirigirPorRol = (role: string) => {
 
       const tipoFinal = credentials.tipoUsuario === 'gym' ? 'GYM_MANAGER' : credentials.tipoUsuario
 
+      const sessionData = {
+        loggedIn: true,
+        userId: data.user.id,
+        email: data.user.email,
+        nombre: data.user.nombre,
+        role: tipoFinal,
+        gymManagerId: null,
+      };
+
       localStorage.setItem(
-        'athletixy_session',
-        JSON.stringify({
-          id: data.user.id,
-          email: credentials.email.trim().toLowerCase(),
-          nombre: credentials.nombre.trim(),
-          role: tipoFinal,
-          gymManagerId: data.user.id,
-          loggedIn: true,
-        })
+        "athletixy_session",
+        JSON.stringify(sessionData)
       )
 
       setSuccess('¡Registro exitoso! Redirigiendo...')
@@ -141,33 +135,13 @@ const redirigirPorRol = (role: string) => {
         return
       }
 
-      // 🟩 GUARDAMOS SESIÓN COMPLETA (AQUÍ ESTABA EL PROBLEMA)
-      // Normalizar el rol en el cliente también
-      let roleFinal = data.user.role
-      if (roleFinal === "coach" && data.user.gymManagerId) {
-        roleFinal = "COACH_INTERNO"
-      } else if (roleFinal === "gym") {
-        roleFinal = "GYM_MANAGER"
-      } else if (roleFinal === "ATHLETE_INTERNO") {
-        roleFinal = "ATHLETE_INTERNO"
-      }
-
       localStorage.setItem(
-        'athletixy_session',
-        JSON.stringify({
-          id: data.user.id,                     // ID del usuario (coachId para COACH_INTERNO)
-          email: data.user.email,
-          nombre: data.user.nombre,
-          role: roleFinal,                       // Rol normalizado
-          coachId: data.user.id,                 // Para COACH_INTERNO: su propio ID
-          gymManagerId: data.user.gymManagerId || null, // ID del GYM_MANAGER que lo creó
-          loggedIn: true,
-          isAdmin: data.user.isAdmin || false
-        })
+        "athletixy_session",
+        JSON.stringify(data.session)
       )
 
       setSuccess('Iniciando sesión...')
-      setTimeout(() => redirigirPorRol(roleFinal), 500)
+      setTimeout(() => redirigirPorRol(data.session.role), 500)
     } catch (error) {
       console.error(error)
       setError('Ocurrió un error al iniciar sesión.')
