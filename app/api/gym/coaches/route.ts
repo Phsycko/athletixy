@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Obtener todos los coaches internos del gym manager
+    // 🔥 CORREGIDO: buscar COACH_INTERNO, no “coach”
     const coaches = await prisma.user.findMany({
       where: {
-        tipoUsuario: "coach",
+        tipoUsuario: "COACH_INTERNO",
         gymManagerId: gymManagerId,
       },
       select: {
@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
       { coaches },
       { status: 200 }
     );
+
   } catch (error: any) {
     console.error("Error obteniendo coaches:", {
       message: error.message,
@@ -69,7 +70,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { nombre, email, password, gymManagerId } = body;
 
-    // Validaciones
     if (!nombre || !email || !password || !gymManagerId) {
       return NextResponse.json(
         { error: "Todos los campos son requeridos" },
@@ -86,7 +86,6 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = email.trim().toLowerCase();
 
-    // Verificar si el email ya existe
     const existingUser = await prisma.user.findUnique({
       where: { email: emailNormalized },
     });
@@ -98,16 +97,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear coach interno CORREGIDO 🔥🔥🔥
+    // 🔥 CORRECTO: los coaches internos sí se guardan como COACH_INTERNO
     const newCoach = await prisma.user.create({
       data: {
         email: emailNormalized,
         password: hashedPassword,
         nombre: nombre.trim(),
-        tipoUsuario: "COACH_INTERNO", // 👈🔥 AQUÍ ESTABA EL ERROR
+        tipoUsuario: "COACH_INTERNO",
         gymManagerId: gymManagerId,
         isAdmin: false,
       },
@@ -129,6 +127,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
+
   } catch (error: any) {
     console.error("Error creando coach interno:", {
       message: error.message,
@@ -139,12 +138,6 @@ export async function POST(request: NextRequest) {
 
     if (error.code === "P2002") {
       errorMessage = "Este email ya está registrado";
-    } else if (
-      error.code === "P1001" ||
-      error.message?.includes("Can't reach database server")
-    ) {
-      errorMessage =
-        "Error de conexión con la base de datos. Verifica la configuración.";
     }
 
     return NextResponse.json(
