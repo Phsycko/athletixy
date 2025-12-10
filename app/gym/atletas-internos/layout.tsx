@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AthleteInternLayout({ children }) {
+export default function AthleteInternLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
