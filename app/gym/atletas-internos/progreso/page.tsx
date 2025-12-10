@@ -1,6 +1,6 @@
 'use client'
 
-export default function AthleteProgresoPage() {
+export default function AtletaInternoProgresoPage() {
   return (
     <div className="space-y-6">
       <div>

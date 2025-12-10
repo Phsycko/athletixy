@@ -1,6 +1,6 @@
 'use client'
 
-export default function AthleteAjustesPage() {
+export default function AtletaInternoAjustesPage() {
   return (
     <div className="space-y-6">
       <div>

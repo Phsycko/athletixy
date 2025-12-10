@@ -1,6 +1,6 @@
 'use client'
 
-export default function AthleteNotificacionesPage() {
+export default function AtletaInternoNotificacionesPage() {
   return (
     <div className="space-y-6">
       <div>

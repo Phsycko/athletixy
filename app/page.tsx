@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LogIn, Dumbbell, UserPlus, Apple, User, Building2, ShoppingBag, Users } from 'lucide-react'
 
-type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' | 'GYM_MANAGER' | 'COACH_INTERNO'
+type UserType = 'atleta' | 'nutriologo' | 'coach' | 'gym' | 'vendedor' | 'GYM_MANAGER' | 'COACH_INTERNO' | 'ATHLETE_INTERNO'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -45,7 +45,7 @@ const redirigirPorRol = (role: string) => {
     role === 'COACH_INTERNO'
       ? '/gym/coach-interno'
       : role === 'ATHLETE_INTERNO'
-      ? '/athlete/dashboard'
+      ? '/gym/atletas-internos/dashboard'
       : role === 'GYM_MANAGER'
       ? '/gym/dashboard'
       : role === 'NUTRIOLOGO'
@@ -167,7 +167,7 @@ const redirigirPorRol = (role: string) => {
       )
 
       setSuccess('Iniciando sesión...')
-      setTimeout(() => redirigirPorRol(data.user.role), 500)
+      setTimeout(() => redirigirPorRol(roleFinal), 500)
     } catch (error) {
       console.error(error)
       setError('Ocurrió un error al iniciar sesión.')

@@ -1,6 +1,6 @@
 'use client'
 
-export default function AthleteComunidadPage() {
+export default function AtletaInternoComunidadPage() {
   return (
     <div className="space-y-6">
       <div>
