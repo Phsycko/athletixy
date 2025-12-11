@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import PWARegister from './pwa-register'
+import ChunkErrorHandler from './chunk-error-handler'
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Athletixy - Gestión de Atletas',
@@ -30,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className="bg-white dark:bg-zinc-900 text-black dark:text-zinc-100 antialiased transition-colors duration-200">
+        <ChunkErrorHandler />
         <PWARegister />
         {children}
       </body>

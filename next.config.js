@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  experimental: { workerThreads: false, cpus: 1 },
+  reactStrictMode: false,
+  distDir: ".next",
+  generateEtags: false,
+  onDemandEntries: { maxInactiveAge: 0, pagesBufferLength: 0 },
+  webpack: (config) => {
+    return config;
+  },
   async headers() {
     return [
       {
