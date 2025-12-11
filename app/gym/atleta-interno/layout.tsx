@@ -54,35 +54,38 @@ export default function AtletaInternoLayout({
   }, [])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (isVerifying === false) return
+    if (typeof window === 'undefined') {
+      setIsVerifying(false)
+      return
+    }
 
     const verifySession = () => {
       try {
         const session = localStorage.getItem('athletixy_session')
         if (!session) {
           setIsVerifying(false)
-          setTimeout(() => router.replace('/'), 100)
+          router.replace('/')
           return
         }
         
         const sessionData = JSON.parse(session)
-        if (!sessionData.loggedIn) {
+        
+        if (!sessionData.loggedIn || !sessionData.role) {
           setIsVerifying(false)
-          setTimeout(() => router.replace('/'), 100)
+          router.replace('/')
           return
         }
 
-        const role = sessionData.role?.toUpperCase()
+        const role = sessionData.role.toUpperCase()
         if (role !== 'ATLETA_INTERNO' && role !== 'ATHLETE_INTERNO') {
           setIsVerifying(false)
-          setTimeout(() => router.replace('/'), 100)
+          router.replace('/')
           return
         }
 
         if (!sessionData.userId) {
           setIsVerifying(false)
-          setTimeout(() => router.replace('/'), 100)
+          router.replace('/')
           return
         }
 
@@ -92,12 +95,12 @@ export default function AtletaInternoLayout({
         console.error('Error verificando sesión:', error)
         localStorage.removeItem('athletixy_session')
         setIsVerifying(false)
-        setTimeout(() => router.replace('/'), 100)
+        router.replace('/')
       }
     }
 
     verifySession()
-  }, [isVerifying, router])
+  }, [router])
 
   const handleLogout = () => {
     localStorage.removeItem('athletixy_session')
