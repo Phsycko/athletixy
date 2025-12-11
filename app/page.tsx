@@ -48,7 +48,7 @@ const redirigirPorRol = (role: string) => {
       : normalizedRole === "GYM_MANAGER"
       ? "/gym/dashboard"
       : normalizedRole === "ATHLETE_INTERNO"
-      ? "/gym/atletas-internos/dashboard"
+      ? "/gym/atleta-interno"
       : "/dashboard";
 };
 
