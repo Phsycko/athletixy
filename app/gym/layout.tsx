@@ -123,8 +123,8 @@ export default function GymLayout({
     setNotificacionesNoLeidas(noLeidas)
   }, [])
 
-  // Si es una ruta de coach-interno o atleta-interno, renderizar solo el children sin el layout del gym
-  if (pathname?.startsWith('/gym/coach-interno') || pathname?.startsWith('/gym/atleta-interno')) {
+  // Si es una ruta de coach-interno o atletas-internos, renderizar solo el children sin el layout del gym
+  if (pathname?.startsWith('/gym/coach-interno') || pathname?.startsWith('/gym/atletas-internos')) {
     return <>{children}</>
   }
 

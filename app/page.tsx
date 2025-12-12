@@ -48,7 +48,7 @@ const redirigirPorRol = (role: string) => {
     return;
   }
   if (role === "ATHLETE_INTERNO") {
-    window.location.href = "/gym/atleta-interno/dashboard";
+    window.location.href = "/gym/atletas-internos/dashboard";
     return;
   }
 
