@@ -39,17 +39,20 @@ export default function LoginPage() {
 
 // 🔁 Función de redirección centralizada
 const redirigirPorRol = (role: string) => {
-  const normalizedRole = role?.toUpperCase() || '';
-  console.log('Redirigiendo por rol:', normalizedRole);
-  
-  window.location.href =
-    normalizedRole === "COACH_INTERNO"
-      ? "/gym/coach-interno"
-      : normalizedRole === "GYM_MANAGER"
-      ? "/gym/dashboard"
-      : normalizedRole === "ATHLETE_INTERNO"
-      ? "/gym/atleta-interno"
-      : "/dashboard";
+  if (role === "COACH_INTERNO") {
+    window.location.href = "/gym/coach-interno";
+    return;
+  }
+  if (role === "GYM_MANAGER") {
+    window.location.href = "/gym/dashboard";
+    return;
+  }
+  if (role === "ATHLETE_INTERNO") {
+    window.location.href = "/gym/atleta-interno/dashboard";
+    return;
+  }
+
+  window.location.href = "/dashboard";
 };
 
   // 🔥 Registrar usuario desde el login
