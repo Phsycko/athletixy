@@ -31,6 +31,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // force full rebuild – fix broken chunks
   return (
     <html lang="es" suppressHydrationWarning>
       <body className="bg-white dark:bg-zinc-900 text-black dark:text-zinc-100 antialiased transition-colors duration-200">
